@@ -1,0 +1,101 @@
+#include<iostream>
+using namespace std;
+
+class CDate
+{
+    int year, month, day;
+public:
+    CDate(int y, int m, int d):year(y),month(m),day(d) { }
+    bool isLeapYear(int y) { return (y%4 == 0 && y%100 != 0) || y%400 == 0; }
+    double getDayofYear()
+    {
+        double sum=0;
+        if(cmp()){   //若日期大于2015-4-7日
+           int i;
+           int a[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
+
+           //计算距离2015-1-1之间有多少天
+           sum+=day;
+           if (isLeapYear(year))
+               a[2]=29;
+
+           for(i=1; i<month; i++)
+               sum+=a[i];
+
+           for(i=2015;i<year;i++){
+               if (isLeapYear(i))
+                   sum+=366;
+               else
+                  sum+=365;
+           }
+        }
+        return sum;
+    }
+    bool cmp(){  //判断日期是否>2015-4-7
+       if(year!=2015) return year>2015;
+       if(month!=4) return month>4;
+       return day>7;
+    }
+    bool isZero(){  //判断日期是否等于0-0-0
+       if(year==0 && month==0 && day==0)
+          return true;
+       else
+          return false;
+    }
+};
+
+class CSoft
+{
+    char type, store;
+    string name;
+    CDate ED;
+public:
+    CSoft(string n, char t ,char s, int y,int m,int d):name(n),type(t),store(s),ED(y,m,d){}
+    CSoft(CSoft &x):name(x.name), type('B'),store('H'), ED(x.ED) {}
+    void print()
+    {
+        cout<<"name:"<<name<<endl;
+        cout<<"type:";
+        switch(type)
+        {
+            case 'O': cout<<"original"<<endl; break;
+            case 'T': cout<<"trial"<<endl; break;
+            case 'B': cout<<"backup"<<endl; break;
+        }
+        cout<<"media:";
+        switch(store)
+        {
+            case 'D': cout<<"optical disk"<<endl; break;
+            case 'H': cout<<"hard disk"<<endl; break;
+            case 'U': cout<<"USB disk"<<endl; break;
+        }
+        cout<<"this software ";
+        if(ED.isZero())  //若日期为0-0-0
+            cout<<"has unlimited use"<<endl;
+        else
+        {
+            double d=ED.getDayofYear();  //返回的是距离2015-1-1有多少天，2015-4-7距离2015-1-1是97天。当日期小于2015-4-7时返回0
+            if(d==0)  
+                cout<<"has expired"<<endl;
+            else
+                cout<<"is going to be expired in "<<d-97<<" days"<<endl;
+        }
+        cout<<endl;
+    }
+};
+
+int main()
+{
+    int t, y, m, d;
+    char ty, s;
+    string n;
+    cin>>t;
+    while(t--)
+    {
+        cin>>n>>ty>>s>>y>>m>>d;
+        CSoft s1(n,ty,s,y,m,d), s2(s1);
+        s1.print();
+        s2.print();
+    }
+    return 0;
+}

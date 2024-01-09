@@ -1,0 +1,194 @@
+使用了t+1个队列，前t个队列存放各组入队数据，t+1队列存放入队组号，用于出队列
+（1）用数组保留数据
+#include<iostream>
+#include<queue>
+using namespace std;
+
+int main(){
+  int t,n,value,i,j;
+  cin>>t;
+  int *data[t];
+  queue<int> q[t+1]; //q[0]~q[t-1]放各组数据,q[t]按入队顺序放组号
+
+  for(i=0;i<t;i++){  //将数组保留在数组中，以供查询
+     cin>>n;
+     data[i]=new int[n+1];//多出一个单元放数组大小，控制循环次数
+     data[i][0]=n;  //放数组大小
+     for(j=1;j<n+1;j++)
+        cin>>data[i][j];
+  }
+
+  string s;
+  bool flag; //控制退出双循环
+
+  while(cin>>s){
+    if(s=="ENQUEUE"){    //元素入队列
+        cin>>value;
+        flag=true;
+        for(i=0;i<t && flag==true;i++){
+            for(j=1;j<data[i][0]+1;j++){
+                if(data[i][j]==value){  //先检查元素属于哪组
+                   if(q[i].empty())   //若该组数据还未入队列，将组号入队列q[t]
+                      q[t].push(i);
+                   q[i].push(value);  //将元素入对应的队列
+                   flag=false;
+                   break;
+                }
+            }
+        }
+    }
+    else if(s=="DEQUEUE"){  //元素出队列
+       value=q[t].front();
+       cout<<q[value].front()<<" "; //将元素出自己所属的队列
+
+       q[value].pop();
+       if(q[value].empty()) //若该组队列已空，则组号退出组队列
+          q[t].pop();
+    }
+    else if(s=="STOP"){
+        cout<<endl;
+        break;
+    }
+  }
+  return 0;
+}
+
+
+//////////////////////////////
+（2）用map保留数据对<数据，组号>，数据是索引，组号是值。查找组号非常简单，不需检索直接可读取
+#include<iostream>
+#include<queue>
+#include<map>
+using namespace std;
+
+int main(){
+    queue<int>q[10] , h;  //h为组号队列
+    map<int ,int >mp;
+    int t;
+
+    cin>>t;
+    for(int i=0;i<t;i++){
+        int n;
+        cin>>n;
+        for(int j=0;j<n;j++){
+            int value;
+            cin>>value;
+            mp[value] = i;
+        }
+    }
+    string s;
+    while(1){
+        cin>>s;
+        if(s=="STOP"){
+            break;
+        }
+        if(s=="ENQUEUE"){
+            int n,team;
+            cin>>n;
+            team=mp[n];   //获得该元素所在的组号
+           if(q[team].empty()){   //若该组数据还未入队列，将组号入队列h
+                h.push(team);
+           }
+           q[team].push(n);  //将元素入对应的队列
+        }
+       else{
+            int team  =h.front();
+            cout<<q[team].front()<<' ';
+            q[team].pop();
+            if(q[team].empty()){
+                h.pop();
+            }
+        }
+    }
+    cout<<endl;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+另一种做法：使用了带组号的结点结构，当有新的元素入队时，使用两个队列轮换。注意：这种做法只使用了2个队列，前面的做法用了t+1个队列
+#include<iostream>
+#include<queue>
+using namespace std;
+
+struct Node{
+   int number;  //组号
+   int code;    //数据
+};
+
+int main(){
+  int t,n,value,i,j;
+  cin>>t;
+  int *data[t]; //存放每组数据
+  queue<Node> q[2]; //使用两个队列来插入元素
+
+  for(i=0;i<t;i++){  //将数组保留在数组中，以供查询
+     cin>>n;
+     data[i]=new int[n+1];
+     data[i][0]=n;    //存放数组大小
+     for(j=1;j<=n;j++){
+        cin>>data[i][j];
+     }
+  }
+
+  string s;
+  Node temp;
+  bool flag;
+  int k=0;
+
+  while(cin>>s){
+    if(s=="ENQUEUE"){    //元素入队列
+        cin>>temp.code;
+
+        flag=true;
+        for(i=0;i<t && flag==true;i++){
+            for(j=1;j<=data[i][0];j++){
+                if(data[i][j]==temp.code){  //先检查元素属于哪组
+                   temp.number=i;
+                   flag=false;  //退出双循环
+                   break;
+                }
+            }
+        }
+
+      //一共两个队列，有元素入队列时，就需要利用另一个队列保证插入的位置合适，k的值取0或1，标识两个队列，数据在两个队列中轮换
+        if(q[k].empty())   //若队列为空，则直接进队列
+            q[k].push(temp);
+        else{               //否则，需要找到合适的位置，这个过程需要在两个队列中完成
+           int u=0;      //表示temp是否插入到了合适的位置
+           while(!q[k].empty()){
+              Node value=q[k].front();
+              q[k].pop();
+              q[1-k].push(value);
+              if(value.number==temp.number){
+                  value=q[k].front();
+                  while((value.number==temp.number) && !q[k].empty()){
+                    q[k].pop();
+                    q[1-k].push(value);
+                     value=q[k].front();
+                  }
+                  q[1-k].push(temp);  //插入到合适位置
+                  q[1-k].push(value);
+                  u=1;
+              }
+           }
+           if(u==0)  //若没有合适位置，则插入到尾部
+              q[1-k].push(temp);
+           k=1-k;
+       }
+    }
+
+    if(s=="DEQUEUE"){  //元素出队列
+       temp=q[k].front();
+       q[k].pop();
+       cout<<temp.code<<" ";
+    }
+
+    if(s=="STOP"){   //显示所有待出的元素
+       cout<<endl;
+       break;
+    }
+
+  }
+  return 0;
+}
+

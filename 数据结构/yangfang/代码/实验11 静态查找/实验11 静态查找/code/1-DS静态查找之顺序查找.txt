@@ -1,0 +1,42 @@
+#include<iostream>
+using namespace std;
+
+class Search{
+    int len;   //数组长度
+    int *data;
+public:
+    Search(){     //初始化
+        cin>>len;
+        data=new int[len+1];  //0号单元用作哨兵
+        for(int i=1;i<=len;i++)
+            cin>>data[i];
+    }
+
+    void SeqSearchKey(int Key)
+    {     int i;
+          data[0] = Key;	                     // 哨兵
+          i = len;			     // 从最后一个元素开始查找
+          while (data[i] != Key)
+                i--;
+          if (i==0)
+              cout<<"error"<<endl;
+         else
+              cout<<i<<endl;
+   }
+
+    ~Search(){
+        delete[] data;
+        len=0;
+    }
+};
+
+int main(){
+    Search s;
+    int t,key;
+    cin>>t;
+    while(t--){
+         cin>>key;
+         s.SeqSearchKey(key);
+    }
+    return 0;
+}

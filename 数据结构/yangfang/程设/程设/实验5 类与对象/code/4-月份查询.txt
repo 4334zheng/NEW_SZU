@@ -1,0 +1,38 @@
+#include <iostream>
+using namespace std;
+
+class Date{
+   int y;
+   int m;
+   int d;
+   int days[12]={31,28,31,30,31,30,31,31,30,31,30,31};
+   string months[12]={"January","February","March","April","May","June","July","August","September","October","November","December"};
+   int count;
+public:
+   Date(int a,int b,int c):y(a),m(b),d(c){}
+
+   int deal(){
+     if(y%400==0 || (y%4==0 && y%100!=0))
+        days[1]=29;
+     count=days[m-1]-d;
+     for(int i=m;i<12;i++)
+        count+=days[i];
+   }
+
+   void print(){
+     cout<<"This month is "<<months[m-1];
+     cout<<" and next month is "<<months[m%12]<<endl;
+     cout<<"There are "<<count<<" days to the end of the year"<<endl;
+   }
+};
+
+int main(){
+  int t,x,y,z;
+  cin>>t;
+  while(t--){
+    cin>>x>>y>>z;
+    Date d(x,y,z);
+    d.deal();
+    d.print();
+  }
+}

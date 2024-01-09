@@ -1,0 +1,269 @@
+第一种写法：直接处理输入：比如3/4，可以看成是输入整数3，字符/，整数4.
+#include<iostream>
+#include<cmath>
+using namespace std;
+
+class CFraction
+ {
+ private:
+      int fz, fm;
+ public:
+      CFraction(int fz_val, int fm_val) ;
+      CFraction();
+      void set(int fz_val, int fm_val) ;
+      CFraction add(const CFraction &r);
+      CFraction sub(const CFraction &r);
+      CFraction mul(const CFraction &r);
+      CFraction div(const CFraction &r);
+      int getGCD();   // 求对象的分子和分母的最大公约数
+      void print();
+ };
+
+ CFraction::CFraction(int fz_val, int fm_val){
+   fz=fz_val;
+   fm=fm_val;
+ }
+
+  CFraction::CFraction(){
+   fz=0;
+   fm=0;
+ }
+
+  void CFraction::set(int fz_val, int fm_val){
+   fz=fz_val;
+   fm=fm_val;
+ }
+
+ CFraction CFraction::add(const CFraction &r){
+     int tfm,tfz;
+     tfm=fm*r.fm;
+     tfz=fz*r.fm+r.fz*fm;
+
+     CFraction c(tfz,tfm);
+     int t=c.getGCD();
+     c.set(tfz/t,tfm/t);
+
+     return c;
+ }
+ CFraction CFraction::sub(const CFraction &r){
+     int tfm,tfz;
+     tfm=fm*r.fm;
+     tfz=fz*r.fm-r.fz*fm;
+
+     CFraction c(tfz,tfm);
+     int t=c.getGCD();
+     c.set(tfz/t,tfm/t);
+
+     return c;
+ }
+ CFraction CFraction::mul(const CFraction &r){
+     int tfm,tfz;
+     tfm=fm*r.fm;
+     tfz=fz*r.fz;
+
+     CFraction c(tfz,tfm);
+     int t=c.getGCD();
+     c.set(tfz/t,tfm/t);
+
+     return c;
+ }
+ CFraction CFraction::div(const CFraction &r){
+     int tfm,tfz;
+     tfm=fm*r.fz;
+     tfz=fz*r.fm;
+
+     CFraction c(tfz,tfm);
+     int t=c.getGCD();
+     c.set(tfz/t,tfm/t);
+
+     return c;
+ }
+ int CFraction::getGCD(){// 求对象的分子和分母的最大公约数
+   int a=abs(fz),b=abs(fm),temp,r;
+   if(a<b){
+      temp=a;
+      a=b;
+      b=temp;
+   }
+
+   r= a%b;
+   while(r){
+    a=b;
+    b=r;
+    r=a%b;
+   }
+
+   return b;
+ }
+
+ void CFraction::print(){
+       if(fz*fm<0)
+           cout<<"-";
+      cout<<abs(fz)<<"/"<<abs(fm)<<endl;
+ }
+
+int main()
+{
+	int t,i,j,len;
+	int fz,fm;
+	char ch;
+	cin>>t;
+	for(i=0;i<t;i++){
+         CFraction c[2];
+         for(j=0;j<2;j++){
+            cin>>fz>>ch>>fm;
+            c[j].set(fz,fm);
+         }
+
+         c[0].add(c[1]).print();
+         c[0].sub(c[1]).print();
+         c[0].mul(c[1]).print();
+         c[0].div(c[1]).print();
+
+         cout<<endl;
+    }
+    return 0;
+}
+
+
+///////////////////////////////
+//使用string来处理输入
+#include <bits/stdc++.h>
+using namespace std;
+
+class CFraction
+ {
+ private:
+      int fz, fm;
+ public:
+      CFraction(int fz_val, int fm_val) ;
+      CFraction();
+      void set(int fz_val, int fm_val) ;
+      CFraction add(const CFraction &r);
+      CFraction sub(const CFraction &r);
+      CFraction mul(const CFraction &r);
+      CFraction div(const CFraction &r);
+      int getGCD();   // 求对象的分子和分母的最大公约数
+      void print();
+ };
+
+ CFraction::CFraction(int fz_val, int fm_val){
+   fz=fz_val;
+   fm=fm_val;
+ }
+
+  CFraction::CFraction(){
+   fz=0;
+   fm=0;
+ }
+
+ void CFraction::set(int fz_val, int fm_val){
+   fz=fz_val;
+   fm=fm_val;
+ }
+
+ CFraction CFraction::add(const CFraction &r){
+     int tfm,tfz;
+     tfm=fm*r.fm;
+     tfz=fz*r.fm+r.fz*fm;
+
+     CFraction c(tfz,tfm);
+     int t=c.getGCD();
+     c.set(tfz/t,tfm/t);
+
+     return c;
+ };
+ CFraction CFraction::sub(const CFraction &r){
+     int tfm,tfz;
+     tfm=fm*r.fm;
+     tfz=fz*r.fm-r.fz*fm;
+
+     CFraction c(tfz,tfm);
+     int t=c.getGCD();
+     c.set(tfz/t,tfm/t);
+
+     return c;
+ };
+ CFraction CFraction::mul(const CFraction &r){
+     int tfm,tfz;
+     tfm=fm*r.fm;
+     tfz=fz*r.fz;
+
+     CFraction c(tfz,tfm);
+     int t=c.getGCD();
+     c.set(tfz/t,tfm/t);
+
+     return c;
+ };
+ CFraction CFraction::div(const CFraction &r){
+     int tfm,tfz;
+     tfm=fm*r.fz;
+     tfz=fz*r.fm;
+
+     CFraction c(tfz,tfm);
+     int t=c.getGCD();
+     c.set(tfz/t,tfm/t);
+
+     return c;
+ };
+ int CFraction::getGCD(){// 求对象的分子和分母的最大公约数
+   int a=abs(fz),b=abs(fm),temp,r;
+   if(a<b){
+      temp=a;
+      a=b;
+      b=temp;
+   }
+
+   r= a%b;
+   while(r){
+    a=b;
+    b=r;
+    r=a%b;
+   }
+
+   return b;
+ };
+
+ void CFraction::print(){
+       if(fz*fm<0)
+           cout<<"-";
+      cout<<abs(fz)<<"/"<<abs(fm)<<endl;
+ };
+
+void finddata(string s,int& fz,int& fm){
+  int t=s.find("/");
+
+  stringstream s1(s.substr(0,t));
+  s1 >> fz;
+
+  stringstream s2(s.substr(t+1));
+  s2 >> fm;
+}
+
+int main()
+{
+	int t,i,j,len;
+	int fz,fm;
+	string s;
+	cin>>t;
+	for(i=0;i<t;i++){
+         CFraction **c=new CFraction*[2];
+         for(j=0;j<2;j++){
+            cin>>s;
+            finddata(s,fz,fm);
+            c[j]=new CFraction(fz,fm);
+         }
+
+         c[0]->add(*c[1]).print();
+         c[0]->sub(*c[1]).print();
+         c[0]->mul(*c[1]).print();
+         c[0]->div(*c[1]).print();
+
+         cout<<endl;
+
+         for(j=0;j<2;j++)
+            delete c[j];
+         delete[] c;
+    }
+    return 0;
+}

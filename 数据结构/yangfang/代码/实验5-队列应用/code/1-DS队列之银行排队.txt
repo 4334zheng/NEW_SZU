@@ -1,0 +1,70 @@
+#include<iostream>
+#include<queue>
+using namespace std;
+int main() {
+    queue<char> kind;
+    queue<int> q[3];    //使用队列
+    char ch;
+    int data;
+    int t;
+    
+    cin>>t;
+    while(t--){
+        cin>>ch;
+        kind.push(ch);
+    }
+
+    while(!kind.empty()){
+        ch=kind.front();
+        kind.pop();
+        
+        cin>>data;
+        q[ch-'A'].push(data);   //针对A,B,C不同，进入不同队列
+    }
+
+    int sum,num;
+    for(int i=0;i<3;i++){
+        num=0;
+        sum=0;
+        while(!q[i].empty()){
+            num++;
+            sum+=q[i].front();
+            q[i].pop();
+        }
+        cout<<sum/num<<endl;
+    }
+
+    return 0;
+}
+
+/////////////////////////////////////
+另一种做法：
+#include<iostream>
+#include<queue>
+using namespace std;
+int main() {
+    queue<char> kind;
+    int num[3]={0,0,0},sum[3]={0,0,0};  //使用数组
+    char ch;
+    int data;
+    int t;
+
+    cin>>t;
+    while(t--){
+        cin>>ch;
+        kind.push(ch);
+    }
+
+    while(!kind.empty()){
+        ch=kind.front();
+        kind.pop();
+        cin>>data;
+        num[ch-'A']++;
+        sum[ch-'A']+=data;
+    }
+
+    for(int i=0;i<3;i++)
+       cout<<sum[i]/num[i]<<endl;
+
+    return 0;
+}

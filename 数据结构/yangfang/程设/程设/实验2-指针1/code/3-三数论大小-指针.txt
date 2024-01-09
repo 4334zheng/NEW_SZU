@@ -1,0 +1,99 @@
+第一种：使用纯指针
+#include<stdio.h>
+#include<iostream>
+using namespace std;
+int main()
+{   //freopen("d:\\a.txt","r",stdin); //提交到后台时，要注释掉这行
+    int t;
+    cin>>t;
+
+     while(t--){
+         int *p,*q,*r;
+         p=new int;
+         q=new int;
+         r=new int;
+         cin>>*p>>*q>>*r;
+
+         if(*p>*q){
+            if(*r>*p)
+                cout<<*r<<" "<<*p<<" "<<*q<<" "<<endl;
+            else if(*r>*q)
+                 cout<<*p<<" "<<*r<<" "<<*q<<" "<<endl;
+            else
+                cout<<*p<<" "<<*q<<" "<<*r<<" "<<endl;
+          }
+         else{
+            if(*r>*q)
+                cout<<*r<<" "<<*q<<" "<<*p<<" "<<endl;
+            else if(*r>*p)
+                cout<<*q<<" "<<*r<<" "<<*p<<" "<<endl;
+            else
+                cout<<*q<<" "<<*p<<" "<<*r<<" "<<endl;
+          }
+     }
+     return 0;
+}
+
+---------------------------------------------
+二、利用排序算法，对三个数进行排序
+#include<iostream>
+#include<stdio.h>
+using namespace std;
+void sort1(int* a,int* b,int* c);
+main()
+{   //freopen("d:\\a.txt",  "r", stdin);  //提交到后台时，要注释掉这行
+    int t,*a,*b,*c;
+    cin>>t;
+    while(t--){
+        a=new int;
+        b=new int;
+        c=new int;
+        cin>>*a>>*b>>*c;
+        sort1(a,b,c);
+        cout<<*a<<" "<<*b<<" "<<*c<<" "<<endl;
+     }
+}
+
+void sort1(int* a,int* b,int* c){   //最简单的冒泡排序
+     int s[3]={*a,*b,*c};
+     int temp;
+     for(int i=0;i<2;i++)
+        for(int j=0;j<2-i;j++){
+            if(s[j]<s[j+1]){
+               temp=s[j];
+               s[j]=s[j+1];
+               s[j+1]=temp;
+         }
+     }
+    *a=s[0];*b=s[1];*c=s[2];
+}
+
+-------------------------------------------------
+三、利用sort函数
+#include<iostream>
+#include<stdio.h>
+#include<algorithm>
+using namespace std;
+
+void compare(int* a,int* b,int* c);
+
+main()
+{   //freopen("d:\\a.txt",  "r", stdin);  //提交到后台时，要注释掉这行
+    int t,*a,*b,*c;
+    cin>>t;
+    while(t--){
+        a=new int;
+        b=new int;
+        c=new int;
+        cin>>*a>>*b>>*c;
+        compare(a,b,c);
+        cout<<*a<<" "<<*b<<" "<<*c<<" "<<endl;
+    }
+}
+
+void compare(int* a,int* b,int* c){
+     int s[3]={*a,*b,*c};
+     sort(s,s+3);
+     *a=s[2];*b=s[1];*c=s[0];
+}
+

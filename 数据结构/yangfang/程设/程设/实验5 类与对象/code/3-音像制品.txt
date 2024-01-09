@@ -1,0 +1,105 @@
+///使用string数组保存音像状态
+#include<iostream>
+using namespace std;
+class Audio {
+        int type;
+        string  name;
+        int price;
+        int status;
+        string type_p[5]={"","黑胶片","CD","VCD","DVD"};
+        string status_p[2]={"未出租","已出租"};
+    public:
+        Audio(int t,string n,int p,int s){
+           type=t;
+           name=n;
+           price=p;
+           status=s;
+        }
+        void Print(){
+          cout<<type_p[type]<<"["<<name<<"]"<<status_p[status]<<endl;
+        }
+        void Fee(int day){
+           if(status==0)
+            cout<<"未产生租金"<<endl;
+           else
+            cout<<"当前租金为"<<day*price<<endl;
+        }
+};
+
+int main()
+{
+    int t;
+    int type;
+    string  name;
+    int price;
+    int status;
+    int n;
+
+    cin>>t;
+    while(t--)
+    {
+        cin>>type>>name>>price>>status;
+        Audio a(type,name,price,status);
+
+        cin>>n;
+        a.Print();
+        if(n!=0)
+            a.Fee(n);
+    }
+    return 0;
+}
+
+
+//////////////////////////////////
+///使用二维字符数组
+#include<iostream>
+#include<cstring>
+using namespace std;
+class Audio {
+    private:
+        int type;
+        char name[10];
+        int price;
+        int status;
+        char *type_p[5]={"","黑胶片","CD","VCD","DVD"};
+        char *status_p[2]={"未出租","已出租"};
+    public:
+        Audio(int t,char n[],int p,int s){
+           type=t;
+           strcpy(name,n);
+           price=p;
+           status=s;
+        }
+        void Print(){
+          cout<<type_p[type]<<"["<<name<<"]"<<status_p[status]<<endl;
+        }
+        void Fee(int day){
+           if(status==0)
+               cout<<"未产生租金"<<endl;
+           else
+              cout<<"当前租金为"<<day*price<<endl;
+        }
+};
+
+int main()
+{
+    int t;
+    int type;
+    char name[10];
+    int price;
+    int status;
+    int n;
+
+    cin>>t;
+    while(t--)
+    {
+        cin>>type>>name>>price>>status;
+        Audio a(type,name,price,status);
+
+        cin>>n;
+        a.Print();
+        if(n!=0)
+            a.Fee(n);
+    }
+    return 0;
+}

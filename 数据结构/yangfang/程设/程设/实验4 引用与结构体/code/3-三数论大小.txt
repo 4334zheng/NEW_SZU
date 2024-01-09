@@ -1,0 +1,107 @@
+//1、调用sort排序，利用greater<int>按从大到小排序
+#include<iostream>
+#include<stdio.h>
+#include<algorithm>
+using namespace std;
+void sort1(int& a,int& b,int& c);
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);//提交时，要注释掉这行
+    int t,a,b,c;
+    cin>>t;
+    while(t--){
+      cin>>a>>b>>c;
+      sort1(a,b,c);
+      cout<<a<<" "<<b<<" "<<c<<endl;
+    }
+}
+
+void sort1(int& a,int& b,int& c){
+  int s[3]={a,b,c};
+  sort(s,s+3,greater<int>());
+  a=s[0];b=s[1];c=s[2];
+}
+
+-------------------------------------------------
+//2、调用sort排序，sort默认是按从小到大排序的，最后赋值要反过来
+#include<iostream>
+#include<stdio.h>
+#include<algorithm>
+using namespace std;
+void sort1(int& a,int& b,int& c);
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);//提交时，要注释掉这行
+    int t,a,b,c;
+    cin>>t;
+    while(t--){
+      cin>>a>>b>>c;
+      sort1(a,b,c);
+      cout<<a<<" "<<b<<" "<<c<<endl;
+    }
+}
+
+void sort1(int& a,int& b,int& c){
+  int s[3]={a,b,c};
+  sort(s,s+3);
+  a=s[2];b=s[1];c=s[0];  //这里和第一种方法不一样
+}
+
+----------------------------
+//3、调用sort排序，自己写一个排序函数complare，规定按从大到小的顺序排序
+#include<iostream>
+#include<stdio.h>
+#include<algorithm>
+using namespace std;
+bool complare(int a,int b);
+void sort1(int& a,int& b,int& c);
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);//提交时，要注释掉这行
+    int t,a,b,c;
+    cin>>t;
+    while(t--){
+      cin>>a>>b>>c;
+      sort1(a,b,c);
+      cout<<a<<" "<<b<<" "<<c<<endl;
+    }
+}
+
+void sort1(int& a,int& b,int& c){
+  int s[3]={a,b,c};
+  sort(s,s+3,complare);
+  a=s[0];b=s[1];c=s[2];
+}
+bool complare(int a,int b)
+{
+    return a>b;
+}
+
+/////////////////////////////////
+//4、自己写一个排序算法，比如冒泡
+#include<iostream>
+#include<stdio.h>
+using namespace std;
+void sort1(int& a,int& b,int& c);
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);  //提交时，要注释掉这行
+    int t,a,b,c;
+    cin>>t;
+    while(t--){
+      cin>>a>>b>>c;
+      sort1(a,b,c);
+      cout<<a<<" "<<b<<" "<<c<<endl;
+    }
+}
+
+void sort1(int& a,int& b,int& c){
+  int s[3]={a,b,c};
+  int temp;
+  for(int i=0;i<2;i++)
+  for(int j=0;j<2-i;j++){
+    if(s[j]<s[j+1]){
+        temp=s[j];
+        s[j]=s[j+1];
+        s[j+1]=temp;
+    }
+  }
+  a=s[0];b=s[1];c=s[2];
+}
+

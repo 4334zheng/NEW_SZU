@@ -1,0 +1,64 @@
+#include<iostream>
+using namespace std;
+
+class Node {
+public:
+    char data;
+    Node *L,*R;
+    Node() { L=R=NULL; }
+};
+
+class BiTree {
+private:
+    Node *root;
+    int leaf;
+
+    void PreOrder(Node *t) {  //在先序遍历下，计算叶子数目。注意，和遍历方式无关，换成其他两种也是一样的
+        if(t){
+            if(t->L==NULL && t->R==NULL)
+               leaf++;
+            PreOrder(t->L);
+            PreOrder(t->R);
+        }
+    }
+
+    Node* CreateTree() {
+        Node *T;
+        char ch;
+        cin>>ch;
+        if(ch=='0')
+            T=NULL;
+        else {
+            T= new Node;
+            T->data=ch;
+            T->L=CreateTree();
+            T->R=CreateTree();
+        }
+        return T;
+     }
+
+public:
+    BiTree() {
+        root=CreateTree();
+        leaf=0;
+    }
+
+    void PreOrder() {
+        PreOrder(root);
+    }
+
+    int getLeaf() {
+        return leaf;
+    }
+};
+
+int main() {
+    int T;
+    cin>>T;
+    while(T--) {
+        BiTree tree;
+        tree.PreOrder();
+        cout<<tree.getLeaf()<<endl;
+    }
+    return 0;
+}

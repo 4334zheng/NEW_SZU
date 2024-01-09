@@ -1,0 +1,105 @@
+#include<iostream>
+using namespace std;
+
+class Search{
+    int len;       //数组长度
+    int *data;
+public:
+    Search(){     //初始化
+        cin>>len;
+        data=new int[len+1];  //0号单元浪费，为了方便和位置对应起来
+        for(int i=1;i<=len;i++)
+            cin>>data[i];
+    }
+
+    void BinSearchKey(int Key)
+   {         int Low, Mid, High;
+             Low = 1;		               // low指向待查元素所在区间的下界
+             High = len;			// high指向待查元素所在区间的上界
+             int BinPos = 0;
+             while (Low <= High) {
+	Mid = (Low+High) / 2;
+                if (Key == data[Mid]) {
+	      BinPos = Mid;	              // 查找成功的位置
+                      break;
+                }
+               if (Key<data[Mid])
+                      High=Mid-1;	  // 上半区间
+              else
+	      Low  = Mid + 1;  // 下半区间
+            }		
+          if(BinPos==0)
+                cout<<"error"<<endl;
+          else
+                cout<<BinPos<<endl;
+    }
+
+    ~Search(){
+        delete[] data;
+        len=0;
+    }
+};
+
+int main(){
+    Search s;
+    int t,key;
+    cin>>t;
+    while(t--){
+     cin>>key;
+     s.BinSearchKey(key);
+    }
+    return 0;
+}
+
+
+////////////////////////////////////
+递归写法
+#include<iostream>
+using namespace std;
+
+class Search{
+    int len;   //数组长度
+    int *data;
+public:
+    Search(int t){     //初始化
+        len=t;
+        data=new int[len+1];  //0号单元浪费
+        for(int i=1;i<=len;i++)
+            cin>>data[i];
+    }
+
+   int BinSearchKey(int key,int low,int high)
+   {   if(low>high)
+              return 0;
+        else{
+              int mid=(low+high)/2;
+              if(data[mid]==key)
+                   return mid;
+              else if(data[mid]>key)
+                        return BinSearchKey(key,low,mid-1);
+              else
+                        return BinSearchKey(key,mid+1,high);
+         }
+    }
+
+    ~Search(){
+        delete[] data;
+        len=0;
+    }
+};
+
+int main(){
+    int len,t,key;
+    cin>>len;
+    Search s(len);
+    cin>>t;
+    while(t--){
+     cin>>key;
+     int r=s.BinSearchKey(key,1,len);
+     if(r==0)
+        cout<<"error"<<endl;
+     else
+        cout<<r<<endl;
+    }
+    return 0;
+}

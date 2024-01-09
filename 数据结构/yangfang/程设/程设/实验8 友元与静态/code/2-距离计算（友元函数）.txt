@@ -1,0 +1,29 @@
+#include<iostream>
+#include<cmath>
+using namespace std;
+
+class Point{
+    double x,y;
+public:
+    Point(double xx,double yy):x(xx),y(yy){};
+    friend double Distance(Point &a,Point &b);
+};
+
+double Distance(Point &a,Point &b)
+{
+    return sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
+}
+
+int main()
+{   
+    int t;
+    cin>>t;
+    while(t--)
+    {
+        double x1,y1,x2,y2;
+        cin>>x1>>y1>>x2>>y2;
+        Point a(x1,y1),b(x2,y2);
+        cout<<(int)(Distance(a,b))<<endl;
+    }
+    return 0;
+}

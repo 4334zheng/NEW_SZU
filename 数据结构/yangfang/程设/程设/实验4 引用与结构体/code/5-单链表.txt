@@ -1,0 +1,115 @@
+#include<stdio.h>
+#include <iostream>
+using namespace std;
+
+struct Node{
+  int data;
+  Node* next;
+};
+
+void creatList(Node* head,int* value,int n);//创建链表
+void deleteList(Node *head);//删除整个链表
+void insertNode(Node *head,int pos,int value);//在指定位置i插入e
+void printList(Node *head);//显示链表元素
+void removeNode(Node *head,int pos);//删除第i个数据
+
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);//提交时，要注释掉本行
+    int t;
+    int n,m,e,*value;
+    cin>>t;
+    while(t--){
+        cin>>n;
+        value=new int[n];  //读入链表各节点数据
+        for(int i=0;i<n;i++)
+            cin>>value[i];
+
+        Node* head=new Node{0,NULL};  //创建链表
+        creatList(head,value,n);
+        printList(head);
+
+        cin>>n;    //插入操作
+        for(int i=0;i<n;i++){
+            cin>>m>>e;
+            insertNode(head,m,e);
+        }
+
+        cin>>n;  //删除操作
+        for(int i=0;i<n;i++){
+            cin>>m;
+            removeNode(head,m);
+        }
+        delete[] value;
+        deleteList(head);   //释放链表
+    }
+        return 0;
+}
+
+
+void creatList(Node* head,int* value,int n){
+ Node *p=head;
+ for(int i=0;i<n;i++){
+     Node* s=new Node{value[i],NULL};
+     s->next=p->next;
+     p->next=s;
+     p=s;
+     head->data++;
+  }
+}
+
+void deleteList(Node *head){
+  Node* p=head;
+  while(head->next){
+    p=head->next;
+    head->next=p->next;
+    delete p;
+ }
+  delete head;
+}
+
+void insertNode(Node *head,int pos,int value){
+  Node* p=head;
+  if(pos<1 || pos>head->data+1){
+    cout<<"error"<<endl;
+    return;
+  }
+
+  while(--pos)  //移到第pos-1个结点
+      p=p->next;
+  Node* s=new Node{value,NULL};
+  s->next=p->next;
+  p->next=s;
+
+  head->data++;
+
+  printList(head);
+}
+
+void removeNode(Node *head,int pos){
+  Node* p=head;
+  if(pos<1 || pos>head->data){
+    cout<<"error"<<endl;
+    return;
+  }
+
+  while(--pos) //移到第pos-1个结点
+        p=p->next;
+  Node* q=p->next;
+  p->next=q->next;
+  delete q;
+
+  head->data--;
+
+  printList(head);
+}
+
+void printList(Node *head){
+  Node* p=head->next;
+  if(p){
+    while(p->next){
+      cout<<p->data<<" ";
+      p=p->next;
+    }
+    cout<<p->data<<endl;
+  }
+}

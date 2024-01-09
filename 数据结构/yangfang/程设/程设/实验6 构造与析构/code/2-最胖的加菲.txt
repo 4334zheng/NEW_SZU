@@ -1,0 +1,95 @@
+//////////第一种，比较函数形参是对象：bool comp(Cat c1, Cat c2)
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+class Cat
+{
+    string name;
+    double weight;
+    public:
+        Cat(){ }  //可以缺省，使用编译系统自带的缺省构造函数
+        void set(string n,double w){
+           name=n;
+           weight=w;
+        }
+        string getName(){return name;}
+        double getWeight(){return weight;}
+
+};
+bool comp(Cat c1, Cat c2)
+{
+    return c1.getWeight()<c2.getWeight();
+}
+
+int main()
+{
+    int t,i;
+    string name;
+    double weight;
+
+    cin>>t;
+    Cat *c=new Cat[t];
+
+    for(i=0;i<t;i++){
+        cin>>name>>weight;
+        c[i].set(name,weight);
+    }
+
+    sort(c,c+t,comp);
+
+    for(i=0;i<t-1;i++)
+        cout<<c[i].getName()<<" ";
+    cout<<c[i].getName()<<endl;
+
+    delete[] c;
+
+}
+
+////////第二种，比较函数形参是常量对象的引用，bool comp(const Cat& c1, const Cat& c2)
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+class Cat
+{
+    string name;
+    double weight;
+    public:
+        Cat(){ }
+        void set(string n,double w){
+           name=n;
+           weight=w;
+        }
+        string getName(){return name;}
+        double getWeight()const{return weight;}   //注意：getWeight()后加了const，表示这个函数是常方法，不能修改数据成员的值。因为比较函数形参定义成常量对象的引用，只能调用常方法
+
+};
+bool comp(const Cat& c1, const Cat& c2)
+{
+    return c1.getWeight()<c2.getWeight();
+}
+
+int main()
+{
+    int t,i;
+    string name;
+    double weight;
+
+    cin>>t;
+    Cat *c=new Cat[t];
+
+    for(i=0;i<t;i++){
+        cin>>name>>weight;
+        c[i].set(name,weight);
+    }
+
+    sort(c,c+t,comp);
+
+    for(i=0;i<t-1;i++)
+        cout<<c[i].getName()<<" ";
+    cout<<c[i].getName()<<endl;
+
+    delete[] c;
+
+}

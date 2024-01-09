@@ -1,0 +1,228 @@
+一、第一种做法：运算后的链表直接在原有的两个链表上进行，除了头节点外，不产生新的结点。注意这种写法，不能写释放链表的析构函数，并且因为类中的数据含指针，如果不打算写拷贝构造函数的话，参数要是对象的引用。
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int code;//coe表示系数
+    int index;//index表示指数
+    Node *next;
+    Node(){next=NULL;}
+};
+
+class List {
+    Node *head;
+public:
+    List()//构造函数
+    {
+        head=new Node;
+    }
+
+    void CreatList(int n)//n代表的是表达式中的项数
+    { Node *p=head,*s;
+
+      for(int i=0; i<n; i++) {
+          s=new Node;
+          cin>>s->code>>s->index;
+          p->next=s;
+          p=s;
+      }
+    }
+
+    void Display() {
+      Node *p=head->next;
+      while(p) {
+            if(p->code<0)
+                cout<<"("<<p->code<<")";
+            else
+                cout<<p->code;
+
+            if(p->index<0)
+                cout<<"x^"<<"("<<p->index<<")";
+            else if(p->index>0)
+                cout<<"x^"<<p->index; 
+           
+             if(p->next)  
+                 cout<<" + ";
+
+            p=p->next;
+     }
+     cout<<endl;
+   }
+
+   friend void Merge(List &A,List &B,List &C) {
+       Node *pa=A.head->next;
+       Node *pb=B.head->next;
+       Node *pc=C.head;
+
+       while(pa && pb) {
+         if(pa->index==pb->index) {   //当指数相同时
+            pa->code+=pb->code;
+            if(pa->code)       //若系数相加后不为0
+              {pc->next=pa;pc=pa;}
+
+            pa=pa->next;
+            pb=pb->next;
+          }
+          else if(pa->index<pb->index) { //当指数不相同时，共用结点
+            pc->next=pa; 
+            pc=pa;
+            pa=pa->next;
+          }
+          else if(pb->index<pa->index) {
+            pc->next=pb; 
+            pc=pb;
+            pb=pb->next;
+          }
+        }
+
+        if(pa)
+           pc->next=pa;
+        else if(pb)
+           pc->next=pb;
+        else
+          pc->next=NULL;  //若刚好pa和pb同时为NULL，则要添加这个，不然pc没有结束符。
+    }
+};
+
+int main() {
+  int t;
+  int n1,n2;
+
+  cin>>t;//输入要测试的组数
+  while(t--) {
+    List A,B,C;
+
+    cin>>n1;
+    A.CreatList(n1);
+    A.Display();
+
+    cin>>n2;
+    B.CreatList(n2);
+    B.Display();
+
+    Merge(A,B,C);
+    C.Display();
+  }
+  return 0;
+}
+
+
+//////////////////////////////////////////////////////////
+二、第二种做法，运算后的链表的每个结点都是新生成的结点
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int code;//coe表示系数
+    int index;//index表示指数
+    Node *next;
+    Node(){next=NULL;}
+    Node(int c,int i){code=c;index=i;next=NULL;}
+};
+
+class List {
+    Node *head;
+public:
+    List()//构造函数
+    {
+        head=new Node;
+    }
+
+    void CreatList(int n)//n代表的是表达式中的项数
+    { Node *p=head,*s;
+
+      for(int i=0; i<n; i++) {
+          s=new Node;
+          cin>>s->code>>s->index;
+          p->next=s;
+          p=s;
+      }
+    }
+
+    void Display() {
+      Node *p=head->next;
+      while(p) {
+            if(p->code<0)
+                cout<<"("<<p->code<<")";
+            else
+                cout<<p->code;
+
+            if(p->index<0)
+                cout<<"x^"<<"("<<p->index<<")";
+            else if(p->index>0)
+                cout<<"x^"<<p->index;
+
+             if(p->next)
+                 cout<<" + ";
+
+            p=p->next;
+     }
+     cout<<endl;
+   }
+
+   void L_insert(Node* p, Node *q){//产生一个新的结点，该结点的数据来自于q指向的结点，然后把该结点插入到指针p后面
+        Node *s;
+        s=new Node;
+        s->code=q->code;
+        s->index=q->index;
+        p->next=s;
+    }
+
+   friend void Merge(List &A,List &B,List &C) {
+       Node *pa=A.head->next;
+       Node *pb=B.head->next;
+       Node *pc=C.head;
+
+       while(pa && pb) {
+         if(pa->index==pb->index) {  //若指数相同
+            int code=pa->code+pb->code;
+            if(code){   //若相加后系数不为0，则产生一个新结点
+               Node* t=new Node(code,pa->index);
+               C.L_insert(pc,t);
+               pc=pc->next;
+            }
+            pa=pa->next;
+            pb=pb->next;
+          }
+         else if(pa->index<pb->index) {  //指数不同
+            C.L_insert(pc,pa);
+            pc=pc->next;
+            pa=pa->next;
+         }
+         else{  //指数不同
+            C.L_insert(pc,pb);
+            pc=pc->next;
+            pb=pb->next;
+          }
+        }
+
+        while(pa)
+          {C.L_insert(pc, pa);pc=pc->next;pa=pa->next;}
+        while(pb)
+          {C.L_insert(pc, pb);pc=pc->next;pb=pb->next;}
+    }
+};
+
+int main() {
+  int t;
+  int n1,n2;
+
+  cin>>t;//输入要测试的组数
+  while(t--) {
+    List A,B,C;
+
+    cin>>n1;
+    A.CreatList(n1);
+
+    cin>>n2;
+    B.CreatList(n2);
+
+    Merge(A,B,C);
+    A.Display();
+    B.Display();
+    C.Display();
+  }
+  return 0;
+}

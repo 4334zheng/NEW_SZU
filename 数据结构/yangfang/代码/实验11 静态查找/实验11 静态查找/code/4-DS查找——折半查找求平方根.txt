@@ -1,0 +1,35 @@
+#include<iostream>
+#include<iomanip>
+#include<cmath>
+using namespace std;
+
+class Search{
+public:
+    void BinSearchKey(double key)
+   {       double low, mid, high,temp;
+           low = 0;			// low指向待查元素所在区间的下界
+           high = key;			// high指向待查元素所在区间的上界
+           while (low <= high) {
+               mid = low+(high - low) / 2;
+               temp = mid*mid;
+               if (abs(temp-key)<0.00001)
+                    break;
+               if(temp < key)
+                   low = mid;
+               else
+                   high = mid;
+      }
+      cout<<fixed<<setprecision(3)<<mid<<endl;
+    }
+};
+
+int main(){
+    Search s;
+    int t,key;
+    cin>>t;
+    while(t--){
+     cin>>key;
+     s.BinSearchKey(key);
+    }
+    return 0;
+}

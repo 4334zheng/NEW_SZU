@@ -1,0 +1,129 @@
+#include<iostream>
+#include<string>
+#include<stdio.h>
+using namespace std;
+
+class CAccount
+{
+    long account;
+    string name;
+    float balance;
+
+  public:
+    CAccount(long account1,string name1,float balance1){
+       account=account1;
+       name=name1;
+       balance=balance1;
+    }
+
+     void deposit(float in)
+    {
+        balance += in;
+        cout<<"saving ok!"<<endl;
+     }
+
+    void withdraw(float out)
+    {
+        if(out>balance)
+           cout<<"sorry! over limit!"<<endl;
+        else
+        {
+           balance -= out;
+           cout<<"withdraw ok!"<<endl;
+         }
+     }
+
+     void check()
+     { cout<<name<<"'s balance is "<<balance<<endl;}
+};
+
+int main()
+{   //freopen("d:\\a.txt","r",stdin);   //上传要注释掉这行
+    int i;
+    long a;
+    string n;
+    float b,temp;
+    for(i=0;i<2;i++)
+    {
+        cin>>a>>n>>b;
+        CAccount account(a,n,b);
+        account.check();
+
+        cin>>temp;
+        account.deposit(temp);
+        account.check();
+
+        cin>>temp;
+        account.withdraw(temp);
+        account.check();
+     }
+     return 0;
+}
+
+
+/////////////////////////
+第二种：使用动态对象数组
+#include<iostream>
+#include<string>
+#include<stdio.h>
+using namespace std;
+
+class CAccount
+{
+    long account;
+    string name;
+    float balance;
+
+  public:
+    CAccount(){}
+    void SetAccount(long account1,string name1,float balance1){
+       account=account1;
+       name=name1;
+       balance=balance1;
+    }
+
+     void deposit(float in)
+    {
+        balance += in;
+        cout<<"saving ok!"<<endl;
+     }
+
+    void withdraw(float out)
+    {
+        if(out>balance)
+           cout<<"sorry! over limit!"<<endl;
+        else
+        {
+           balance -= out;
+           cout<<"withdraw ok!"<<endl;
+         }
+     }
+
+     void check()
+     { cout<<name<<"'s balance is "<<balance<<endl;}
+};
+
+int main()
+{   //freopen("d:\\a.txt","r",stdin);   //上传要注释掉这行
+    int i;
+    CAccount *account=new CAccount[2];
+    long a;
+    string n;
+    float b,temp;
+    for(i=0;i<2;i++)
+    {
+        cin>>a>>n>>b;
+        account[i].SetAccount(a,n,b);
+        account[i].check();
+
+        cin>>temp;
+        account[i].deposit(temp);
+        account[i].check();
+
+        cin>>temp;
+        account[i].withdraw(temp);
+        account[i].check();
+     }
+     delete[] account;
+     return 0;
+}

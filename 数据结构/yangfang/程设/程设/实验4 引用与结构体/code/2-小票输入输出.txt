@@ -1,0 +1,65 @@
+//第一种，用string保存数据
+#include<iostream>
+#include<string>
+using namespace std;
+
+struct Message{
+    string name,te,op,card,va,cn,tr,co;
+};
+
+int main()
+{
+   int t;
+   cin>>t;
+   Message date;
+   while(t--)
+   {
+     cin>>date.name >>date.te >>date.op>>date.card>>date.va >>date.cn>>date.tr>>date.co ;
+
+      int n=(date.cn).length();
+      string s(n-8,'*'); (date.cn).replace(4,n-8,s);
+     //或者 (date.cn).erase(4,n-8);(date.cn).insert(4,n-8,'*');
+
+      cout<<"Name: "<<date.name<<endl;
+      cout<<"Terminal: "<<date.te<<' '<<"operator: "<<date.op<<endl;cout<<"Card Issuers: "<<date.card<<' '<<"Validity: "<<date.va<<endl;
+      cout<<"CardNumber: "<<date.cn<<endl;
+      cout<<"Traded: "<<date.tr<<endl;cout<<"Costs: $"<<date.co<<endl;
+      cout<<endl;
+   }
+   return 0;
+}
+
+
+///////////////////////////////
+//第二种，用字符数组保存数据
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+struct  Message{
+    char name[20],te[10],op[10],card[10],va[10],cn[20],tr[10],co[10];
+};
+
+int main()
+{
+   int t,i,len;
+   cin>>t;
+   Message date;
+   while(t--)
+   {
+     cin>>date.name >>date.te >>date.op>>date.card>>date.va >>date.cn>>date.tr>>date.co ;
+     len=strlen(date.cn);
+     for(i=0;i<len;i++){
+           if(i>=4 && i<len-4)
+                 date.cn[i]='*';
+      }
+
+      cout<<"Name: "<<date.name<<endl;
+      cout<<"Terminal: "<<date.te<<' '<<"operator: "<<date.op<<endl;cout<<"Card Issuers: "<<date.card<<' '<<"Validity: "<<date.va<<endl;
+      cout<<"CardNumber: "<<date.cn<<endl;
+      cout<<"Traded: "<<date.tr<<endl;cout<<"Costs: $"<<date.co<<endl;
+      cout<<endl;
+   }
+   return 0;
+}
+

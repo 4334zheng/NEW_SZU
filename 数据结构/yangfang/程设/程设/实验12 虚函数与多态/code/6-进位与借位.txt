@@ -1,0 +1,265 @@
+一、第一种做法：数值
+#include<iostream>
+using namespace std;
+
+class Group
+{
+public:
+  virtual int add(int x, int y)=0;//输出加法的运算结果
+  virtual int sub(int x, int y)=0;//输出减法的运算结果
+};
+
+class GroupA:public Group{
+  int add(int x,int y){
+    return x+y;
+  }
+  int sub(int x,int y){
+    return x-y;
+  }
+};
+
+class GroupB:public Group{
+  int add(int x,int y){
+    return x+y;
+  }
+  int sub(int x,int y){
+     int temp;
+     int result=0,num=1;
+     while(x && y) {
+        temp=x%10-y%10;
+        if(temp<0)
+            temp+=10;
+        result+=temp*num;
+        num*=10;
+        x/=10;
+        y/=10;
+     }
+     if(x>0){
+        while(x){
+        temp=x%10;
+        result+=temp*num;
+        num*=10;
+        x/=10;
+        }
+     }
+    return result;
+  }
+};
+
+class GroupC:public Group{
+  int add(int x,int y){
+     int temp;
+     int result=0,num=1;
+     while(x && y) {
+        temp=x%10+y%10;
+        if(temp>=10)
+            temp-=10;
+        result+=temp*num;
+        num*=10;
+        x/=10;
+        y/=10;
+     }
+     if(x>=0 || y>=0){
+       int len;
+       if(x!=0)
+          len=x;
+       else
+          len=y;
+       while(len!=0){
+        temp=len%10;
+        result+=temp*num;
+        num*=10;
+        len/=10;
+        }
+    }
+    return result;
+  }
+
+   int sub(int x,int y){
+     int temp;
+     int result=0,num=1;
+     while(x!=0 && y!=0) {
+        temp=x%10-y%10;
+        if(temp<0)
+            temp+=10;
+        result+=temp*num;
+        num*=10;
+        x/=10;
+        y/=10;
+     }
+     if(x>0){
+        while(x!=0){
+        temp=x%10;
+        result+=temp*num;
+        num*=10;
+        x/=10;
+        }
+     }
+    return result;
+  }
+};
+
+int main(){
+  int t,n,x,y;
+  char ch;
+  Group* p;
+  cin>>t;
+  while(t--){
+    cin>>n>>x>>ch>>y;
+    if(n==1)
+        p=new GroupA;
+    else if(n==2)
+        p=new GroupB;
+    else if(n==3)
+        p=new GroupC;
+
+    if(ch=='+')
+        cout<<p->add(x,y)<<endl;
+    else
+        cout<<p->sub(x,y)<<endl;
+    delete p;
+  }
+}
+
+///////////////////////////////////////////////
+二、第二种做法：使用字符串来处理数据的位数
+#include<bits/stdc++.h>
+using namespace std;
+
+class Group
+{
+public:
+  virtual int add(int x, int y)=0;//输出加法的运算结果
+  virtual int sub(int x, int y)=0;//输出减法的运算结果
+};
+
+class GroupA:public Group{
+  int add(int x,int y){
+    return x+y;
+  }
+  int sub(int x,int y){
+    return x-y;
+  }
+};
+
+class GroupB:public Group{
+  int add(int x,int y){
+    return x+y;
+  }
+  int sub(int x,int y){
+     stringstream sstr1,sstr2;
+     sstr1 << x;
+     sstr2 << y;
+     string s1,s2 ;
+     sstr1>>s1;
+     sstr2>>s2;
+     int len1=s1.length()-1,len2=s2.length()-1;
+     int temp=0,num=1,result=0;
+     while(len1>=0 && len2>=0){
+        temp=s1[len1]-s2[len2];
+        if(temp<0)
+           temp+=10;
+        result+=temp*num;
+        num*=10;
+        len1--;
+        len2--;
+     }
+    if(len1>=0){
+        for(int i=len1;i>=0;i--){
+            temp=s1[i]-'0';
+            result+=temp*num;
+            num*=10;
+        }
+    }
+    return result;
+  }
+};
+
+class GroupC:public Group{
+  int add(int x,int y){
+     stringstream sstr1,sstr2;
+     sstr1 << x;
+     sstr2 << y;
+     string s1,s2 ;
+     sstr1>>s1;
+     sstr2>>s2;
+     int len1=s1.length()-1,len2=s2.length()-1;
+     int temp=0,num=1,result=0;
+     while(len1>=0 && len2>=0){
+        temp=s1[len1]-'0'+s2[len2]-'0';
+        if(temp>=10)
+           temp-=10;
+        result+=temp*num;
+        num*=10;
+        len1--;
+        len2--;
+     }
+
+     if(len1>=0 || len2>=0){
+       string s;
+       int len;
+       if(len1>=0){
+        len=len1;s=s1;
+       }
+       else{
+        len=len2;s=s2;
+       }
+       for(int i=len;i>=0;i--){
+            temp=s[i]-'0';
+            result+=temp*num;
+            num*=10;
+        }
+    }
+    return result;
+   }
+
+   int sub(int x,int y){
+     stringstream sstr1,sstr2;
+     sstr1 << x;
+     sstr2 << y;
+     string s1,s2 ;
+     sstr1>>s1;
+     sstr2>>s2;
+     int len1=s1.length()-1,len2=s2.length()-1;
+     int temp=0,num=1,result=0;
+     while(len1>=0 && len2>=0){
+        temp=s1[len1]-s2[len2];
+        if(temp<0)
+           temp+=10;
+        result+=temp*num;
+        num*=10;
+        len1--;
+        len2--;
+     }
+    if(len1>=0){
+        for(int i=len1;i>=0;i--){
+            temp=s1[i]-'0';
+            result+=temp*num;
+            num*=10;
+        }
+    }
+    return result;
+  }
+};
+
+int main(){
+  int t,n,x,y;
+  char ch;
+  Group* p;
+  cin>>t;
+  while(t--){
+    cin>>n>>x>>ch>>y;
+    if(n==1)
+        p=new GroupA;
+    else if(n==2)
+        p=new GroupB;
+    else if(n==3)
+        p=new GroupC;
+
+    if(ch=='+')
+        cout<<p->add(x,y)<<endl;
+    else
+        cout<<p->sub(x,y)<<endl;
+    delete p;
+  }
+}

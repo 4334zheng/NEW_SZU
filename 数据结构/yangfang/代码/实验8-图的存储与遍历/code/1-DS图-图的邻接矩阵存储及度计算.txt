@@ -1,0 +1,102 @@
+#include<iostream>
+using namespace std;
+
+class Map{
+    int len;    //顶点数目
+    char type; //图的类型
+    string *v; //顶点数组
+    int **p;  //邻接矩阵
+public:
+    Map(){  //初始化
+        int i,j;
+        cin>>type>>len;
+
+        v=new string[len];
+        for(i=0;i<len;i++)
+            cin>>v[i];
+
+        p=new int*[len];
+        for(i=0;i<len;i++){
+            p[i]=new int[len];
+            for(j=0;j<len;j++) //邻接矩阵各数据初始化为0
+               p[i][j]=0;
+       }
+    }
+
+    int FindPoint(string ch){  //查找顶点在顶点数组中的下标
+        for(int i=0;i<len;i++){
+            if(ch==v[i])
+                return i;
+        }
+        return -1;
+    }
+
+    void CreateMap(){  //创建邻接矩阵
+        int i,edge,v1,v2;
+        string ch1,ch2;
+        cin>>edge;
+        for(i=0;i<edge;i++){
+            cin>>ch1>>ch2;
+            v1=FindPoint(ch1);
+            v2=FindPoint(ch2);
+            p[v1][v2]=1;
+            if(type=='U')   //无向图要多处理一步
+                p[v2][v1]=1;
+        }
+    }
+
+    void Display(){  //输出显示
+        int i,j;
+        for(i=0;i<len;i++){     //显示邻接矩阵
+            for(j=0;j<len-1;j++)
+               cout<<p[i][j]<<" ";
+            cout<<p[i][j]<<endl;  //每行最后一个数据后没有空格，要单独处理
+        }
+
+        if(type=='D'){   //有向图的输出信息：出度、入度、度
+            for(i=0;i<len;i++){
+                int a=0,b=0;
+                for(j=0;j<len;j++){
+                    a+=p[i][j];  //出度
+                    b+=p[j][i]; //入度
+                }
+                if(a==0&&b==0)
+                    cout<<v[i]<<endl;
+                else
+                    cout<<v[i]<<": "<<a<<" "<<b<<" "<<a+b<<endl;
+           }
+        }
+        else if(type=='U'){ //无向图的输出信息：度
+            for(i=0;i<len;i++){
+                int a=0;
+                for(j=0;j<len;j++)
+                    a+=p[i][j];
+                if(a==0)
+                    cout<<v[i]<<endl;
+                else
+                    cout<<v[i]<<": "<<a<<endl;
+             }
+        }
+    }
+
+    ~Map(){
+        for(int i=0;i<len;i++)
+            delete[] p[i];
+        delete[] p;
+
+        delete[] v;
+        len=0;
+        type='0';
+    }
+};
+
+int main(){
+    int t;
+    cin>>t;
+    while(t--){
+        Map test;
+        test.CreateMap();
+        test.Display();
+    }
+    return 0;
+}

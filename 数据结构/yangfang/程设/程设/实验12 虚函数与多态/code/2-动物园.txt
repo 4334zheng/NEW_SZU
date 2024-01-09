@@ -1,0 +1,76 @@
+#include <iostream>
+#include<string>
+using namespace std;
+
+class CAnimal
+{
+protected:
+    int age;
+    string species, name;
+public:
+    CAnimal(string sp, string n, int a): species(sp), name(n), age(a) {}
+    virtual void Speak()=0;
+};
+
+class CTiger: public CAnimal
+{
+public:
+    CTiger(string sp, string n, int a): CAnimal(sp, n, a) {}
+    void Speak()
+    {   cout<<"Hello,I am "<<name<<",AOOO.\n";}
+};
+
+class CPig: public CAnimal
+{
+public:
+    CPig(string sp, string n, int a): CAnimal(sp, n, a) {}
+    void Speak()
+    {   cout<<"Hello,I am "<<name<<",HENGHENG.\n";}
+};
+
+class CDuck: public CAnimal
+{
+public:
+    CDuck(string sp, string n, int a): CAnimal(sp, n, a) {}
+    void Speak()
+    {   cout<<"Hello,I am "<<name<<",GAGA.\n";}
+};
+
+class CDog: public CAnimal
+{
+public:
+    CDog(string sp, string n, int a): CAnimal(sp, n, a) {}
+    void Speak()
+    {   cout<<"Hello,I am "<<name<<",WangWang.\n";}
+};
+
+int main()
+{
+    int t, a;
+    string sp, n;
+    CAnimal *zoo;
+
+    cin>>t;
+    while(t--)
+    {
+        cin>>sp>>n>>a;
+        if(sp=="Tiger") 
+            zoo=new CTiger(sp, n, a);
+        else if(sp=="Pig") 
+            zoo=new CPig(sp, n, a);
+        else if(sp=="Duck") 
+            zoo=new CDuck(sp, n, a);
+        else if(sp=="Dog") 
+            zoo=new CDog(sp, n, a);
+        else{
+	        zoo=NULL;
+            cout<<"There is no "<<sp<<" in our Zoo.\n";
+        }
+
+       if(zoo){
+            zoo->Speak();
+            delete zoo;
+       }
+    }
+    return 0;
+}

@@ -1,0 +1,38 @@
+#include<iostream>
+#include<stdio.h>
+#include<cstring>
+using namespace std;
+
+int Compare(char *p,char *q);
+
+main()
+{   //freopen("d:\\a.txt",  "r", stdin);
+    int t;
+    char p[20],q[20];
+    cin>>t;
+    while(t--){
+        cin>>p>>q;
+        cout<<Compare(p,q)<<endl;
+    }
+}
+
+int Compare(char *s,char *k){
+ int num=0;
+ int lens=strlen(s),lenk=strlen(k);
+
+ if(lens==lenk){
+    while(*s ){
+      if(*s>*k)    //大于，num++
+        num++;
+      if(*s<*k)  //小于， num--
+        num--;
+      k++;s++;
+    }
+    if(num==0)
+        return 0;
+    else
+        return num>0?1:-1;
+ }
+ else
+    return lens>lenk?1:-1;
+}

@@ -1,0 +1,66 @@
+#include<iostream>
+using namespace std;
+
+class CCounter{
+protected:
+	int value;
+public:
+	CCounter(int v):value(v){}
+	bool increment(){
+		value++;
+                                return true;
+	}
+	int getVal(){
+		return value;
+	}
+};
+
+class CLoop:public CCounter{
+private:
+	int max,min;
+public:
+	CLoop(int v,int ma,int mi):CCounter(v),max(ma),min(mi){}
+	bool increment()
+	{      value++;
+	       if(value>max){
+		   value=min;
+		   return true;
+	       }
+	      else
+                                 return false;
+	}
+};
+
+class CClock{
+	CLoop hour,minute,second;
+public:
+	CClock(int h,int m,int s):hour(h,23,0),minute(m,59,0),second(s,59,0){}
+	void time(int s){
+		while(s--){
+			if(second.increment()){
+				if(minute.increment()){
+					hour.increment();
+				}
+			}
+		}
+	}
+                void print(){
+                       cout<<hour.getVal()<<":"<<minute.getVal()<<":"<<second.getVal()<<endl;
+                }
+};
+
+int main()
+{   
+	int t,hour,minute,second,s;
+
+	cin>>t;
+	while(t--)
+	{
+		cin>>hour>>minute>>second>>s;
+		CClock c(hour,minute,second);
+		c.time(s);
+		c.print();
+	}
+
+	return 0;
+}

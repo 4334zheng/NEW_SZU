@@ -1,0 +1,110 @@
+#include<iostream>
+#include<iostream>
+using namespace std;
+
+class ListNode{
+public:
+    int data;
+    ListNode* next;
+    ListNode(){next=NULL;}
+};
+
+class LinkList{
+   ListNode* head;
+   int len;
+public:
+   LinkList(){
+       cin>>len;
+       head=new ListNode;
+       ListNode* p=head,*s;
+       for(int i=0;i<len;i++){
+          s=new ListNode;
+          cin>>s->data;
+          p->next=s;
+          p=s;
+       }
+       LL_display();
+   }
+
+   ~LinkList(){
+        ListNode* p;
+        while(head){
+            p=head->next;
+            delete head;
+            head=p;
+        }
+        len=0;
+   }
+
+   void LL_index(int i){
+       if(i<1 || i>len || len==0){
+          cout<<"error"<<endl;
+          return;
+       }
+       ListNode* p=head;
+       for(int j=0;j<i;j++)
+            p=p->next;
+       cout<<p->data<<endl;
+   }
+
+   void LL_insert(int i,int item){
+       if(i<1 || i>len+1){
+          cout<<"error"<<endl;
+          return;
+       }
+       ListNode* p=head;
+       for(int j=1;j<i;j++)
+             p=p->next;
+       ListNode* s=new ListNode;
+       s->data=item;
+       s->next=p->next;
+       p->next=s;
+       len++;
+       LL_display();
+   }
+
+   void LL_del(int i){
+       if(i<1 || i>len || len==0){
+          cout<<"error"<<endl;
+          return;
+       }
+       ListNode* p=head;
+       for(int j=1;j<i;j++)
+             p=p->next;
+       ListNode* s;
+       s=p->next;
+       p->next=s->next;
+       delete s;
+       len--;
+       LL_display();
+   }
+
+   void LL_display(){
+       ListNode* p=head->next;
+       while(p){
+            cout<<p->data<<" ";
+            p=p->next;
+          }
+       cout<<endl;
+   }
+};
+
+int main(){
+   LinkList l;
+   int t,item;
+
+   cin>>t>>item;
+   l.LL_insert(t,item);
+   cin>>t>>item;
+   l.LL_insert(t,item);
+
+   cin>>t;
+   l.LL_del(t);
+   cin>>t;
+   l.LL_del(t);
+
+   cin>>t;
+   l.LL_index(t);
+   cin>>t;
+   l.LL_index(t);
+}

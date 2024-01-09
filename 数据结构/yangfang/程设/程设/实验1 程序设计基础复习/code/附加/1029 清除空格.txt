@@ -1,0 +1,118 @@
+一、用string的find，erase方法
+#include<iostream>
+#include<stdio.h>
+#include<string>
+using namespace std;
+void trim(string &s);
+int main()
+{
+  freopen("d:\\a.txt",  "r", stdin);
+  int t;
+  string s;
+  cin>>t;
+  getline(cin,s);
+  while(t--){
+    getline(cin,s);
+    trim(s);
+    cout<<s<<endl;
+  }
+}
+
+void trim(string &s)
+{
+   int index = 0;
+   if( !s.empty())
+   {
+      while( (index = s.find(' ',index)) != string::npos)
+      {
+        s.erase(index,1);
+      }
+    }
+}
+--------------------------------------------
+二、用string逐个处理字符
+#include<iostream>
+#include<stdio.h>
+#include<string>
+using namespace std;
+void trim(string &s);
+int main()
+{
+  freopen("d:\\a.txt",  "r", stdin);
+  int t;
+  string s;
+  cin>>t;
+  getline(cin,s);
+  while(t--){
+    getline(cin,s);
+    trim(s);
+    cout<<s<<endl;
+  }
+}
+
+void trim(string &s)
+{  string p=s;
+   s="";
+   for(int i=0;i<p.length();i++){
+     if(p[i]!=' ')
+        s+=p[i];
+     }
+}
+---------------------------------------------------------------
+三、用字符数组
+#include<iostream>
+#include<stdio.h>
+#include<cstring>
+using namespace std;
+void trim(char s[]);
+int main()
+{
+  freopen("d:\\a.txt",  "r", stdin);
+  int t;
+  char s[20];
+  cin>>t;
+  cin.getline(s,20);
+  while(t--){
+    cin.getline(s,20);
+    trim(s);
+    cout<<s<<endl;
+  }
+}
+
+void trim(char s[])
+{   int j=0,len=strlen(s);
+    for(int i=0;i<len;i++){
+     if(s[i]!=' ')
+        s[j++]=s[i];
+    }
+    s[j]=0;
+}
+-----------------------------
+四、用字符指针
+#include<iostream>
+#include<stdio.h>
+using namespace std;
+void trim(char *s);
+int main()
+{
+  freopen("d:\\a.txt",  "r", stdin);
+  int t;
+  char s[20];
+  cin>>t;
+  cin.getline(s,20);
+  while(t--){
+    cin.getline(s,20);
+    trim(s);
+    cout<<s<<endl;
+  }
+}
+
+void trim(char *s)
+{   char *p=s;
+    while(*p){
+      if(*p!=' ')
+        *s++=*p;
+       p++;
+    }
+    *s=0;
+}

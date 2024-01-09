@@ -1,0 +1,57 @@
+#include<stdio.h>
+#include<cmath>
+#include<iostream>
+using namespace std;
+
+int ifunc(int);
+float ffunc(float);
+void sfunc(char*);
+
+int main()
+{   //freopen("d:\\a.txt","r",stdin);
+
+	int (*p1)(int)=ifunc;
+	float (*p2)(float)=ffunc;
+	void (*p3)(char*)=sfunc;
+	int t;
+	cin>>t;
+
+	while(t--){
+	   char ch;
+	   cin>>ch;
+	   switch(ch){
+                      case 'I':int i;
+                                  cin>>i;
+                                  cout<<p1(i)<<endl;
+                                  break;
+                      case 'F':float f;
+                                   cin>>f;
+                                   cout<<p2(f)<<endl;
+                                   break;
+                      case 'S':char s[20];
+                                   cin>>s;
+                                   p3(s);
+                                   cout<<s<<endl;
+                                   break;
+	 }
+          }
+          return 0;
+}
+
+int ifunc(int x)
+{
+    return x*x;
+}
+
+float ffunc(float x){
+    return sqrt(x);
+}
+
+void sfunc(char* s){
+ char* p=s;
+ while(*p){
+     if(islower(*p))
+         *p=toupper(*p);
+     p++;
+ }
+}

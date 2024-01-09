@@ -1,0 +1,64 @@
+#include<iostream>
+#include<iomanip>
+using namespace std;
+
+class Geometry{
+public:
+    virtual double getArea()=0;
+};
+
+class Rect:public Geometry{
+	double width,height;
+public:
+	Rect(double w,double h):width(w),height(h){}
+	double getArea(){
+		return width*height;
+	}
+};
+
+class Circle:public Geometry{
+	double radius;
+public:
+    Circle(double r):radius(r){}
+	double getArea(){
+		return  radius*radius*3.14;
+	}
+};
+
+class TotalArea{
+public:
+           static void computerTotalArea(Geometry** t,int n){
+	    Geometry *max;
+	    max=t[0];
+	    for(int i=1;i<n;i++){
+	       if(t[i]->getArea()>max->getArea())
+                           max=t[i];
+	    }
+	    cout<<"最大面积="<<fixed<<setprecision(2)<<max->getArea()<<endl;
+	}
+};
+
+int main(){
+   int t,n;
+   double width,height,radius;
+   Geometry **p;
+   cin>>t;
+   p=new Geometry*[t];
+   for(int i=0;i<t;i++){
+     cin>>n;
+     switch(n){
+     case 1:{cin>>width>>height;
+                 p[i]=new Rect(width,height);
+                 break;
+                 }
+     case 2:{cin>>radius;
+                 p[i]=new Circle(radius);
+                 break;
+                 }
+     }
+   }
+   TotalArea::computerTotalArea(p,t);
+   for(int i=0;i<t;i++)
+         delete p[i];
+   delete[] p;
+}

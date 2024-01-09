@@ -1,0 +1,66 @@
+一、数组方式
+/////////////////////////
+#include<iostream>
+#include<stdio.h>
+using namespace std;
+
+int main()
+{
+  //freopen("d:\\a.txt",  "r", stdin);
+  int t,n;
+  double average=0;
+  cin>>t;
+  while(t--){
+    cin>>n;
+    double s[n];
+
+    for(int j=0;j<n;j++){
+        cin>>s[j];
+        average+=s[j];
+    }
+    average/=n;
+
+    int len=0;
+    for(int j=0;j<n;j++){
+        if(s[j]>average)
+            len++;
+    }
+    cout<<len<<endl;
+  }
+}
+
+
+二、使用指针处理数组
+-------------------------------------------
+#include<iostream>
+#include<stdio.h>
+using namespace std;
+
+int main()
+{
+  //freopen("d:\\a.txt",  "r", stdin);
+  int t,n;
+  double *s,*p;
+  double average=0;
+  cin>>t;
+  while(t--){
+    cin>>n;
+    s=new double[n];
+
+    p=s;
+    for(int j=0;j<n;j++){
+        cin>>*s;
+        average+=*s++;
+    }
+    average=average/n;
+
+    int len=0;
+    s=p;
+    for(int j=0;j<n;j++){
+        if(*s++>average)
+            len++;
+    }
+    cout<<len<<endl;
+    delete[] p;
+  }
+}

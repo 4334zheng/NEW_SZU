@@ -1,0 +1,174 @@
+一、用prim（偷懒用穷举法了）
+#include<iostream>
+using namespace std;
+
+const int MaxWeight=10000;
+
+class Map{
+    int len;   //顶点数
+    int **p;  //邻接矩阵
+    int *v;  //访问标志
+public:
+    Map(int t){     //初始化
+        len=t;
+        v=new int[len];
+        p=new int*[len];
+        for(int i=0;i<len;i++){
+            p[i]=new int[len];
+            v[i]=0;
+            for(int j=0;j<len;j++)
+               cin>>p[i][j];
+        }
+    }
+
+    void set(int i,int j){ //将已经建成的路的权值设置为0，注意无向图要设置两个位置
+       p[i][j]=0;
+       p[j][i]=0;
+    }
+
+    int Prim(){
+       int pos,min,sum=0,k=0;
+       v[0]=1;
+
+       while(k<len-1){
+           min=MaxWeight;
+           for(int i=0;i<len;i++){
+              for(int j=0;j<len;j++){
+                if(v[i]==1 && v[j]==0 && p[i][j]<min){
+                    pos=j;
+                    min=p[i][j];
+                 }
+              }
+           }
+           v[pos]=1;
+           sum+=min;
+           k++;
+       }
+       return sum;
+    }
+
+    ~Map(){
+        for(int i=0;i<len;i++)
+            delete[] p[i];
+        delete[] p;
+        delete[] v;
+        len=0;
+    }
+};
+
+int main(){
+    int t,u,v;
+    while(cin>>t){
+      Map g(t);
+      cin>>t;
+      while(t--){
+         cin>>u>>v;
+         g.set(u-1,v-1);
+      }
+      cout<<g.Prim()<<endl;
+   }
+}
+
+
+/////////////////////////////////
+
+二、用kruskal
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+struct Node{  //边数据
+  int v1,v2,weight;
+};
+
+bool cmp(const Node& n1,const Node& n2){
+  return n1.weight<n2.weight;
+}
+
+class Map{
+    int len;   //顶点数
+    int **p;  //邻接矩阵
+    int *v;  //访问标志
+    Node *node2;//最小生成树使用，存放选择好的边
+    int edge;
+public:
+    Map(int t){     //初始化
+        len=t;
+        edge=len*(len-1)/2; //无向图是对称矩阵，存一半的边就可以了，这里存的是上三角的数据，不包括主对角线的数据
+        node2=new Node[edge];
+        v=new int[len];
+        p=new int*[len];
+        for(int i=0;i<len;i++){
+            p[i]=new int[len];
+            for(int j=0;j<len;j++)
+               cin>>p[i][j];
+        }
+    }
+
+    void set(int i,int j){ //将已经建成的路的权值设置为0，注意无向图要设置两个位置
+       p[i][j]=0;
+       p[j][i]=0;
+    }
+
+    void CreateMap(){  //对边进行排序处理
+        int v1,v2,weight,n=0;
+
+        for(int i=0;i<len;i++){
+            for(int j=i+1;j<len;j++){  //无向图是对称矩阵，存一半的边就可以了，这里存的是上三角的数据，不包括主对角线的数据
+               node2[n].v1=i;
+               node2[n].v2=j;
+               node2[n].weight=p[i][j];
+               n++;
+            }
+        }
+        sort(node2,node2+edge,cmp); //对边进行排序
+    }
+
+    int Kruskal(){
+       int p1,p2,k=0,count=0,q1,q2,sum=0;
+
+       for(int i=0;i<len;i++)//刚开始每个结点都是不同的连通分量
+          v[i]=i;
+
+       while(count!=len-1){
+          p1=node2[k].v1;
+          p2=node2[k].v2;
+          if(v[p1]!=v[p2]){
+              count++;
+              sum+=node2[k].weight;
+
+              q1=v[p1];  
+              q2=v[p2];   
+              for(int i=0;i<len;i++){  //将所有等于q1的值都换成q2的值，即大家属于同一个连通分量
+                   if(v[i]==q1)
+                      v[i]=q2;
+              }
+          }
+          k++;
+       }
+       return sum;
+    }
+
+    ~Map(){
+        for(int i=0;i<len;i++)
+            delete[] p[i];
+        delete[] p;
+        delete[] node2;
+        delete[] v;
+        len=0;
+    }
+};
+
+int main(){
+    int t,u,v;
+    while(cin>>t){
+      Map g(t);
+      cin>>t;
+      while(t--){
+         cin>>u>>v;
+         g.set(u-1,v-1);
+      }
+      g.CreateMap();
+      cout<<g.Kruskal()<<endl;
+   }
+}

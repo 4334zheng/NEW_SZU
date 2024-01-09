@@ -1,0 +1,64 @@
+#include<iostream>
+using namespace std;
+
+class Map{
+    int len; //顶点数
+    int *v;  //访问标识数组
+    int **p; //邻接矩阵
+    int count;
+public:
+    Map(){
+        int i,j;
+        cin>>len;
+        v=new int[len];
+        for(i=0;i<len;i++)
+            v[i]=0;
+        p=new int*[len];
+        for(i=0;i<len;i++){
+            p[i]=new int[len];
+            for(j=0;j<len;j++)
+               cin>>p[i][j];
+        }
+    }
+
+    void dsf(int k){
+       count++;    //记录访问的元素个数
+       v[k]=1;
+       for(int i=0;i<len;i++){
+          if(p[k][i] && !v[i]){
+             dsf(i);
+          }
+       }
+    }
+
+    string DFSTraverse(){
+      for(int i=0;i<len;i++){
+        count=0;
+        dsf(i);
+        if(count!=len)  //若一趟遍历不能访问所有顶点，则不是连通图，提前终止程序；否则继续从下一个结点开始遍历
+           return "No";
+        for(int j=0;j<len;j++) //从一个顶点遍历结束后，访问标志要清0
+            v[j]=0;
+      }
+      return "Yes";
+    }
+
+
+    ~Map(){
+        for(int i=0;i<len;i++)
+            delete[] p[i];
+        delete[] p;
+        delete[] v;
+        len=0;
+    }
+};
+
+int main(){
+    int t;
+    cin>>t;
+    while(t--){
+        Map test;
+        cout<<test.DFSTraverse()<<endl;
+    }
+    return 0;
+}

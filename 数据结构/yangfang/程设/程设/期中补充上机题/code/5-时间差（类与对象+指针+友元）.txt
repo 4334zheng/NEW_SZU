@@ -1,0 +1,28 @@
+#include<iostream>
+#include<cmath>
+using namespace std;
+class Time{
+    int hour, minute, second;
+public:
+    Time(int h, int m, int s):hour(h),minute(m),second(s){}
+    string getTime() {return to_string(hour) + "时" + to_string(minute) + "分" + to_string(second) + "秒";}
+    friend void different(Time& a, Time&  b);
+};
+void different(Time& a, Time& b) {
+    int totalA = a.hour*3600+ a.minute*60 + a.second;
+    int totalB = b.hour*3600 + b.minute*60 + b.second;
+    int deff=abs(totalA - totalB);
+   cout << a.getTime() << "--" << b.getTime() << "时间差为" << deff<< "秒" << endl;
+}
+ 
+ 
+int main() {
+    int num, t;
+    cin >> t;
+    while (t--) {
+        int a, b ,c ,d ,e ,f;
+        cin >> a >> b >> c >> d >> e >> f;
+        Time aa(a, b, c), bb(d, e,f );
+        different(aa, bb);
+    }
+}

@@ -1,0 +1,50 @@
+#include<stdio.h>
+#include<iostream>
+using namespace std;
+int main()
+{   //freopen("d:\\a.txt","r",stdin);
+    int t,i;
+    cin>>t;
+
+    while(t--){
+       char ch;
+       cin>>ch;
+       int len;
+       cin>>len;
+       switch(ch){
+           case 'I':{ int* p=new int[len],*q=p;
+                         float sum=0;
+                         for(i=0;i<len;i++,p++){
+                             cin>>*p;
+                             sum+=*p;
+                         }
+                         cout<<sum/len<<endl;
+                         delete[] q;
+                        }
+                        break;
+           case 'F':{ float *p=new float[len],*q=p;
+                          float min;
+                          for(i=0;i<len;i++,p++){
+                             cin>>*p;
+                             if(i==0 || *p<min)
+                                 min=*p;
+                           }
+                          cout<<min<<endl;
+                          delete[] q;
+                        }
+                        break;
+           case 'C':{ char *p=new char[len],*q=p;
+                          char max;
+                          for(i=0;i<len;i++,p++){
+                               cin>>*p;
+                               if(i==0 || *p>max)
+                                    max=*p;
+                           }
+                          cout<<max<<endl;
+                          delete[] q;
+                        }
+                        break;
+            }
+      }
+      return 0;
+}

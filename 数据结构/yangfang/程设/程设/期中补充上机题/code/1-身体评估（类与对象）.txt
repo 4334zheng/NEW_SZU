@@ -1,0 +1,35 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+class Healthy{
+    string name;
+    double height, weight, yao;
+public:
+    Healthy(string n, double h, double w, double y):name(n),height(h),weight(w),yao(y){}
+    int BMI(){
+        return (int)(weight / (height*height) + 0.5);
+    }
+    double rate(){
+        double a = yao * 0.74;
+        double b = weight * 0.082 + 34.89;
+        return (a - b) / weight;
+    }
+    void display(){
+        cout << name << "'s BMI: " << BMI();
+        cout << "--BFR: " << fixed << setprecision(2) << rate() << endl;
+    }
+};
+
+int main(){
+    int T;
+    cin >> T;
+    while (T --){
+        string name;
+        double height, weight, yao;
+        cin >> name >> height >> weight >> yao;
+        Healthy myHealthy(name, height, weight, yao);
+        myHealthy.display();
+    }
+    return 0;
+}

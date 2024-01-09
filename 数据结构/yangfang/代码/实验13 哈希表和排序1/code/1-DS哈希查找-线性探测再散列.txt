@@ -1,0 +1,89 @@
+#include<iostream>
+using namespace std;
+
+class Search{
+    int len;        //表长
+    int  *data;   //数据
+public:
+    Search(){     //初始化
+        cin>>len;
+        data=new int[len];
+        for(int i=0;i<len;i++)  //因为有可能会发生冲突，因此数据要初始化为0，作为该地址可用的判断依据
+            data[i]=0;
+
+        int t,key;
+        cin>>t;
+        for(int i=0;i<t;i++){
+            cin>>key;
+            hashFunc(key);
+        }
+    }
+
+   void hashFunc(int key) //线性探测再散列-将数据放入哈希表中
+    {
+       int temp,addr;
+       addr=key%11;
+       for(int d=0;d<len;d++){
+           temp=(addr+d)%len; //计算地址。若冲突，下趟循环继续计算新的地址。
+           if(data[temp]==0){
+              data[temp]=key;
+              break;
+          }
+       }
+    }
+
+    void hashSearch(int key)  //在哈希表中查找数据
+    {  int count=0,success=0,pos=0;
+       int temp,addr;
+       addr=key%11;
+       for(int d=0;d<len;d++){
+           count++;
+           temp=(addr+d)%len;
+           if(data[temp]==key || data[temp]==0){  //当找到key，或表中没有key时，查找结束
+                if(data[temp]==key){
+                   success=1;
+                   pos=temp;
+                }
+                break;
+          }
+       }
+
+       cout<<success<<" "<<count;
+       if(success==1)
+            cout<<" "<<pos+1;
+       cout<<endl;
+    }
+
+   void print(){ //输出哈希表中的元素，没有数据输出NULL
+       int i;
+       for(i=0;i<len-1;i++){
+        if(data[i]!=0)
+          cout<<data[i]<<" ";
+        else
+          cout<<"NULL"<<" ";
+       }
+       if(data[i]!=0)
+          cout<<data[i]<<endl;
+        else
+          cout<<"NULL"<<endl;
+    }
+
+    ~Search(){
+        delete[] data;
+    }
+};
+
+int main(){
+    int t,n,key;
+    cin>>t;
+    while(t--){
+      Search s;
+      s.print();
+      cin>>n;
+      while(n--){
+        cin>>key;
+        s.hashSearch(key);
+      }
+    }
+    return 0;
+}

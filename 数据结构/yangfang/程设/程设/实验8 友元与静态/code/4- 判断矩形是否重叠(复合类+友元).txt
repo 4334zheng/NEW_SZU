@@ -1,0 +1,47 @@
+#include<iostream>
+using namespace std;
+
+class rect;
+class Spoint
+{   int x,y;
+ public:
+    Spoint(){}
+    Spoint(int x,int y):x(x),y(y){}
+    friend void judge(const rect &A, const rect &B);
+};
+class rect
+{   Spoint a,b;
+ public:
+    rect(){}
+    //rect(Spoint& a,Spoint& b):a(a),b(b){}
+    rect(int x1,int y1,int x2,int y2):a(x1,y1),b(x2,y2){}
+    friend void judge(const rect &A, const rect &B);
+};
+
+void judge(const rect &A, const rect &B)
+{ //反证法
+    if((A.a.x > A.b.x ? A.a.x: A.b.x) < (B.a.x < B.b.x ? B.a.x: B.b.x)||
+       (A.a.x < A.b.x ? A.a.x: A.b.x) > (B.a.x > B.b.x ? B.a.x: B.b.x)||
+       (A.a.y < A.b.y ? A.a.y: A.b.y) > (B.a.y > B.b.y ? B.a.y: B.b.y)||
+       (A.a.y > A.b.y ? A.a.y: A.b.y) < (B.a.y < B.b.y ? B.a.y: B.b.y))
+        cout<<"not overlapped" <<endl;
+    else
+        cout<<"overlapped"<<endl;
+}
+int main()
+{
+    int t;
+    cin >> t;
+    for(int i = 0 ; i < t ; i++)
+    {
+        int x1,x2,y1,y2;
+        cin >> x1 >> y1 >> x2 >> y2;
+        rect A(x1,y1,x2,y2);
+
+        cin >> x1 >> y1 >> x2 >> y2;//创建矩形B
+        rect B(x1,y1,x2,y2);
+
+        judge(A,B);
+     }
+  return 0;
+}

@@ -1,0 +1,206 @@
+第一种：从起始点出发，边访问顶点边判断该顶点是否和起始点构成回路
+#include<iostream>
+using namespace std;
+
+class Map{
+    int len; //顶点数
+    string *vex;
+    int *v;  //访问标识数组
+    float **p; //邻接矩阵
+    bool flag;  //标志是否有符合要求的环
+public:
+    Map(){
+        int i,j,edge;
+        cin>>len;
+
+        v=new int[len];
+        vex=new string[len];
+        for(i=0;i<len;i++)
+            v[i]=0;
+
+        p=new float*[len];
+        for(i=0;i<len;i++){
+            p[i]=new float[len];
+            for(j=0;j<len;j++){
+              p[i][j]=0;  //其他位置初始化为0
+              if(i==j)
+                 p[i][j]=1; //对角线元素设为1
+            }
+        }
+
+        cin>>edge;
+        for(i=0;i<len;i++)
+            cin>>vex[i];
+
+        for(i=0;i<edge;i++){
+            string s1,s2;
+            float t;
+            cin>>s1>>t>>s2;
+            p[findVex(s1)][findVex(s2)]=t;
+        }
+    }
+
+    int findVex(string v){
+        for(int i=0;i<len;i++)
+            if(vex[i]==v)
+               return i;
+    }
+
+    void dsf(int s,int t,float& c){ //s表示初始顶点，t表示当前要访问的顶点，c记录环上的权值
+      v[t]=1;
+      if(flag==false){  //flag=true，则表示已经找到回路了，可以提前结束递归。因为题目只需要判断是否有回路，并不要求记录每条回路信息。
+       for(int i=0;i<len;i++){
+          if(p[t][i] && !v[i]){
+             c*=p[t][i];   //访问到的每一条边的权值都保留下来
+             if(p[i][s]>0){  //若和起始点构成回路
+                if(c*p[i][s]>1)
+                    {flag=true;return;}
+             }
+             dsf(s,i,c);
+          }
+       }
+     }
+    }
+
+    string DFSTraverse(){
+      for(int i=0;i<len;i++){
+        flag=false;
+        float result=1;
+        dsf(i,i,result);  //从顶点i开始一趟遍历
+
+        if(flag==true)  //若找到，提前结束程序；否则换另一个顶点继续
+               return "YES";
+
+        for(int t=0;t<len;t++) //一趟遍历后清空数组元素
+            v[t]=0;
+      }
+      return "NO";
+    }
+
+    ~Map(){
+        for(int i=0;i<len;i++){
+            delete[] p[i];
+        }
+        delete[] p;
+        delete[] v;
+        delete[] vex;
+        len=0;
+    }
+};
+
+int main(){
+    int t;
+    cin>>t;
+    while(t--){
+      Map test;
+      cout<<test.DFSTraverse()<<endl;
+    }
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////
+第二种：一趟访问结束后，统一处理看是否构成回路。增加了一个数组r，记录一趟中依次访问的顶点
+#include<iostream>
+using namespace std;
+
+class Map{
+    int len; //顶点数
+    string *vex;
+    int *v;  //访问标识数组
+    float **p; //邻接矩阵
+    int *r;  //按次序存放一趟遍历后的顶点序列，用来检查是否和起始点构成回路；若构成回路，则再计算回路上的权值乘积。
+    int count; //和数组r配套使用，按访问次序存放顶点
+public:
+    Map(){
+        int i,j,edge;
+        cin>>len;
+        v=new int[len];
+        vex=new string[len];
+        r=new int[len];
+        for(i=0;i<len;i++){
+            v[i]=0;
+            r[i]=0;
+        }
+        p=new float*[len];
+        for(i=0;i<len;i++){
+            p[i]=new float[len];
+            for(j=0;j<len;j++){
+              p[i][j]=0;
+              if(i==j)
+                p[i][j]=1;
+            }
+        }
+
+        cin>>edge;
+        for(i=0;i<len;i++)
+            cin>>vex[i];
+
+        for(i=0;i<edge;i++){
+            string s1,s2;
+            float t;
+            cin>>s1>>t>>s2;
+            p[findVex(s1)][findVex(s2)]=t;
+        }
+    }
+
+    int findVex(string v){
+        for(int i=0;i<len;i++)
+            if(vex[i]==v)
+               return i;
+    }
+
+    void dsf(int k){
+       v[k]=1;
+       r[count++]=k;
+       for(int i=0;i<len;i++){
+          if(p[k][i] && !v[i]){
+             dsf(i);
+          }
+       }
+    }
+
+    string DFSTraverse(){
+      for(int i=0;i<len;i++){
+        count=0;
+        dsf(i);  //从顶点i开始一趟遍历
+
+        float result=1,temp=0;
+        for(int k=1;k<count;k++){ //注意：k=0记录的是顶点i，所以从k=1开始
+             result*=p[r[k-1]][r[k]];
+             if(p[r[k]][i]!=0){
+                temp=result*p[r[k]][i];  //最后要乘以最后一个顶点k到起始点i的权值
+                if(temp>1)
+                   return "YES";
+             }
+        }
+
+        for(int t=0;t<len;t++){ //一趟遍历后清空数组元素
+            v[t]=0;
+            r[t]=0;
+        }
+      }
+      return "NO";
+    }
+
+
+    ~Map(){
+        for(int i=0;i<len;i++){
+            delete[] p[i];
+        }
+        delete[] p;
+        delete[] v;
+        delete[] vex;
+        len=0;
+    }
+};
+
+int main(){
+    int t;
+    cin>>t;
+    while(t--){
+      Map test;
+      cout<<test.DFSTraverse()<<endl;
+    }
+    return 0;
+}

@@ -1,0 +1,58 @@
+#include<iostream>
+using namespace std;
+
+class Cube;
+class Point
+{
+    int x, y, z;
+public:
+    Point(int x = 0, int y = 0, int z = 0) :x(x), y(y), z(z) {}
+    void set(int x1,int y1,int z1){
+        x=x1;
+        y=y1;
+        z=z1;
+    }
+    friend class Cube;
+};
+
+class Cube
+{
+    Point *g;
+public:
+    Cube(int x1,int y1,int z1,int x2,int y2,int z2){
+       g=new Point[2];
+       g[0].set(x1,y1,z1);
+       g[1].set(x2,y2,z2);
+    }
+
+    void collide(const Cube& r)
+    {
+        if (g[0].x > r.g[1].x || //front
+            g[1].x < r.g[0].x || //back
+            g[1].z > r.g[0].z || //up
+            g[0].z < r.g[1].z || //down
+            g[1].y < r.g[0].y || //left
+            g[0].y > r.g[1].y )  //right
+            cout << "have distance" << endl;
+        else
+            cout << "collide" << endl;
+    }
+    ~Cube(){
+      delete[] g;
+    }
+};
+
+int main()
+{
+    int n,x1,y1,z1,x2,y2,z2;
+    cin >> n;
+    while(n--)
+    {   cin>>x1>>y1>>z1>>x2>>y2>>z2;
+        Cube a(x1,y1,z1,x2,y2,z2);
+        cin>>x1>>y1>>z1>>x2>>y2>>z2;
+        Cube b(x1,y1,z1,x2,y2,z2);
+        a.collide(b);
+    }
+
+    return 0;
+}

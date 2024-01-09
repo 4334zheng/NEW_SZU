@@ -1,0 +1,25 @@
+#include <iostream>
+using namespace std;
+
+void pre(int i,int n,int a[]) {
+    if(i<=n && a[i]!=0){
+        cout<<a[i]<<" ";
+        pre(i*2,n,a);
+        pre(i*2+1,n,a);
+    }
+}
+
+int main() {
+    int t,n,*a;
+    cin>>t;
+    while(t--) {
+        cin >> n;
+        a=new int[n+1];   //0号单位浪费了，第一个元素放在1号空间
+        for(int i = 1;i <= n;i++)
+            cin>>a[i];
+        pre(1,n,a);
+        cout<<endl;
+        delete[] a;
+    }
+    return 0;
+}

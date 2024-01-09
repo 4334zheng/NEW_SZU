@@ -1,0 +1,47 @@
+#include<iostream>
+using namespace std;
+
+class Sort{
+    int len;   //数组长度
+    int *data;
+public:
+    Sort(){     //初始化
+        cin>>len;
+        data=new int[len+1];    //0号单元浪费
+        for(int i=1;i<=len;i++)  //从1号单元开始放数据
+            cin>>data[i];
+    }
+
+    void directSort(){
+        int i,j,value;
+        for(i=2;i<=len;i++){
+            value=data[i];
+            for(j=i-1;j>=1;j--){
+                if(value<data[j])
+                    data[j+1]=data[j];
+                else
+                  break;
+            }
+            data[j+1]=value;
+            print();
+        }
+    }
+
+    void print(){
+       int i;
+       for(i=1;i<len;i++)
+            cout<<data[i]<<" ";
+       cout<<data[i]<<endl;
+    }
+
+    ~Sort(){
+        delete[] data;
+        len=0;
+    }
+};
+
+int main(){
+    Sort s;
+    s.directSort();
+    return 0;
+}

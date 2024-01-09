@@ -1,0 +1,52 @@
+#include<iostream>
+using namespace std;
+
+class CPoint{
+protected:
+	double x,y;
+public:
+	CPoint(double x1,double y1):x(x1),y(y1){}
+};
+
+class CCircle:public CPoint{
+protected:
+	double r;
+public:
+	CCircle(double x1,double y1,double r1):CPoint(x1,y1),r(r1){}
+	double getArea(){
+		return 3.14*r*r;
+	}
+	void print(){
+		cout<<"Circle:("<<x<<","<<y<<"),"<<r<<endl;
+                                cout<<"Area:"<<getArea()<<endl;
+	}
+};
+
+class CCylinder:public CCircle{
+private:
+	double h;
+public:
+	CCylinder(double x1,double y1,double r1,double h1):CCircle(x1,y1,r1),h(h1){}
+	double getVol(){
+		return getArea()*h;
+	}
+	void print(){
+		cout<<"Cylinder:("<<x<<","<<y<<"),"<<r<<","<<h<<endl; 
+                                cout<<"Volume:"<<getVol()<<endl;
+	}
+};
+
+int main()
+{  
+	double x,y,r,h;
+
+	cin>>x>>y>>r;
+	CCircle c(x,y,r);
+	c.print();
+
+	cin>>x>>y>>r>>h;
+	CCylinder cylinder(x,y,r,h);
+	cylinder.print();
+	
+	return 0;
+}

@@ -1,0 +1,19 @@
+#include<iostream>
+#include<stdio.h>
+using namespace std;
+
+int main()
+{
+  //freopen("d:\\a.txt",  "r", stdin);
+  int t;
+  cin>>t;
+
+  while(t--){
+    long n;
+    cin>>n;
+    if(n%6==0 || (n/100000>0 && n/100000<10) || n%10==6)
+        cout<<"Yes"<<endl;
+    else
+        cout<<"No"<<endl;
+  }
+}

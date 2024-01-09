@@ -1,0 +1,83 @@
+#include<iostream>
+using namespace std;
+
+class Account
+{
+	static int count;
+	static float InterestRate;
+	string accon,accname;
+	float balance;
+public:
+	Account(){count++;}
+	Account(string _accon,string _accname,float _balance):accon(_accon),accname(_accname),balance(_balance)
+	{count++;}
+    ~Account(){count--;}
+    void setData(string accon1,string accname1,float balance1){
+		accon=accon1;
+		accname=accname1;
+		balance=balance1;
+	}
+    static void setInterestRate(float inter){
+		InterestRate=inter;
+	}
+    void Deposit(float amount){ //存款
+    	balance+=amount;
+	}
+    void Withdraw(float amount){ //取款
+        if(amount<=balance)
+    	   balance-=amount;
+	}
+    float GetBalance(){
+    	return balance;
+	}
+    static int GetCount(){
+    	return count;
+	}
+    static float GetInterestRate(){
+    	return InterestRate;
+	}
+    void Show(float deposit,float withdraw){//账号、姓名、存款后的余额、存款后结息余额、取款后余额。
+    	cout<<accon<<" "<<accname<<" ";
+    	Deposit(deposit);
+    	cout<<balance<<" ";
+    	Update(*this);
+    	cout<<balance<<" ";
+    	Withdraw(withdraw);
+    	cout<<balance<<endl;
+	}
+
+    friend void Update(Account& a);
+};
+
+int Account::count=0;
+float Account::InterestRate=0;
+
+void Update(Account& a){//（结息余额=账户余额+账户余额*利率）。
+	a.balance=a.balance*(1+Account::InterestRate);
+}
+
+int main()
+{
+	float interest,dep,withd,all=0,balance;
+	int t,i;
+	string name,num;
+
+	cin>>interest;
+	Account::setInterestRate(interest);
+
+	cin>>t;
+	Account *a=new Account[t];
+
+	for(i=0;i<t;i++)
+	{
+		cin>>num>>name>>balance>>dep>>withd;
+		a[i].setData(num,name,balance);
+		a[i].Show(dep,withd);
+		all+=a[i].GetBalance();
+	}
+	cout<<all<<endl;
+
+	delete []a;
+
+	return 0;
+}

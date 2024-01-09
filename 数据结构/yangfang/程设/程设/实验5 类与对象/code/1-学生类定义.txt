@@ -1,0 +1,45 @@
+////使用string处理字符串
+
+#include<iostream>
+#include<string>
+using namespace std;
+
+class student{
+    string name;
+    string num;
+    string college;
+    string major;
+    string sex;
+    string adress;
+    string tele;
+
+    public:
+        student(string name1,string num1,string college1,string major1,string sex1,string adress1,string tele1)
+        {
+                name=name1;
+                num=num1;
+                college=college1;
+                major=major1;
+                sex=sex1;
+                adress=adress1;
+                tele=tele1;
+        }
+        void print()
+        {
+            cout<<name<<" "<<num<<" "<<college<<" "<<major<<" "<<sex<<" "<<adress<<" "<<tele<<endl;
+        }
+};
+int main()
+{   
+    int t;
+    cin>>t;
+    string a,b,c,d,e,f,g;
+    while(t--)
+    {
+        cin>>a>>b>>c>>d>>e>>f>>g;
+        student stu(a,b,c,d,e,f,g);
+        stu.print();
+    }
+    return 0;
+}
+

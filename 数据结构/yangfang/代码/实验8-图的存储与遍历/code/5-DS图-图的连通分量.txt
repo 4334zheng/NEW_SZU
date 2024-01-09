@@ -1,0 +1,102 @@
+#include<iostream>
+using namespace std;
+
+class Map{
+    int len;    //顶点数
+    string *name; //顶点数组
+    int **p;   //邻接矩阵
+    int count; //访问元素计数
+    int *v; //访问标识符
+public:
+    Map(){     //初始化
+        count=0;
+        cin>>len;
+
+        v=new int[len];
+        name=new string[len];
+        p=new int*[len];
+
+        for(int i=0;i<len;i++){
+            cin>>name[i];  //输入顶点
+            v[i]=0;  //标志位初始化为0
+
+            p[i]=new int[len];
+            for(int j=0;j<len;j++)
+                 p[i][j]=0;     //邻接矩阵各数据初始化为0
+        }
+    }
+
+    int FindPoint(string ch){  //查找顶点字母在数组中的下标
+        for(int i=0;i<len;i++){
+            if(ch==name[i])
+                return i;
+        }
+        return -1;
+    }
+
+    void CreateMap(){  //建立邻接矩阵
+        int i,edge,v1,v2;
+        string ch1,ch2;
+        cin>>edge;
+        for(i=0;i<edge;i++){
+            cin>>ch1>>ch2;
+            v1=FindPoint(ch1);
+            v2=FindPoint(ch2);
+            p[v1][v2]=1;  
+            p[v2][v1]=1;  //注意，无向图要加这行
+        }
+    }
+
+    void dsf(int k){  //DSF深度遍历
+       v[k]=1;
+       for(int i=0;i<len;i++){
+          if(p[k][i] && !v[i]){
+             dsf(i);
+          }
+       }
+    }
+
+    int DFSTraverse(){   //用count记录调用DSF的次数，即有几个联通分量
+      for(int i=0;i<len;i++)
+        if(!v[i]){
+          count++;
+          dsf(i);
+        }
+      return count;
+    }
+
+    void Display(){ //显示数据
+        int i,j;
+        for(i=0;i<len-1;i++)
+            cout<<name[i]<<" ";
+        cout<<name[i]<<endl;
+
+        for(i=0;i<len;i++){
+            for(j=0;j<len-1;j++)
+               cout<<p[i][j]<<" ";
+            cout<<p[i][j]<<endl;
+        }
+
+        cout<<DFSTraverse()<<endl<<endl;
+    }
+
+    ~Map(){
+        for(int i=0;i<len;i++)
+            delete[] p[i];
+        delete[] p;
+        delete[] v;
+        delete[] name;
+        len=0;
+    }
+};
+
+int main(){
+    int t;
+    cin>>t;
+    while(t--){
+        Map test;
+        test.CreateMap();
+        test.Display();
+    }
+    return 0;
+}

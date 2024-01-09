@@ -1,0 +1,79 @@
+#include<iostream>
+using namespace std;
+
+class ListNode{//结点类
+public:
+    int data;
+    ListNode *next;
+    ListNode(int e){data=e;next=NULL;}
+};
+
+class Linklist{
+    ListNode *head;
+    int len;
+public:
+    Linklist(){
+        int e;
+        cin>>len;
+        head=new ListNode(0);
+        ListNode *p=head;
+        for(int i=0;i<len;i++){
+           cin>>e;
+           ListNode *s=new ListNode(e);
+           p->next=s;
+           p=s;
+        }
+    }
+
+    ~Linklist(){
+        ListNode *p;
+        while(head){
+           p=head;
+           head=p->next;
+           delete p;
+        }
+       len=0;
+    }
+
+    void L_del(){ //双循环：为每个结点遍历后面的结点，看是否有重复的元素
+        ListNode *p,*q,*s;
+        p=head->next;
+        while(p){   //p指向当前结点
+            q=p;
+            while(q->next){  //用指针q遍历p后面的每个结点，为了删除操作，q指向待比较元素的前一个结点
+               //注意，若有删除操作发生，则q不后移，在删除后直接比较q->next指向的新结点；若没有删除操作，则q后移，比较下一个结点。
+               if(q->next->data==p->data){
+                    s=q->next;             //s指向待删除结点
+                    q->next=s->next;
+                    len--;
+                    delete s;
+                }
+                else
+                    q=q->next;   //无删除操作，则q后移
+            }
+            p=p->next;
+        }
+    }
+
+    void L_display(){
+        ListNode *p=head->next;
+        cout<<len<<":";
+        while(p){
+          cout<<" "<<p->data;
+          p = p->next;
+        }
+        cout<<endl;
+    }
+};
+
+int main(){
+    int t;
+    cin>>t;
+    while(t--){
+        Linklist l;
+        l.L_del();
+        l.L_display();
+    }
+    return 0;
+}
+

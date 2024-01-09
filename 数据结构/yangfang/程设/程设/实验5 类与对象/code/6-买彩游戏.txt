@@ -1,0 +1,76 @@
+#include <iostream>
+#include <string>
+#include <stdio.h>
+using namespace std;
+
+class Lottery
+{
+        int code[7];
+    public:
+        Lottery(int*);
+        int matchOne(int*);
+        void matchTotal(int,int* [],string);
+};
+
+Lottery::Lottery(int *c)//设置摇奖号码
+{
+    for(int i=0; i<7; ++i)
+        code[i]=c[i];
+}
+
+int Lottery::matchOne(int *p) //判断一注彩票是否中奖，返回值为奖项类型
+{
+    int ans=0,price=0; //ans记录号码匹配数目
+    for(int i=0; i<7; ++i){
+        if(code[i]==p[i])
+            ++ans;
+    }
+    if(ans==7)
+       price=1;  //一等奖
+    else if(ans==5 || ans==6)
+       price=2;  //二等奖
+    else if(ans>=2)
+       price=3;  //三等奖
+    else
+       price=0;  //未中奖
+    return price;
+}
+
+void Lottery::matchTotal(int t,int* p[],string name)//判断t注彩票是否中奖
+{
+    int a[4]={0,0,0,0}; //记录各个奖项中奖数目
+    string b[4]={"","注一等奖！","注二等奖！","注三等奖！"};//用于输出结果
+
+    for(int i=0; i<t; ++i){
+           a[matchOne(p[i])]++;
+    }
+
+    if(a[0]==t)  //未中奖
+        cout<<"加油！继续"<<endl;
+    for(int i=1; i<4; ++i){
+        if(a[i])
+            cout<<"恭喜"<<name<<"中了"<<a[i]<<b[i]<<endl;
+    }
+}
+
+int main()
+{  // freopen("d:\\a.txt",  "r", stdin);
+    int n,i,j;
+    string name;
+    cin>>n>>name;
+    int c[7];
+    int* p[n];
+
+    for(i=0; i<n; i++){
+        p[i]=new int[7];  //存放用户的每组彩票信息
+        for(j=0;j<7;j++)
+          cin>>p[i][j];  //输入一组彩票的各个号码
+    }
+
+    for(j=0;j<7;j++)  //输入开奖号码
+          cin>>c[j];
+
+    Lottery L(c);
+    L.matchTotal(n,p,name);
+    return 0;
+}

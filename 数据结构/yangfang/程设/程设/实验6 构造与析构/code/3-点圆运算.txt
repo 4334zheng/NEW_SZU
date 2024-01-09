@@ -1,0 +1,77 @@
+#include<iostream>
+#include<cmath>
+#include<stdio.h>
+using namespace std;
+
+class Point{
+	double x,y;
+public:
+	Point(double x,double y):x(x),y(y){ }
+	Point():x(0),y(0){ }  //用于创建动态数组
+	void setXY(double x1,double y1){
+	    x=x1;
+	    y=y1;
+	}
+	double getX(){
+                    return x;
+	}
+               double getY(){
+                   return y;
+	}
+	~Point(){
+	    x=0;
+	    y=0;
+	    cout<<"point clear"<<endl;
+	}
+
+};
+
+class Circle{
+	double x,y,r;
+public:
+	Circle(double x,double y,double r):x(x),y(y),r(r){ }
+	Circle():x(0),y(0),r(0){ }
+	void Contain(Point& p){ //注意：如果参数不是引用，会多创建一个对象，那么释放的时候因为析构函数中有输出语句，结果就不正确。
+	    double d;
+	    d=sqrt(pow(p.getX()-x,2)+pow(p.getY()-y,2));
+	    if(d>r)
+                       cout<<"out"<<endl;
+                   else
+                      cout<<"in"<<endl;
+	}
+
+	~Circle(){
+	    x=0;
+	    y=0;
+	    r=0;
+	    cout<<"circle clear"<<endl;
+	}
+
+};
+
+int main()
+{      //freopen("d:\\a.txt",  "r", stdin);
+     int t,i;
+     double x,y,r;
+
+     cin>>x>>y;
+     Point p(x,y);
+
+     cin>>t;
+     Point* po=new Point[t];
+
+    for(i=0;i<t;i++){
+         cin>>x>>y;
+         po[i].setXY(x,y);
+    }
+
+    cin>>x>>y>>r;
+    Circle c(x,y,r);
+
+    c.Contain(p);
+
+    for(i=0;i<t;i++)
+        c.Contain(po[i]);
+
+   return 0;
+}

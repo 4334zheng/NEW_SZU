@@ -1,0 +1,75 @@
+﻿#include <iostream>
+#include <string>
+using namespace std;
+
+void GetNext(string p, int next[]){
+        int i, j,len=p.length();
+        next[0] = -1; j=0; i=-1;
+        while (j < len){       //注意：要多求一位
+            if (i == -1 || p[j] == p[i])
+                next[++j] = ++i;
+            else
+                i = next[i];
+        }
+}
+
+void matched_Prefix_Postfix(string  s){
+    string result="empty";
+    int max,len=s.length();
+    int *next=new int[len+1];
+
+    GetNext(s,next);
+    max=next[len];  //max记录了串的最长的真前后缀的长度
+    if(max>0)
+        result=s.substr(0,max);
+    cout<<result<<endl;
+
+   delete[] next;
+}
+
+int main() {
+    int t;
+    cin >> t;
+    string str;
+    while( t-- ) {
+        cin >> str;
+        matched_Prefix_Postfix(str);
+    }
+    return 0;
+}
+
+
+//////////////////////////////////////////
+直接求字符串的所有前缀和后缀，按长度从大到小比较
+#include <iostream>
+#include <string>
+using namespace std;
+
+void matched_Prefix_Postfix(string  s){
+    int len=s.length();
+    string s1[len-1],s2[len-1];
+    for(int i=0;i<len-1;i++){
+        s1[i]=s.substr(0,i+1);          //前缀数组
+        s2[i]=s.substr(len-1-i,i+1); //后缀数组
+    }
+
+    string result="empty";
+    for(int i=len-2; i>=0; i--){  //前缀和后缀按长度从大到小比较，比较成功，则退出循环
+            if(s1[i]==s2[i]){
+                result=s1[i];
+                break;
+            }
+    }
+    cout<<result<<endl;
+}
+
+int main() {
+    int t;
+    cin >> t;
+    string str;
+    while( t-- ) {
+        cin >> str;
+        matched_Prefix_Postfix(str);
+    }
+    return 0;
+}

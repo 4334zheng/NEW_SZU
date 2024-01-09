@@ -1,0 +1,176 @@
+第一种：边递归边检查是否有回路。判断s[i][i]是否为1
+#include<iostream>
+using namespace std;
+
+class Map{
+    int len; //顶点数
+    int *v;  //访问标识数组
+    int **p,**s; //p表示邻接矩阵，s表示可达矩阵
+    bool flag;
+public:
+    Map(){  //各类数据初始化
+        int i,j;
+        cin>>len;
+
+        v=new int[len];
+        for(i=0;i<len;i++)
+            v[i]=0;
+
+        p=new int*[len];
+        s=new int*[len];
+        for(i=0;i<len;i++){
+            p[i]=new int[len];
+            s[i]=new int[len];
+            for(j=0;j<len;j++){
+               cin>>p[i][j];
+               s[i][j]=0;
+            }
+       }
+    }
+
+    void dsf(int s,int k){ //s表示该趟的起始顶点，k表示新访问的顶点
+       v[k]=1;   //访问的顶点设置成1
+       for(int i=0;i<len;i++){
+          if(p[k][i] && !v[i]){
+             if(p[i][s]==1) //判断新选择的顶点i到起始点s之间是否有回路
+                flag=true;
+             dsf(s,i);
+          }
+       }
+    }
+
+    void DFSTraverse(){
+      for(int i=0;i<len;i++){
+        flag=false;
+        dsf(i,i);   //从顶点i开始遍历
+        for(int j=0;j<len;j++){ //一趟遍历完成后，处理顶点i在可达矩阵中的第i行数据
+            if(j!=i)
+                s[i][j]=v[j];  //访问到的为1，否则为0
+            else
+            {
+                if(flag==true)
+                    s[i][i]=1;
+            }
+        }
+        for(int t=0;t<len;t++)  //从一个顶点遍历结束后，访问标志要清0，准备下一趟遍历
+            v[t]=0;
+      }
+    }
+
+    void show(){
+      int i,j;
+      for(i=0;i<len;i++){
+        for(j=0;j<len-1;j++)
+            cout<<s[i][j]<<" ";
+        cout<<s[i][j]<<endl;
+      }
+    }
+
+
+    ~Map(){
+        for(int i=0;i<len;i++){
+            delete[] p[i];
+            delete[] s[i];
+        }
+        delete[] p;
+        delete[] s;
+        delete[] v;
+        len=0;
+    }
+};
+
+int main(){
+    Map test;
+    test.DFSTraverse();
+    test.show();
+    return 0;
+}
+
+
+//////////////////////////////////////
+第二种：一趟递归结束，统一检查路径上的点是否到起始点有回路
+#include<iostream>
+using namespace std;
+
+class Map{
+    int len; //顶点数
+    int *v;  //访问标识数组
+    int **p,**s; //p表示邻接矩阵，s表示可达矩阵
+public:
+    Map(){
+        int i,j;
+        cin>>len;
+
+        v=new int[len];
+        for(i=0;i<len;i++)
+            v[i]=0;
+
+        p=new int*[len];
+        s=new int*[len];
+        for(i=0;i<len;i++){
+            p[i]=new int[len];
+            s[i]=new int[len];
+            for(j=0;j<len;j++){
+               cin>>p[i][j];
+               s[i][j]=0;
+            }
+       }
+    }
+
+    void dsf(int k){
+       v[k]=1;
+       for(int i=0;i<len;i++){
+          if(p[k][i] && !v[i]){
+             dsf(i);
+          }
+       }
+    }
+
+    void DFSTraverse(){
+      for(int i=0;i<len;i++){
+        dsf(i);
+        for(int j=0;j<len;j++){ //从一个顶点遍历结束后，访问标志要清0
+            if(j!=i)
+                s[i][j]=v[j];
+            else
+            {
+                for(int k=0;k<len;k++)  //要检查起始点为i的路径上的其余顶点，是否到起始点i有回路
+                   if(v[k]==1 && p[k][i]==1){
+                      s[i][i]=1;
+                      break;
+                   }
+            }
+        }
+        for(int t=0;t<len;t++)
+            v[t]=0;
+      }
+    }
+
+    void show(){
+      int i,j;
+      for(i=0;i<len;i++){
+        for(j=0;j<len-1;j++)
+            cout<<s[i][j]<<" ";
+        cout<<s[i][j]<<endl;
+      }
+    }
+
+
+    ~Map(){
+        for(int i=0;i<len;i++){
+            delete[] p[i];
+            delete[] s[i];
+        }
+        delete[] p;
+        delete[] s;
+        delete[] v;
+        len=0;
+    }
+};
+
+int main(){
+    Map test;
+    test.DFSTraverse();
+    test.show();
+    return 0;
+}

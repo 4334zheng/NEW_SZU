@@ -1,0 +1,253 @@
+第一种做法：用一个数组sortv，保存拓扑排序后的顶点
+#include<iostream>
+#include<queue>
+using namespace std;
+
+const int MaxWeight=1000;
+
+struct Node{  //顶点数据
+  int ve;  //最早开始时间
+  int vl;  //最晚开始时间
+};
+
+class Map{
+    int len;    //顶点数
+    int **p;    //邻接矩阵
+
+    Node *node1;//按拓扑排序结果，依次存放各顶点的最早开始时间和最晚开始时间
+    int *v;     //存放顶点入度
+    int *sortv; //存放拓扑排序后的顶点
+public:
+    Map(){     //初始化
+        cin>>len;
+
+        node1=new Node[len];
+        sortv=new int[len];
+        v=new int[len];
+            
+        p=new int*[len];
+        for(int i=0;i<len;i++){
+            v[i]=0;
+            p[i]=new int[len];
+            for(int j=0;j<len;j++)
+                  p[i][j]=0;
+        }
+
+        int edge,v1,v2,weight;
+        cin>>edge;
+        for(int i=0;i<edge;i++){
+            cin>>v1>>v2>>weight;
+            p[v1][v2]=weight;
+            v[v2]++;     //计算顶点的入度
+        }
+    }
+
+    void TopologicalSort(){ //对顶点拓扑排序，结果保留在数组sortv[]中
+       queue<int>q;
+       for(int i=0;i<len;i++){
+          if(v[i]==0)
+            q.push(i);
+       }
+
+       int pos=0;
+
+       while(!q.empty()){
+          int t=q.front();
+          q.pop();
+
+          for(int i=0;i<len;i++){
+            if(p[t][i]!=0){   
+                v[i]--;
+                if(v[i]==0)
+                   q.push(i);
+            }
+          }
+          sortv[pos++]=t;
+       }
+    }
+
+    void CriticalPath(){ //求各个顶点的最早开始时间和最晚开始时间
+       int k,max,min;
+
+       k=sortv[0];
+       node1[k].ve=0; //将初始顶点的最早开始时间设置为0
+
+       for(int i=1;i<len;i++){ //按拓扑排序依次求各个顶点的最早开始时间
+          k=sortv[i];
+          max=0;
+          for(int j=0;j<len;j++){
+             if(p[j][k]!=0 && p[j][k]+node1[j].ve>max)  //比较顶点k进来的边
+                max=p[j][k]+node1[j].ve;
+          }
+          node1[k].ve=max;
+       }
+
+       k=sortv[len-1];
+
+       node1[k].vl=node1[k].ve;    //将结束时间的最晚开始时间设置成等于最早开始时间
+
+       for(int i=len-2;i>=0;i--){  //按拓扑逆序依次求各个顶点的最晚开始时间
+          k=sortv[i];
+          min=MaxWeight;
+          for(int j=0;j<len;j++){
+             if(p[k][j]!=0 && node1[j].vl-p[k][j]<min)   //比较顶点k出去的边
+                min=node1[j].vl-p[k][j];
+          }
+          node1[k].vl=min;
+       }
+    }
+
+    void Show(){
+       for(int i=0;i<len;i++)
+          cout<<node1[i].ve<<" ";
+       cout<<endl;
+
+       for(int i=0;i<len;i++)
+          cout<<node1[i].vl<<" ";
+       cout<<endl;
+    }
+
+    ~Map(){
+        for(int i=0;i<len;i++)
+            delete[] p[i];
+        delete[] p;
+        delete[] v;
+        delete[] node1;
+        delete[] sortv;
+        len=0;
+    }
+};
+
+int main(){
+    Map test;
+    test.TopologicalSort();
+    test.CriticalPath();
+    test.Show();
+    return 0;
+}
+
+////////////////////////////////////////////////////////////
+第二种做法：在结构中多定义一个变量，记录拓扑排序后的顶点
+#include<iostream>
+#include<queue>
+using namespace std;
+
+const int MaxWeight=1000;
+
+struct Node{  //顶点数据
+  int vertexNo;  //顶点或事件，存放拓扑排序后的顶点
+  int ve;  //最早开始时间
+  int vl;  //最晚开始时间
+};
+
+class Map{
+    int len;    //顶点数
+    int **p;    //邻接矩阵
+
+    Node *node1;//存放顶点的最早开始时间和最晚开始时间
+    int *v;     //存放顶点入度
+public:
+    Map(){     //初始化
+        cin>>len;
+
+        node1=new Node[len];
+        v=new int[len];
+            
+        p=new int*[len];
+        for(int i=0;i<len;i++){
+            v[i]=0;
+            p[i]=new int[len];
+            for(int j=0;j<len;j++)
+                  p[i][j]=0;
+        }
+
+        int edge,v1,v2,weight;
+        cin>>edge;
+        for(int i=0;i<edge;i++){
+            cin>>v1>>v2>>weight;
+            p[v1][v2]=weight;
+            v[v2]++;
+        }
+    }
+
+    void TopologicalSort(){ //对顶点拓扑排序，结果保留在数组node1的vertexNo字段中
+       queue<int>q;
+       for(int i=0;i<len;i++){
+          if(v[i]==0)
+            q.push(i);
+       }
+
+       int pos=0;
+
+       while(!q.empty()){
+          int t=q.front();
+          q.pop();
+
+          for(int i=0;i<len;i++){
+            if(p[t][i]!=0){
+                v[i]--;
+                if(v[i]==0)
+                q.push(i);
+            }
+          }
+          node1[pos++].vertexNo=t;
+       }
+    }
+
+    void CriticalPath(){ //求各个顶点的最早开始时间和最晚开始时间
+       int k,max,min;
+
+       k=node1[0].vertexNo;
+       node1[k].ve=0; //将初始顶点的最早开始时间设置为0
+
+       for(int i=1;i<len;i++){ //按拓扑排序依次求各个顶点的最早开始时间
+          k=node1[i].vertexNo;
+          max=0;
+          for(int j=0;j<len;j++){
+             if(p[j][k]!=0 && p[j][k]+node1[j].ve>max)
+                max=p[j][k]+node1[j].ve;
+          }
+          node1[k].ve=max;
+       }
+
+       k=node1[len-1].vertexNo;
+
+       node1[k].vl=node1[k].ve;    //将结束时间的最晚开始时间设置成等于最早开始时间
+
+       for(int i=len-2;i>=0;i--){  //按拓扑逆序依次求各个顶点的最晚开始时间
+          k=node1[i].vertexNo;
+          min=MaxWeight;
+          for(int j=0;j<len;j++){
+             if(p[k][j]!=0 && node1[j].vl-p[k][j]<min)
+                min=node1[j].vl-p[k][j];
+          }
+          node1[k].vl=min;
+       }
+    }
+
+    void Show(){
+       for(int i=0;i<len;i++)
+          cout<<node1[i].ve<<" ";
+       cout<<endl;
+       for(int i=0;i<len;i++)
+          cout<<node1[i].vl<<" ";
+       cout<<endl;
+    }
+
+    ~Map(){
+        for(int i=0;i<len;i++)
+            delete[] p[i];
+        delete[] p;
+        delete[] v;
+        delete[] node1;
+        len=0;
+    }
+};
+
+int main(){
+    Map test;
+    test.TopologicalSort();
+    test.CriticalPath();
+    test.Show();
+    return 0;
+}

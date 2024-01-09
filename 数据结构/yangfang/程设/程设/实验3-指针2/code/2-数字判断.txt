@@ -1,0 +1,33 @@
+#include <iostream>
+#include<stdio.h>
+#include <stdlib.h>
+using namespace std;
+
+int isNumber(char *s);
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);
+	char str[20];
+	int t;
+	cin>>t;
+	while(t--)
+	{
+		cin>>str;
+		cout<<isNumber(str)<<endl;
+	}
+	return 0;
+}
+
+int isNumber(char *s)
+{
+	char *p=s;
+	if(s[0]=='-'|| s[0]=='+')  //若有正负符号，则p后移一位
+		p++;
+
+	while(*p)
+	{
+		if(!(isdigit(*p)))
+		   return -1;
+                               p++;
+	}
+	return atoi(s);
+}

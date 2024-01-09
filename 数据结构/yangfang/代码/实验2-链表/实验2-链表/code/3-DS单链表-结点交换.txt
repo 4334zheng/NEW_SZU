@@ -1,0 +1,132 @@
+#include<iostream>
+using namespace std;
+
+class ListNode{//结点类
+public:
+    int data;
+    ListNode *next;
+    ListNode(){next=NULL;}
+};
+
+class Linklist{
+    ListNode *head;
+    int len;
+public:
+    Linklist(){
+        head=new ListNode;
+        cin>>len;
+        ListNode *p=head,*s;
+        for(int i=0;i<len;i++){
+           s=new ListNode;
+           cin>>s->data;
+           p->next=s;
+           p=s;
+        }
+       L_display();
+    }
+
+    ~Linklist(){
+        ListNode *p;
+        while(head){
+           p=head;
+           head=p->next;
+           delete p;
+        }
+        len=0;
+    }
+
+    void L_display(){
+        ListNode *p;
+        p=head->next;
+        while(p){
+          cout<<p->data<<" ";
+          p = p->next;
+        }
+        cout<<endl;
+    }
+
+    void swap(int a,int b){
+       if(a<1 || a>len  || b<1 || b>len ){
+            cout<<"error"<<endl;
+            return ;
+       }
+
+       ListNode *p,*p2,*p3,*q;
+
+       p=head;
+       for(int i=1;i<a;i++)    //p指向第a-1个结点
+           p=p->next;
+       p2=p->next;     //p2指向第a个结点
+       p3=p2->next;  //p3指向第a+1个结点
+
+       q=head;
+       for(int i=1;i<b;i++)  //q指向第b-1个结点
+          q=q->next;
+
+       p2->next=q->next->next;
+       p->next=q->next;
+       q->next->next=p3;
+       q->next=p2;
+
+       L_display();
+    }
+
+};
+
+int main() {
+    Linklist list;
+    int a,b;
+
+    for(int j=0;j<2;j++) {
+        cin>>a>>b;
+        list.swap(a,b);
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+注意：上面这种写法不完善，不能交换两个相邻的结点。swap函数可以改写一下，增加对这种情况的处理
+  void swap(int a,int b){
+       if(a<1 || a>len  || b<1 || b>len ){
+            cout<<"error"<<endl;
+            return ;
+       }
+
+      ListNode *p,*p2,*p3,*q;
+
+     if(b-a==1){   //若两个结点相邻
+        p=head;
+        for(int i=1;i<a;i++)    //p指向第a-1个结点
+           p=p->next;
+       q=head;
+       for(int i=1;i<b;i++)  //q指向第b-1个结点
+          q=q->next;
+       p2=q->next;     //p2指向第b个结点
+
+       q->next=p2->next;
+       p2->next=q;
+       p->next=p2;
+     }
+     else{   //若两个顶点不相邻
+       p=head;
+       for(int i=1;i<a;i++)    //p指向第a-1个结点
+           p=p->next;
+       p2=p->next;     //p2指向第a个结点
+       p3=p2->next;  //p3指向第a+1个结点
+
+       q=head;
+       for(int i=1;i<b;i++)  //q指向第b-1个结点
+          q=q->next;
+
+       p2->next=q->next->next;
+       p->next=q->next;
+       q->next->next=p3;
+       q->next=p2;
+     }
+
+       L_display();
+    }
+
+
+

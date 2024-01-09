@@ -1,0 +1,139 @@
+#include <iostream>
+using namespace std;
+
+class BiTreeNode{
+public:
+    char data;
+    BiTreeNode *lc;
+    BiTreeNode *rc;
+    BiTreeNode():lc(NULL),rc(NULL){}
+};
+
+class BiTree{
+private:
+    BiTreeNode *root;
+    int count;
+
+    BiTreeNode *CreateBiTree() {
+        BiTreeNode *T;
+        char ch;
+        cin>>ch;
+        if(ch == '0')
+            T = NULL;
+        else {
+            T = new BiTreeNode();
+            T-> data = ch;
+            T->lc = CreateBiTree();
+            T->rc = CreateBiTree();
+        }
+        return T;
+    }
+
+    void PreO(BiTreeNode *t) {
+        if(t) {
+            if(t->lc){
+                if(!t->lc->lc && !t->lc->rc)
+                   count++;
+            }
+            PreO(t->lc);
+            PreO(t->rc);
+        }
+    }
+
+public:
+    BiTree(){}
+    void CreateTree() {
+        count=0;
+        root = CreateBiTree();
+    }
+    void Pre() {
+        PreO(root);
+    }
+    int getCount(){return count;}
+};
+
+int main() {
+    int t;
+    cin>>t;
+    while(t--) {
+        BiTree bt;
+        bt.CreateTree();
+        bt.Pre();
+        cout<<bt.getCount()<<endl;
+    }
+    return 0;
+}
+
+///////////////////////////////////////////
+使用三叉链表表示二叉树：
+#include <iostream>
+using namespace std;
+
+class BiTreeNode{
+public:
+    char data;
+    BiTreeNode *lc;
+    BiTreeNode *rc;
+    BiTreeNode *parent;
+    BiTreeNode():lc(NULL),rc(NULL),parent(NULL){}
+};
+
+class BiTree{
+private:
+    BiTreeNode *root;
+    int count;
+
+    BiTreeNode *CreateBiTree(BiTreeNode *p) {  //p表示父节点，第一次运行时设置为NULL
+        BiTreeNode *T;
+        char ch;
+        cin>>ch;
+        if(ch == '0')
+            T = NULL;
+        else {
+            T = new BiTreeNode();
+            T-> data = ch;
+            T->parent=p;
+            T->lc = CreateBiTree(T);
+            T->rc = CreateBiTree(T);
+        }
+        return T;
+    }
+
+    void PreO(BiTreeNode *t) {
+        if(t) {
+            if(t->parent){  //要注意根节点，它的父结点为NULL，如果不加这个if，当t为根节点时会出错
+              if(t->parent->lc==t && !t->lc && !t->rc)
+                  count++;
+            }
+            PreO(t->lc);
+            PreO(t->rc);
+        }
+    }
+
+public:
+    BiTree(){}
+
+    void CreateTree() {
+        count=0;
+        BiTreeNode *t=NULL;
+        root = CreateBiTree(t);
+    }
+
+    void Pre() {
+        PreO(root);
+    }
+
+    int getCount(){return count;}
+};
+
+int main() {
+    int t;
+    cin>>t;
+    while(t--) {
+        BiTree bt;
+        bt.CreateTree();
+        bt.Pre();
+        cout<<bt.getCount()<<endl;
+    }
+    return 0;
+}

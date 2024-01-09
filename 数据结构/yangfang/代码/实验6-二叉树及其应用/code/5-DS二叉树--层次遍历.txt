@@ -1,0 +1,63 @@
+#include<iostream>
+#include <queue>
+using namespace std;
+
+class treenode{
+public:
+    char data;
+    treenode *left,*right;
+    treenode():left(NULL),right(NULL){}
+};
+
+class tree{
+    treenode *root;
+    void creatbitree(treenode* &t){
+        char ch;
+        cin>>ch;
+        if(ch=='0')
+            t=NULL;
+        else{
+            t=new treenode();
+            t->data=ch;
+            creatbitree(t->left);
+            creatbitree(t->right);
+        }
+     }
+
+public:
+    tree(){}
+    ~tree(){}
+
+    void creattree(){
+        creatbitree(root);
+    }
+
+    void levelOrder() {
+      treenode* p = root;
+      queue<treenode*> q;  //存放的是指针
+      q.push(p);
+      while (!q.empty()) {
+        p = q.front();
+        q.pop();
+        cout << p->data;
+     
+        if (p->left)
+           q.push(p->left);
+        if (p->right)
+           q.push(p->right);
+     }
+     cout<<endl;
+   }
+
+};
+
+int main() {
+    int t;
+    cin >> t;
+    tree tree0;
+    while (t--) {
+        tree0.creattree();
+        tree0.levelOrder();
+    }
+    return 0;
+}

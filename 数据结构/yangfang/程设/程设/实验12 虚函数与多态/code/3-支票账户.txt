@@ -1,0 +1,87 @@
+#include<iostream>
+using namespace std;
+
+class CBAcc
+{
+protected:
+    double bal;
+    string name, acc;
+public:
+    CBAcc(string n, string a, double b): name(n), acc(a), bal(b) {}
+    virtual void Depos(double x)//存款
+    {   bal+=x;}
+    virtual void With(double x)//取款
+    {
+        if(x<=bal)
+            bal-=x;
+        else
+            cout<<"insufficient\n";
+    }
+    virtual void Disp()
+    {   cout<<name<<" "<<acc<<" Balance:"<<bal;}
+};
+
+class CBPlus: public CBAcc
+{
+    double limit, sum;
+public:
+    CBPlus(string n, string a, double b):CBAcc(n, a, b),limit(5000),sum(0){}
+    void Depos(double x)//存款，先还透支
+    {
+        if(sum>x)
+            sum-=x;
+        else
+        {
+            x-=sum;
+            sum=0;
+            bal+=x;
+        }
+    }
+    void With(double x)//取款，要判断是否超出透支上限
+    {
+        if(x<=limit-sum+bal)
+        {
+            if(bal<=x)
+            {
+                x-=bal;
+                bal=0;
+                sum+=x;
+            }
+            else
+                bal-=x;
+        }
+        else
+            cout<<"insufficient\n";
+    }
+    void Disp()
+    {   CBAcc::Disp();  cout<<" limit:"<<limit-sum;
+    }
+};
+
+int main()
+{
+    int t;
+    double b, x;
+    string n, a;
+    CBAcc *c;
+    cin>>t;
+    while(t--)
+    {
+        cin>>n>>a>>b;
+        if(a[1]=='A')
+            c=new CBAcc(n, a, b);
+        else
+            c=new CBPlus(n, a, b);
+        for(int i=0; i<2; ++i)
+        {
+            cin>>x;
+            c->Depos(x);
+            cin>>x;
+            c->With(x);
+        }
+        c->Disp();
+       cout<<endl;
+       delete c;
+    }
+    return 0;
+}

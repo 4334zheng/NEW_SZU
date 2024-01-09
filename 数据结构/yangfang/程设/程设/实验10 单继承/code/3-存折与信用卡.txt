@@ -1,0 +1,159 @@
+///1、姓名用string表示
+#include<iostream>
+using namespace std;
+
+class CAccount
+{
+protected:
+    long account;
+    string  name;
+    float balance;
+public:
+    CAccount(long a,string n,float b):account(a),name(n),balance(b){}
+    void check()  //查询
+    { 
+        cout<<"balance is "<<balance<<endl;
+    }
+    void deposit(float num)  //存款
+    {
+        balance += num;
+        cout<<"saving ok!"<<endl;
+    }
+    void withdraw(float num) //取款
+    {
+        if( balance >= num  )
+        {
+            balance -= num;
+            cout<<"withdraw ok!"<<endl;
+        }
+        else
+            cout<<"sorry! over balance!"<<endl;
+    }
+};
+
+class CCreditcard:public CAccount
+{
+protected:
+    float limit;
+public:
+    CCreditcard(long a,string n,float b,float l):CAccount(a,n,b),limit(l){}
+    void withdraw(float num)
+    {
+        if( limit+balance >= num )
+        {
+            cout<<"withdraw ok!"<<endl;
+            balance-=num;
+        }
+        else
+            cout<<"sorry! over limit!"<<endl;
+    }
+};
+
+int main()
+{
+    long id1;
+    string  name;
+    float balance,depo,with,limit;
+
+    cin>>id1>>name>>balance>>depo>>with;
+    CAccount ca(id1,name,balance);
+    ca.check();
+    ca.deposit(depo);
+    ca.check();
+    ca.withdraw(with);
+    ca.check();
+
+    cin>>id1>>name>>balance>>limit>>depo>>with;
+    CCreditcard cc(id1,name,balance,limit);
+    cc.check();
+    cc.deposit(depo);
+    cc.check();
+    cc.withdraw(with);
+    cc.check();
+
+    return 0;
+}
+
+//////////////////////////////////////
+2、姓名用char name[10]表示
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+class CAccount
+{
+protected:
+    long account;
+    char name[10];
+    float balance;
+public:
+    CAccount(){}
+    CAccount(long a,char n[],float b):account(a),balance(b)
+    {
+        strcpy(name,n);
+    }
+    void check()
+    {
+        cout<<"balance is "<<balance<<endl;
+    }
+    void deposit(float num)
+    {
+        balance += num;
+        cout<<"saving ok!"<<endl;
+    }
+    void withdraw(float num)
+    {
+        if( balance >= num  )
+        {
+            balance -= num;
+            cout<<"withdraw ok!"<<endl;
+        }
+        else
+            cout<<"sorry! over balance!"<<endl;
+    }
+};
+
+class CCreditcard:public CAccount
+{
+protected:
+    float limit;
+public:
+    CCreditcard(){}
+    CCreditcard(long a,char n[],float b,float l):CAccount(a,n,b),limit(l){}
+    void withdraw(float num)
+    {
+        if( limit+balance >= num )
+        {
+            cout<<"withdraw ok!"<<endl;
+            balance-=num;
+        }
+        else
+            cout<<"sorry! over limit!"<<endl;
+    }
+};
+
+int main()
+{   
+    long id1;
+    char name[10];
+    float balance,depo,with,limit;
+
+    cin>>id1>>name>>balance>>depo>>with;
+    CAccount ca(id1,name,balance);
+    ca.check();
+    ca.deposit(depo);
+    ca.check();
+    ca.withdraw(with);
+    ca.check();
+
+    cin>>id1>>name>>balance>>limit>>depo>>with;
+    CCreditcard cc(id1,name,balance,limit);
+    cc.check();
+    cc.deposit(depo);
+    cc.check();
+    cc.withdraw(with);
+    cc.check();
+
+    return 0;
+}
+

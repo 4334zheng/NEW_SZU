@@ -1,0 +1,61 @@
+这是不带头结点的循环链表，head指向的第一个结点在循环中可能被删除了（当然也有可能第一个结点是最后剩下的那个结点），因此不能写析构函数。这个题本身也不需要写析构函数，每次循环都删除了一个结点，最后只剩一个结点，直接删除就可以了。
+#include<iostream>
+using namespace std;
+
+class Node{
+public:
+  int e;
+  Node* next;
+};
+
+class List{
+   Node* head;
+public:
+   List(int n){
+     head=new Node;   //头结点单独处理
+     head->next=head;
+     head->e=1;
+
+     Node *s,*p;
+     p=head;
+     for(int i=2;i<=n;i++){
+        s=new Node;
+        s->e=i;
+        s->next=p->next;
+        p->next=s;
+        p=s;
+     }
+   }
+
+   void print(int k,int s){
+      Node *p=head,*q;
+
+      for(int i=1;i<s;i++)//p指向第s个结点，即报1的结点。注意，头结点是编号为1的结点
+        p=p->next;
+
+      while(p->next!=p){   //若只剩p一个结点，则结束循环
+        for(int i=0;i<k-2;i++) //p指向待删除结点的前一个结点
+            p=p->next;
+
+        q=p->next;   //q指向要删除的元素，输出并删除
+        cout<<q->e<<" "; 
+        p->next=q->next;
+        delete q;
+
+        p=p->next;//p指向下一个报1的结点
+      }
+      cout<<p->e<<" "<<endl;  //输出最后一个结点的值
+      delete p;
+      head=NULL;
+   }
+
+};
+
+int main(){
+   int n,k,s;
+   while(cin>>n>>k>>s){
+     List l(n);
+     l.print(k,s);
+   }
+   return 0;
+}

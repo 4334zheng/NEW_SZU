@@ -1,0 +1,225 @@
+一、使用两个队列（1个用于顾客排队，1个用于窗口处理--每分钟都检查该队列：顾客处理时间结束则出队列，否则重新入队列）
+#include<iostream>
+#include<queue>
+#include<iomanip>
+using namespace std;
+
+class Person {  //顾客类
+    int arriveTime,dealTime;//arriveTime表示达到时间,dealTime表示耗时时间
+public:
+    Person(int a, int d):arriveTime(a),dealTime(d) {}
+    int getArriveTime() { return arriveTime; }
+    int getDealTime() { return dealTime; }
+    void setArriveTime(int a){arriveTime=a;}
+    void setDealTime(int d){dealTime=d;}
+};
+
+int main() {
+   float waitTime=0;    //所有客户等待时间
+   int longestTime=0;  //最长等待时间
+   int finishTime=0;     //最后完成时间
+   queue<Person> line;   //客户队列
+   queue<Person> window;  //窗口队列
+   int windowlen;  //窗口个数
+   int linelen;         //客户个数
+
+   int a,d;
+   cin>>linelen;
+   for(int i=0;i<linelen;i++){   //客户入队列
+        cin>>a>>d;
+        Person p(a,d);
+        line.push(p);
+    }
+    cin>>windowlen;
+   
+    int flag=0,time=0;    //flag记录窗口已使用数目；time用于模拟计时，每扫描完一遍可用窗口，time加1
+    while (!line.empty() || !window.empty()) {  //若客户还未处理完
+         while(flag<windowlen&& !line.empty()&&line.front().getArriveTime() <= time) { //有可用窗口，同时客户达到时间<=当前时间time，则窗口为该客户服务，使用while是1秒钟内有可能会处理多个客户
+                    Person p = line.front();    //从排队队列中出一个客户
+                    line.pop();
+
+                    int t;
+                    t=time - p.getArriveTime();   //计算其等待时间，并加入到总的等待时间
+                    waitTime+=t;
+
+                    if(t>longestTime)      //是否为最长等待时间？
+                        longestTime=t;
+
+                    t=time + p.getDealTime();    //计算其结束时间，是否为最后完成时间？
+                    if(t>finishTime)
+                        finishTime=t;
+
+                    window.push(p);
+                    flag++;
+        }
+
+        time++;       //当前时间加1，模拟真实时间
+
+        int s=window.size();       //检查窗口队列的处理中的客户，若还未结束，则其处理时间减1，若刚好结束，则出队列
+        for (int i=0;i<s;i++) {
+            Person p=window.front();
+            int t=p.getDealTime();
+            t--;
+
+            window.pop();
+
+            if (t == 0)
+                   flag--;
+            else{
+                    p.setDealTime(t);
+                    window.push(p);
+            }
+        }
+      }
+      cout <<fixed<<setprecision(1)<< 1.0*waitTime / linelen <<" "<<longestTime<<" "<<finishTime<< endl;
+}
+
+//////////////////////
+二、使用1个队列queue（用于顾客排队），1个数组（用于窗口处理）
+#include<iostream>
+#include<queue>
+#include<iomanip>
+using namespace std;
+
+class Person {
+    int arr,pro;
+public:
+    Person(int n, int s) {
+        arr = n; //到达时间
+        pro = s; //耗时时间
+    }
+    int getarr() { return arr; }
+    int getpro() { return pro; }
+};
+
+int main() {
+    int flag = 0, wait = 0, longest = 0, latest = 0; //flag记录已用窗口个数
+    int K,N;
+    int arr, pro,time=0;
+    queue<Person> line;  //客户队列
+
+    cin >> N;
+    for(int i=0;i<N;i++){   //客户入队列
+        cin >> arr >> pro;
+        Person tmp(arr, pro);
+        line.push(tmp);
+    }
+
+    cin >> K;
+    int windows[K];   //窗口数组，初始化值为0。当窗口被使用时，值为任务的处理时间。每过一秒，该值减一，直到为0，表示窗口重新可用。
+    for(int i=0;i<K;i++)
+         windows[i]=0;
+
+    while (!line.empty()) {
+        while (flag<K&& !line.empty()&&line.front().getarr() <= time) {  //当窗口可用，且到达时间<=当前时间时，处理客户
+            for (int i=0;i<K;i++) {  //扫描可用窗口
+                if (windows[i] == 0) { //表示该窗口未被使用
+                    int temp=line.front().getpro();
+                    windows[i] = temp;  //将客户处理时间设置成数组元素的内容
+
+                    int t;
+                    t=time - line.front().getarr();   //计算其等待时间，并加入到总的等待时间
+                    wait+=t;
+
+                    if(t>longest)      //是否为最长等待时间？
+                        longest=t;
+
+                    t=time + temp;    //计算其结束时间，是否为最后完成时间？
+                    if(t>latest)
+                        latest=t;
+
+                    line.pop();
+                    flag++;  //已用窗口数目+1
+                    break;
+                }
+            }
+        }
+
+        time++;
+
+        for (int i=0;i<K;i++) {  //每过1秒，扫描一遍，看是否有任务完成
+            if (windows[i] >0) {
+                windows[i]--;
+                if (windows[i] == 0)
+                    flag--;
+            }
+        }
+    }
+
+    cout <<fixed<<setprecision(1)<< 1.0*wait / N <<" "<<longest<<" "<<latest<< endl;
+}
+
+/////////////////////
+三、使用1个队列queue（用于顾客排队），1个动态数组vector（用于窗口处理）
+#include<iostream>
+#include<queue>
+#include <vector>
+#include<iomanip>
+using namespace std;
+
+class Person {
+    int arr,pro;
+public:
+    Person(int n, int s) {
+        arr = n; //到达时间
+        pro = s; //耗时时间
+    }
+    int getarr() { return arr; }
+    int getpro() { return pro; }
+};
+
+int main() {
+    int flag = 0, wait = 0, longest = 0, latest = 0; //flag记录已用窗口个数
+    int K,N;
+    int arr, pro,time=0;
+    queue<Person> line;  //客户队列
+
+    cin >> N;
+    for(int i=0;i<N;i++){   //客户入队列
+        cin >> arr >> pro;
+        Person tmp(arr, pro);
+        line.push(tmp);
+    }
+
+    cin >> K;
+    vector<int> windows(K,0);   //处理窗口数组，数组元素初始化值为0
+    vector<int>::iterator it;   //遍历数组元素的指针it
+
+    while (!line.empty()) {
+        while (flag<K&& !line.empty()&&line.front().getarr() <= time) {
+            for (it = windows.begin(); it != windows.end(); it++) {
+                if (*it == 0) { //*it=0，表示该窗口未被使用
+                    int temp=line.front().getpro();
+                    *it = temp;  //将客户处理时间设置成*it的内容
+
+                    int t;
+                    t=time - line.front().getarr();   //计算其等待时间，并加入到总的等待时间
+                    wait+=t;
+
+                    if(t>longest)      //是否为最长等待时间？
+                        longest=t;
+
+                    t=time + temp;    //计算其结束时间，是否为最后完成时间？
+                    if(t>latest)
+                        latest=t;
+
+                    line.pop();
+                    flag++;
+                    break;
+                }
+            }
+        }
+
+        time++;
+
+        for (it = windows.begin(); it != windows.end(); it++) {
+            if (*it >0) {
+                (*it)--;
+                if (*it == 0)
+                    flag--;
+            }
+        }
+    }
+
+    cout <<fixed<<setprecision(1)<< 1.0*wait / N <<" "<<longest<<" "<<latest<< endl;
+}

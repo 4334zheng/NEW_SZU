@@ -1,0 +1,464 @@
+第一种，PRIM使用暴力法
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+const int MaxWeight=1000;
+
+struct Node{  //边数据结构定义
+  int v1,v2,weight;
+};
+
+bool cmp(const Node& n1,const Node& n2){
+  return n1.weight<n2.weight;
+}
+
+class Map{ //图使用邻接矩阵方式存储
+    int len;   //顶点数
+    string *name; //顶点数组
+    int **p;  //邻接矩阵
+    int *v;  //访问标志
+    Node *node1,*node2;//node1存放算法过程中逐渐产生的边；node2存放图的原始边（克鲁斯卡尔算法需要）
+public:
+    Map(){     //初始化
+        cin>>len;
+        name=new string[len];
+        node1=new Node[len-1];  //n-1条边
+        v=new int[len];
+
+        p=new int*[len];
+        for(int i=0;i<len;i++){
+            cin>>name[i];
+            p[i]=new int[len];
+            for(int j=0;j<len;j++)
+               p[i][j]=MaxWeight;
+        }
+    }
+
+    int FindPoint(string ch){  //查找顶点字母在数组中的下标
+        for(int i=0;i<len;i++){
+            if(ch==name[i])
+                return i;
+        }
+        return -1;
+    }
+
+    void CreateMap(){  //建立邻接矩阵
+        int edge,v1,v2,weight;
+        string ch1,ch2;
+
+        cin>>edge;
+        node2=new Node[edge];  //node2存放图的原始输入边
+
+        for(int i=0;i<edge;i++){
+            cin>>ch1>>ch2>>weight;
+
+            v1=FindPoint(ch1);
+            v2=FindPoint(ch2);
+            p[v1][v2]=weight;
+            p[v2][v1]=weight;   //无向图多这一行
+
+            node2[i].v1=v1<v2?v1:v2;  //v1的值<v2的值，输出需要
+            node2[i].v2=v1>v2?v1:v2;
+            node2[i].weight=weight;
+        }
+        sort(node2,node2+edge,cmp); //对边进行排序
+    }
+
+    void Prim(string start){
+       int p1,p2,min,sum=0;
+
+       for(int i=0;i<len;i++) //访问标志位初始化为0
+          v[i]=0;
+
+       p1=FindPoint(start);  //第一个顶点单独处理
+       v[p1]=1;
+
+       for(int k=0;k<len-1;k++){
+           min=MaxWeight;
+           for(int i=0;i<len;i++){
+              for(int j=0;j<len;j++){
+                if(v[i]==1 && v[j]==0 && p[i][j]<min){
+                    p1=i;
+                    p2=j;
+                    min=p[i][j];
+                 }
+              }
+           }
+
+           v[p2]=1;
+           sum+=min;
+           node1[k].v1=p1;     //每次选出来的边加入到node1数组中
+           node1[k].v2=p2;
+           node1[k].weight=min;
+       }
+
+       cout<<sum<<endl;
+       cout<<"prim:"<<endl;
+       for(int i=0;i<len-1;i++)
+            cout<<name[node1[i].v1]<<" "<<name[node1[i].v2]<<" "<<node1[i].weight<<endl;
+    }
+
+    void Kruskal(){
+       int p1,p2,k=0,count=0,q1,q2;
+
+       for(int i=0;i<len;i++)//刚开始每个结点都是不同的连通分量
+          v[i]=i;
+
+       cout<<"kruskal:"<<endl;
+       while(count<len-1){
+          p1=node2[k].v1;
+          p2=node2[k].v2;
+
+          if(v[p1]!=v[p2]){
+              count++;
+              cout<<name[p1]<<" "<<name[p2]<<" "<<node2[k].weight<<endl;  //按题目要求，直接输出了
+
+              q1=v[p1];
+              q2=v[p2];
+              for(int i=0;i<len;i++){
+                   if(v[i]==q1)
+                      v[i]=q2;
+              }
+          }
+
+          k++;
+       }
+    }
+
+    ~Map(){
+        for(int i=0;i<len;i++)
+            delete[] p[i];
+        delete[] p;
+        delete[] name;
+        delete[] node1;
+        delete[] node2;
+        delete[] v;
+        len=0;
+    }
+};
+
+int main(){
+    Map test;
+    test.CreateMap();
+    string start;
+    cin>>start;
+    test.Prim(start);
+    test.Kruskal();
+
+    return 0;
+}
+
+
+//////////////////////////////////////
+第二种，PRIM使用最小交叉边法：
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+const int MaxWeight=1000;
+
+struct Node{  //边数据
+  int v1,v2,weight;
+};
+
+bool cmp(const Node& n1,const Node& n2){
+  return n1.weight<n2.weight;
+}
+
+class Map{
+    int len;   //顶点数
+    string *name; //顶点数组
+    int **p;  //邻接矩阵
+    Node *node1,*node2;//最小生成树使用，存放选择好的边
+public:
+    Map(){     //初始化
+        cin>>len;
+        name=new string[len];
+        node1=new Node[len-1];
+
+        p=new int*[len];
+        for(int i=0;i<len;i++){
+            cin>>name[i];
+            p[i]=new int[len];
+            for(int j=0;j<len;j++)
+               p[i][j]=MaxWeight;
+        }
+    }
+
+    int FindPoint(string ch){  //查找顶点字母在数组中的下标
+        for(int i=0;i<len;i++){
+            if(ch==name[i])
+                return i;
+        }
+        return -1;
+    }
+
+    void CreateMap(){  //建立邻接矩阵
+        int edge,v1,v2,weight;
+        string ch1,ch2;
+
+        cin>>edge;
+        node2=new Node[edge];
+
+        for(int i=0;i<edge;i++){
+            cin>>ch1>>ch2>>weight;
+
+            v1=FindPoint(ch1);
+            v2=FindPoint(ch2);
+            p[v1][v2]=weight;
+            p[v2][v1]=weight;   // 无向图需要
+
+            node2[i].v1=v1<v2?v1:v2;
+            node2[i].v2=v1>v2?v1:v2;
+            node2[i].weight=weight;
+        }
+        sort(node2,node2+edge,cmp); //对边进行排序
+    }
+
+    void Prim(string start){
+       int p1,p2,min,sum=0;
+       Node* temp=new Node[len];  //temp存放V-U中各顶点到集合U中顶点的最小交叉边及其权值
+
+       p1=FindPoint(start);  
+       for(int i=0;i<len;i++){ //初始化起始点p1到其余各结点的权值
+          temp[i].v1=p1;
+          temp[i].weight=p[p1][i];     //注意：temp[i].v2这个字段没用，可直接用数组的下标来表示第二个顶点
+       }
+       temp[p1].weight=0; //访问过的顶点权值设置为0，避免重复访问
+
+       for(int i=0;i<len-1;i++){
+           min=MaxWeight;   //在temp中找出权值最小的边
+           for(int j=0;j<len;j++){
+             if(temp[j].weight && temp[j].weight<min){
+                min=temp[j].weight;
+                p2=j;
+             }
+           }
+
+           sum+=min;   //将边及权值加入到node1。注意：已经在集合中的顶点是v1，新选中的顶点是v2
+           node1[i].v1=temp[p2].v1;
+           node1[i].v2=p2;
+           node1[i].weight=min;
+
+           for(int j=0;j<len;j++){  //检查新选中的顶点p2，是否使得剩余顶点的最小交叉边权值变小
+              if(temp[j].weight && temp[j].weight>p[p2][j]){
+                temp[j].weight=p[p2][j];
+                temp[j].v1=p2;
+              }
+           }
+
+           temp[p2].weight=0;  //表示已经被选中
+       }
+
+       cout<<sum<<endl;
+       cout<<"prim:"<<endl;
+       for(int i=0;i<len-1;i++)
+         cout<<name[node1[i].v1]<<" "<<name[node1[i].v2]<<" "<<node1[i].weight<<endl;
+
+       delete[] temp;
+    }
+
+
+    void Kruskal(){
+       int p1,p2,k=0,count=0,q1,q2;
+       int *v=new int[len];  //Kruskal算法需要的组标志
+       for(int i=0;i<len;i++)//刚开始每个结点都是不同的连通分量
+          v[i]=i;
+
+       cout<<"kruskal:"<<endl;
+       while(count<len-1){
+          p1=node2[k].v1;
+          p2=node2[k].v2;
+          if(v[p1]!=v[p2]){
+              count++;
+              cout<<name[p1]<<" "<<name[p2]<<" "<<node2[k].weight<<endl;
+
+              q1=v[p1];
+              q2=v[p2];
+              for(int i=0;i<len;i++){  //将所有等于q1的值都换成q2的值，即大家属于同一个连通分量
+                   if(v[i]==q1)
+                      v[i]=q2;
+              }
+          }
+          k++;
+       }
+       delete[] v;
+    }
+
+    ~Map(){
+        for(int i=0;i<len;i++)
+            delete[] p[i];
+        delete[] p;
+        delete[] name;
+        delete[] node1;
+        delete[] node2;
+        len=0;
+    }
+};
+
+int main(){
+    Map test;
+    test.CreateMap();
+    string start;
+    cin>>start;
+    test.Prim(start);
+    test.Kruskal();
+    return 0;
+}
+
+/////////////////////////
+第三种：PRIM使用最小交叉边法，用sort排序
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+const int MaxWeight=1000;
+
+struct Node{  //边数据
+  int v1,v2,weight;
+};
+
+bool cmp(const Node& n1,const Node& n2){
+  return n1.weight<n2.weight;
+}
+
+class Map{
+    int len;   //顶点数
+    string *name; //顶点数组
+    int **p;  //邻接矩阵
+    Node *node1,*node2;//最小生成树使用，存放选择好的边
+public:
+    Map(){     //初始化
+        cin>>len;
+        name=new string[len];
+        node1=new Node[len-1];
+        p=new int*[len];
+        for(int i=0;i<len;i++){
+            cin>>name[i];
+            p[i]=new int[len];
+            for(int j=0;j<len;j++)
+               p[i][j]=MaxWeight;
+        }
+    }
+
+    int FindPoint(string ch){  //查找顶点字母在数组中的下标
+        for(int i=0;i<len;i++){
+            if(ch==name[i])
+                return i;
+        }
+        return -1;
+    }
+
+    void CreateMap(){  //建立邻接矩阵
+        int edge,v1,v2,weight;
+        string ch1,ch2;
+
+        cin>>edge;
+        node2=new Node[edge];
+
+        for(int i=0;i<edge;i++){
+            cin>>ch1>>ch2>>weight;
+
+            v1=FindPoint(ch1);
+            v2=FindPoint(ch2);
+            p[v1][v2]=weight;
+            p[v2][v1]=weight;
+
+            node2[i].v1=v1<v2?v1:v2;
+            node2[i].v2=v1>v2?v1:v2;
+            node2[i].weight=weight;
+        }
+        sort(node2,node2+edge,cmp); //对边进行排序
+    }
+
+    void Prim(string start){
+       int p1,p2,sum=0,k,t;
+       Node* temp=new Node[len];  //temp存放V-U中各顶点到集合U中顶点的最小交叉边及其权值
+       int *v=new int[len];
+
+       p1=FindPoint(start);  
+       for(int i=0;i<len;i++){ //初始化起始点p1到其余各结点的权值
+          temp[i].v1=p1;
+          temp[i].v2=i;
+          temp[i].weight=p[p1][i];
+          v[i]=0;
+       }
+
+       v[p1]=1;
+
+       for(int i=0;i<len-1;i++){
+           sort(temp,temp+len,cmp);  //每次都先排序，第一个就是最小的。因此每次选中的边要设置成MaxWeight，防止再次被选中
+
+           sum+=temp[0].weight;   //将边及权值加入到node1
+           node1[i]=temp[0];
+
+           temp[0].weight=MaxWeight;  //选中的边设置成MaxWeight
+           k=temp[0].v2;
+           v[k]=1;
+
+           for(int j=0;j<len;j++){  //检查新选中的顶点p2，是否使得剩余顶点的最小交叉边权值变小
+              t=temp[j].v2;
+              if(v[t]==0 && temp[j].weight>p[k][t]){
+                temp[j].weight=p[k][t];
+                temp[j].v1=k;
+              }
+           }
+       }
+
+       cout<<sum<<endl;
+       cout<<"prim:"<<endl;
+       for(int i=0;i<len-1;i++)
+         cout<<name[node1[i].v1]<<" "<<name[node1[i].v2]<<" "<<node1[i].weight<<endl;
+
+       delete[] temp;
+       delete[] v;
+    }
+
+
+    void Kruskal(){
+       int p1,p2,k=0,count=0,q1,q2;
+       int *v=new int[len];  //Kruskal算法需要的组标志
+       for(int i=0;i<len;i++)//刚开始每个结点都是不同的连通分量
+          v[i]=i;
+
+       cout<<"kruskal:"<<endl;
+       while(count<len-1){
+          p1=node2[k].v1;
+          p2=node2[k].v2;
+          if(v[p1]!=v[p2]){
+              count++;
+              cout<<name[p1]<<" "<<name[p2]<<" "<<node2[k].weight<<endl;
+
+              q1=v[p1];
+              q2=v[p2];
+              for(int i=0;i<len;i++){  //将所有等于q1的值都换成q2值，即大家属于同一个连通分量
+                   if(v[i]==q1)
+                      v[i]=q2;
+              }
+          }
+          k++;
+       }
+       delete[] v;
+    }
+
+    ~Map(){
+        for(int i=0;i<len;i++)
+            delete[] p[i];
+        delete[] p;
+        delete[] name;
+        delete[] node1;
+        delete[] node2;
+        len=0;
+    }
+};
+
+int main(){
+    Map test;
+    test.CreateMap();
+    string start;
+    cin>>start;
+    test.Prim(start);
+    test.Kruskal();
+    return 0;
+}

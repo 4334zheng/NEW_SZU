@@ -1,0 +1,126 @@
+///用字符指针表示字符串
+
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+class CTelNumber{
+    char *s;
+  public:
+    CTelNumber(char *s1){
+        s=new char [strlen(s1)+1];
+        strcpy(s,s1);
+    }
+
+    CTelNumber (CTelNumber &n){
+           if(judge(n.s)){
+              s=new char[strlen(n.s)+2];
+              char c=n.s[0];
+
+              if(c>='2' && c<='4')
+                   s[0]='8';
+              else if(c>='5' && c<='8')
+                   s[0]='2';
+              for(int i=0;i<7;i++)
+                   s[i+1]=n.s[i];
+              s[8]='\0';
+
+             cout<<s<<endl;
+           }
+         else{
+            s=0;
+            cout<<"Illegal phone number"<<endl;
+           }
+    }
+
+    bool judge(char* s){
+        if(strlen(s)!=7)
+            return false;
+        else if(s[0]<'2' || s[0]>'8')
+            return false;
+        else{
+            for(int i=0;i<7;i++){
+              if(!isdigit(s[i]))
+                return false;
+            }
+            return true;
+        }
+    }
+
+    ~CTelNumber(){
+        if(s)
+          delete[] s;
+    }
+};
+
+int main()
+{
+    int t;
+    char s[10];
+    cin>>t;
+    while(t--)
+    {
+        cin>>s;
+        CTelNumber t1(s);
+        CTelNumber t2(t1);
+    }
+    return 0;
+}
+
+
+///////////////////////////////////////////
+////用string表示电话号码
+
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+class CTelNumber{
+    string s;
+  public:
+    CTelNumber(string s1){
+        s=s1;
+    }
+
+    CTelNumber (CTelNumber &n){
+        if(judge(n.s)){
+           char c=n.s[0],k;
+           if(c>='2' && c<='4')
+              k='8';
+           if(c>='5' && c<='8')
+              k='2';
+           s=k+n.s;
+           cout<<s<<endl;
+        }
+        else
+           cout<<"Illegal phone number"<<endl;
+    }
+
+    bool judge(string s){
+        if(s.length()!=7)
+            return false;
+        else if(s[0]<'2' || s[0]>'8')
+            return false;
+        else{
+            for(int i=0;i<7;i++){
+              if(!isdigit(s[i]))
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+int main()
+{
+    int t;
+    string s;
+    cin>>t;
+    while(t--)
+    {
+        cin>>s;
+        CTelNumber  t1(s);
+        CTelNumber t2(t1);
+    }
+    return 0;
+}

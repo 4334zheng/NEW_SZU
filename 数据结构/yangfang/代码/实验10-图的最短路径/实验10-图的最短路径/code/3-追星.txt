@@ -1,0 +1,89 @@
+#include <iostream>
+using namespace std;
+
+const int INFINITY=1000;  // 无穷大
+class Graph{
+    int  v;		   // 顶点数
+    int  **AdjMatrix;    // 邻接矩阵
+    int  *Dest;              // 存放每个顶点对应的最短路径长度
+public:
+    //创建图的邻接矩阵
+    void CreateGraph()   // 生成图（采用邻接矩阵）
+  {      int  i, j;
+         cin >> v;  //输入顶点样本数目
+
+         Dest=new int[v];
+         AdjMatrix=new int*[v];
+         for(i=0;i<v;i++){
+             AdjMatrix[i]=new int[v];
+             for(j=0;j<v;j++)
+                 AdjMatrix[i][j]=INFINITY;
+         }
+
+         int edge,a,b,c;
+        cin>>edge;
+        for(i=0;i<edge;i++){    //这道题和第一题的差别，就是边的处理，其余过程都是一样的
+	 cin>>a>>b>>c;
+	 if(c<AdjMatrix[a-1][b-1]){   //依次输入邻接矩阵，注意：可能有重边，因此要比较一下大小
+	         AdjMatrix[a-1][b-1]=c;
+	         AdjMatrix[b-1][a-1]=c;      //无向图，两条边
+	 }
+       }
+  }
+
+  //图的最短路径函数
+  void ShortestPath()
+  {
+	int i, j, k, CurrentVex, MinDest;
+	bool *Final=new bool[v];   //判断顶点是否已经被选择过
+
+	for (i=0; i<v; i++) {
+		Dest[i] = INFINITY;		                // 所有顶点到开始顶点之间的距离初值设为无穷大
+		if (AdjMatrix[0][i] < INFINITY) {	// 在开始顶点与当前顶点之间存在弧
+			Dest[i] = AdjMatrix[0][i];
+		}
+		Final[i] = false;
+	}
+
+	Final[0] = true;
+	for (i=1; i<v; i++) {
+		MinDest = INFINITY;
+		for (j=0; j<v; j++) {		// 找当前未处理过顶点中到开始顶点最近的顶点
+			if (!Final[j]) {
+				if (Dest[j] < MinDest) {
+					CurrentVex = j;	// CurrentVex表示离开始顶点最近的顶点
+					MinDest = Dest[j];
+				}
+			}
+		}
+		Final[CurrentVex] = true;
+		if(CurrentVex==v-1){    //若找到的顶点是v-1，则可以提前结束
+                                      cout<<Dest[v-1]<<endl;
+                                      break;
+		}
+		for (j=1; j<v; j++) {		// 更新当前最短路径及距离
+			if ( !Final[j] && (MinDest+AdjMatrix[CurrentVex][j] < Dest[j]))
+				Dest[j]=MinDest+AdjMatrix[CurrentVex][j];//更新顶点j到开始顶点的最短距离
+		}
+	}
+	delete[] Final;
+  }
+
+  ~Graph(){
+      for(int i=0;i<v;i++)
+            delete[] AdjMatrix[i];
+      delete []AdjMatrix;
+      delete []Dest;
+  }
+
+};
+
+//主函数
+int main()
+ {
+    Graph g;
+    g.CreateGraph();
+    g.ShortestPath();
+
+    return 0;
+}

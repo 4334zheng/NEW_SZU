@@ -1,0 +1,73 @@
+#include<iostream>
+using namespace std;
+
+class Person{
+   string name;
+   int age;
+public:
+   Person(){}
+   Person(string name,int age):name(name),age(age){}
+   void display(){cout<<name<<" "<<age<<" ";}
+   char grade(int score){
+      char grade;
+      if(score>=85)
+        grade='A';
+      else if(score>=75)
+        grade='B';
+      else if(score>=65)
+        grade='C';
+      else if(score>=60)
+        grade='D';
+      else
+        grade='F';
+      return grade;
+   }
+};
+
+class Student1:public Person{
+   int score1,score2;
+public:
+   Student1(){}
+   Student1(string name,int age,int score1,int score2):Person(name,age),score1(score1),score2(score2){}
+   void display(){
+      Person::display();
+      int score;
+      score=(int)(score1*0.4+score2*0.6+0.5);  //成绩四舍五入，所以加0.5
+      cout<<grade(score)<<endl;
+   }
+};
+
+class Student2:public Person{
+   int score1;
+public:
+   Student2(){}
+   Student2(string name,int age,int score1):Person(name,age),score1(score1){}
+   void display(){
+      Person::display();
+      int score;
+      score=(int)(score1+0.5);  //成绩四舍五入，所以加0.5
+      cout<<grade(score)<<endl;
+   }
+};
+
+int main(){
+   int t,age,score1,score2;
+   char type;
+   string name;
+
+   cin>>t;
+   while(t--){
+      cin>>type;
+      if(type=='R'){
+        cin>>name>>age>>score1>>score2;
+        Student1 stu(name,age,score1,score2);
+        stu.display();
+      }
+      else{
+        cin>>name>>age>>score1;
+        Student2 stu(name,age,score1);
+        stu.display();
+      }
+   }
+   return 0;
+}

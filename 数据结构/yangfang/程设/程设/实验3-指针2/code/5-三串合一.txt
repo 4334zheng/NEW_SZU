@@ -1,0 +1,70 @@
+第一种做法：数组、指针交替
+#include<iostream>
+#include<stdio.h>
+#include<cstring>
+using namespace std;
+
+main()
+{   //freopen("d:\\a.txt",  "r", stdin);
+    int t,b[3],e[3],i,j,n=0;  //数组b,e分别记录每个字符串的起止位置
+    cin>>t;
+    char p[3][15],*q,*s,*r;
+    while(t--){
+      for(i=0;i<3;i++)
+          cin>>p[i];
+      for(i=0;i<3;i++){
+          cin>>b[i]>>e[i];
+          n+=e[i]-b[i]+1;       //n记录合并后的大小
+      }
+      r=new char[++n];  //多出一个放结束符
+      s=r;
+      for(i=0;i<3;i++){
+         q=*(p+i);  //等价于：q=p[i];
+         for(j=b[i]-1;j<e[i];j++)
+             *s++=*(q+j);  
+      }
+      *s='\0';
+      cout<<r<<endl;
+      delete[] r;
+    }
+    return 0;
+}
+
+
+///////////////////////////////
+第二种做法：纯指针
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{   //freopen("d:\\a.txt","r",stdin);
+    int t;
+    cin>>t;
+
+     while(t--){
+       char **p=new char*[3], *s=new char[40], *q=s;
+       int a,b;
+
+       for(int i=0;i<3;i++){  //输入3个字符串
+         p[i]=new char[15];
+         cin>>p[i];
+       }
+
+       for(int i=0;i<3;i++){  //将每个字符串的部分内容，拷贝到s上去，注意q声明时有q=s
+         cin>>a>>b;
+         for(int j=a-1;j<b;j++)
+            *q++=*(*(p+i)+j);   //等价于：*q++=*(p[i]+j);或*q++=p[i][j];
+       }
+       *q=0;   //处理结束后，加结束符0
+
+       cout<<s<<endl; //输出s的值
+
+       for(int i=0;i<3;i++) //释放空间
+           delete[] p[i];
+       delete[] p;
+     }
+    return 0;
+}
+
+
+

@@ -1,0 +1,80 @@
+//连通图的应用，和克鲁斯卡尔算法中并查集的处理相同
+#include <iostream>
+#include <cmath>
+using namespace std;
+ 
+class Graph{
+  int *connect;//连通图
+  int *x; //x位置
+  int *y; //y位置
+  bool *v; //顶点是否可访问
+  int distance;//保存距离
+  int num; //顶点数
+public:
+  Graph(){
+    cin>>num>>distance;
+ 
+    connect=new int[num+1];
+    x=new int[num+1];
+    y=new int[num+1];
+    v=new bool[num+1];
+ 
+    for(int i = 1; i <= num; i++){
+        cin>>x[i];
+        cin>>y[i];
+        connect[i] = i;  //刚开始，各个顶点互不连通
+        v[i]=false;
+    }
+  }
+ 
+  ~Graph(){
+    num=0;
+    distance=0;
+    delete[] connect;
+    delete[] x;
+    delete[] y;
+    delete[] v;
+  }
+ 
+  void optO(int id){  //当修复一个顶点时，要判断是否和其他已经可用的顶点可连通
+     v[id] = true;
+     int q1,q2;
+     for(int i = 1; i <= num; i++){
+        if(i != id && v[i] && (pow((x[i]-x[id]),2) + pow((y[i]-y[id]),2)) <= pow(distance,2)){
+             if(connect[i]!=connect[id]){
+                  q1=connect[i];
+                  q2=connect[id];
+                  for(int j=1;j<=num;j++){  //将所有等于q1的值都换成q2值，即大家属于同一个连通分量
+                        if(connect[j]==q1)
+                           connect[j]=q2;
+                }
+             }
+         }
+     }
+  }
+ 
+  void optS(int p,int q){
+    if(connect[p] != connect[q])
+        cout<<"FAIL"<<endl;
+    else
+        cout<<"SUCCESS"<<endl;
+   }
+ 
+};
+ 
+int main(){
+    Graph g;
+    char op;
+    int d1,d2;
+    while(cin>>op){
+        if(op=='O'){
+            cin>>d1;
+            g.optO(d1);
+        }
+        if(op== 'S'){
+            cin>>d1>>d2;
+            g.optS(d1,d2);
+        }
+    }
+    return 0;
+}

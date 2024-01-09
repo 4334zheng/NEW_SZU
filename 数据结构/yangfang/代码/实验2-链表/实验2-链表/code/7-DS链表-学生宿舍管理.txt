@@ -1,0 +1,265 @@
+#include<iostream>
+using namespace std;
+
+class Node{//宿舍结点类
+public:
+    string name;
+    int number;
+    Node *next;
+    Node(){next=NULL;}
+};
+
+class Linklist{
+    Node *ahead,*fhead;  //ahead表示已经分配的宿舍；fhead表示空闲宿舍
+public:
+    Linklist(){
+        ahead=new Node;
+        fhead=new Node;
+
+        Node *p=fhead,*s;
+
+        for(int i=101;i<=120;i++){   //刚开始宿舍都还未分配，建立fhead链表
+            s=new Node;
+            s->number=i;
+            p->next=s;
+            p=s;
+        }
+    }
+
+    ~Linklist(){
+        Node *p;
+        while(ahead){
+           p=ahead;
+           ahead=p->next;
+           delete p;
+        }
+
+        while (fhead){
+           p=fhead;
+           fhead=p->next;
+           delete p;
+        }
+    }
+
+    void L_init(string name,int number){   //初始化：分配一个宿舍：将该宿舍按宿舍号从小到大的顺序插入到ahead链表，并从fhead中删除
+        Node *p=fhead,*q,*s;
+        while(p->next->number!=number)   //从ahead表中删除
+            p=p->next;
+        q=p->next;
+        p->next=q->next;
+        delete q;
+
+         q=ahead;    //寻找插入位置
+         while(q->next && q->next->number<number)
+            q=q->next;
+
+         s=new Node;  //插入一个新结点
+         s->name=name;
+         s->number=number;
+         s->next=q->next;
+         q->next=s;
+    }
+
+    void L_assign(string name){//给用户name分配一个宿舍
+         Node *p,*q,*s;
+         p=fhead->next; //p指向可用链表的第一个结点，需要将该结点插入到已用链表中
+         fhead->next=p->next;  //将p从链表中去掉
+
+         q=ahead;           //q寻找插入的有效位置
+         while(q && q->next->number<p->number)
+              q=q->next;
+
+         s=new Node;
+         s->name=name;
+         s->number=p->number;
+
+         s->next=q->next;
+         q->next=s;
+
+         delete p;
+    }
+
+    void L_return(int number){  //回收一间宿舍
+         Node *q=ahead,*s;
+         while(q->next && q->next->number!=number)
+            q=q->next;
+         s=q->next;     //找到要回收的宿舍s
+         q->next=q->next->next;
+
+         Node *p=fhead->next,*pnew;
+         while(p->next)
+            p=p->next;
+         p->next=s;   //将s挂在可用链表的尾部
+         s->next=NULL;
+    }
+
+    void L_adisplay(){  //显示已经分配的宿舍信息
+        Node *p=ahead->next;
+
+        while(p->next){
+          cout<<p->name<<"("<<p->number<<")-";
+          p = p->next;
+        }
+        cout<<p->name<<"("<<p->number<<")"<<endl;
+    }
+
+    void L_fdisplay(){  //显示未分配的宿舍信息
+        Node *p=fhead->next;
+        while(p->next){
+          cout<<p->number<<"-";
+          p = p->next;
+        }
+        cout<<p->number<<endl;
+    }
+};
+
+int main(){
+    Linklist l;
+    string name,str;
+    int number;
+    int t;
+
+    cin>>t;
+    while(t--){
+        cin>>name>>number;
+        l.L_init(name,number);
+    }
+
+    cin>>t;
+    while(t--){
+        cin>>str;
+        if(str=="assign"){
+            cin>>name;
+            l.L_assign(name);
+        }
+        if(str=="return"){
+            cin>>number;
+            l.L_return(number);
+        }
+        if(str=="display_used"){
+            l.L_adisplay();
+        }
+        if(str=="display_free"){
+            l.L_fdisplay();
+        }
+    }
+
+    return 0;
+}
+
+////////////////////////////////////
+使用list
+#include<iostream>
+#include <list>
+using namespace std;
+
+class Node{//宿舍结点类
+public:
+    string name;
+    int number;
+};
+
+bool cmp(const Node& s1, const Node& s2) //该函数用于排序，按number值由小到大
+{
+  return s1.number<s2.number;
+}
+
+typedef list<Node> LISTINT;
+
+class Linklist{
+    LISTINT ahead,fhead;
+    LISTINT::iterator iter;
+public:
+    Linklist(){
+        Node s;
+        for(int i=101;i<=120;i++){
+            s.number=i;
+            fhead.push_back(s);
+        }
+    }
+
+    void L_init(string name,int number){ //初始分配宿舍
+        iter=fhead.begin();
+        for(iter=fhead.begin();iter!=fhead.end();iter++){
+            if((*iter).number==number)
+                break;
+        }
+        Node t=*iter;
+        t.name=name;
+        fhead.erase(iter);
+        ahead.push_back(t);
+        ahead.sort(cmp);  //排序
+    }
+
+    void L_assign(string name){//分配宿舍操作
+         iter=fhead.begin();
+         Node t=*(iter);
+         t.name=name;
+         fhead.pop_front();
+
+         ahead.push_back(t);
+         ahead.sort(cmp);  //排序
+    }
+
+    void L_return(int number){  //回收宿舍操作
+        for(iter=ahead.begin();iter!=ahead.end();iter++){
+            if((*iter).number==number)
+                break;
+        }
+         Node t=*(iter);
+         ahead.erase(iter);
+         fhead.push_back(t);
+    }
+
+    void L_adisplay(){
+        LISTINT::iterator i1=ahead.end();
+        i1--;
+        for(iter=ahead.begin();iter!=i1;iter++){
+            cout<<(*iter).name<<"("<<(*iter).number<<")-";
+        }
+        cout<<(*iter).name<<"("<<(*iter).number<<")"<<endl;
+    }
+
+    void L_fdisplay(){
+        LISTINT::iterator i1=fhead.end();
+        i1--;
+        for(iter=fhead.begin();iter!=i1;iter++){
+            cout<<(*iter).number<<"-";
+        }
+        cout<<(*iter).number<<endl;
+    }
+};
+
+int main(){
+    Linklist l;
+    string name,str;
+    int number;
+    int t;
+
+    cin>>t;
+    while(t--){
+        cin>>name>>number;
+        l.L_init(name,number);
+    }
+
+    cin>>t;
+    while(t--){
+        cin>>str;
+        if(str=="assign"){
+            cin>>name;
+            l.L_assign(name);
+        }
+        if(str=="return"){
+            cin>>number;
+            l.L_return(number);
+        }
+        if(str=="display_used"){
+            l.L_adisplay();
+        }
+        if(str=="display_free"){
+            l.L_fdisplay();
+        }
+    }
+
+    return 0;
+}

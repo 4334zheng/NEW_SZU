@@ -1,0 +1,73 @@
+#include<iostream>
+using namespace std;
+
+const int LEN=11;
+class Node {               // 定义结点结构
+public:
+   int key;
+   Node *next;
+   Node(){key=0;next=NULL;}
+   Node(int k){key=k;next=NULL;}
+};
+
+class Search{
+    Node  *data;
+public:
+    Search(){     //初始化
+        data=new Node[LEN];
+        int n,key;
+        cin>>n;
+        for(int i=0;i<n;i++){
+            cin>>key;
+            hashFunc(key);
+        }
+    }
+
+    void hashFunc(int key){	
+            int i;
+            Node *p, *q;
+            i = key%11;
+            p = data+i;			//指向Hash表中的头结点
+
+            q = new Node(key);	      //表头插入
+            q->next = data[i].next;
+            data[i].next = q;
+   }
+
+    void hashSearch(int key)
+    {      int i,HashCount;
+           Node *p, *q;
+           i = key%11;
+           p = data[i].next;			//指向Hash表中的第一个结点
+           HashCount = 0;
+           while (p) {
+                HashCount++;
+	if (p->key == key) {
+                      cout<<i<<" "<<HashCount<<endl;
+                     return;
+                 }
+                p = p->next;
+        }
+        if(!p){   //若没找到，则从表头插入
+                q = new Node(key);				
+	q->next = data[i].next;
+                data[i].next = q;
+	cout<<"error"<<endl;
+        }
+   }
+
+    ~Search(){
+           delete[] data;
+    }
+};
+
+int main(){
+    Search s;
+    int t,key;
+    cin>>t;
+    while(t--){
+         cin>>key;
+         s.hashSearch(key);
+    }
+    return 0;
+}

@@ -1,0 +1,45 @@
+#include<iostream>
+#include<string>
+using namespace std;
+class Account {
+    long code;
+    char type;
+    float balance,rate;
+public:
+    Account(long c,char t,float b):code(c),type(t),rate(0.005),balance(b){}
+    Account(Account& a):type(a.type),code(a.code+50000000),rate(0.015),balance(a.balance){}
+    void count()
+    { cout<<"Account="<<code<<"--sum="<<balance*(1+rate)<<endl;}
+    void show()
+     {  string s;
+        if(type=='P')
+            s="Person";
+        else
+            s="Enterprise";
+        cout<<"Account="<<code<<"--"<<s<<"--sum="<<balance<<"--rate="<<rate<<endl;
+    }
+};
+
+int main() {
+    int t;
+    cin>>t;
+
+    float c;
+    char b,f,g;
+    long a;
+
+    while(t--){
+       cin>>a>>b>>c>>f>>g;
+       Account d(a,b,c);
+       Account e(d);
+       if(f=='C')
+          d.count();
+       else
+         d.show();
+       if(g=='C')
+         e.count();
+       else
+         e.show();
+    }
+    return 0;
+}

@@ -1,0 +1,73 @@
+//该题思路：先将1边界的外围的0全变成1，然后计算中间被围住的0的个数。
+#include "iostream"
+using namespace std;
+
+class Map {
+private:
+    bool **Visit;//访问标识
+    int **Matrix;//矩阵
+    int m; //行
+    int n; //列
+
+    void SetOne(int x, int y) {  //将1的外围的0都变成1，这种递归可以处理一片完整的区域（将从0开始的范围都变成1）
+        if (x<0 || y<0 || x>=m || y>=n || Matrix[x][y] || Visit[x][y])
+            return;
+
+        Matrix[x][y]=1;
+        Visit[x][y]=true;
+
+        SetOne(x-1,y); //上
+        SetOne(x+1,y); //下
+        SetOne(x,y-1); //左
+        SetOne(x,y+1); //右 
+    }
+
+public:
+    void SetMatrix() {
+        cin>>m>>n;
+
+        Matrix=new int*[m];   //给数组分配空间
+        Visit=new bool*[m];
+
+        for (int i=0; i<m; i++) {  //数组初始化
+           Matrix[i]=new int[n];
+            Visit[i]=new bool[n];
+            for (int j=0; j<n; j++){
+              cin>>Matrix[i][j];
+              Visit[i][j]=false;
+            }
+        }
+    }
+
+    int HowMany() {
+      //用两个循环，处理整个边界，把边界上从0开始的一片区域都变成1，因为怕中间会被1截断，所以不能只从第一个顶点开始递归
+        for (int i=0; i<m; i++) {
+            SetOne(i,0);   //每行的第一列
+            SetOne(i,n-1); //每行的最后一列
+        }
+
+        for (int i=0; i<n; i++) {
+            SetOne(0,i);   //每列的第一行
+            SetOne(m-1,i); //每列的最后一行
+        }
+
+       //开始统计被1包围的区域里面的0的数目
+        int res=0;
+        for (int i=1; i<m; i++) //计算0的个数
+            for (int j=1; j<n; j++)
+               if (!Matrix[i][j])
+                  res++;
+        return res;
+    }
+};
+
+int main() {
+    int m,n,t;
+    cin>>t;
+    while (t--) {
+        Map mp;
+        mp.SetMatrix();
+        cout<<mp.HowMany()<<endl;
+    }
+    return 0;
+}

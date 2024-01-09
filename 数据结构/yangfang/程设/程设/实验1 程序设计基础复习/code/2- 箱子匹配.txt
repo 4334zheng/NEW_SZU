@@ -1,0 +1,23 @@
+#include<iostream>
+#include<stdio.h>
+#include<algorithm>
+using namespace std;
+
+int main()
+{
+  //freopen("d:\\a.txt",  "r", stdin);
+  int t;
+  int s[3],p[3];
+  cin>>t;
+
+  while(t--){
+    cin>>s[0]>>s[1]>>s[2];
+    cin>>p[0]>>p[1]>>p[2];
+    sort(s,s+3);
+    sort(p,p+3);
+    if((s[0]<=p[0] && s[1]<=p[1] && s[2]<=p[2])||(p[0]<=s[0] && p[1]<=s[1] && p[2]<=s[2]))
+        cout<<"yes"<<endl;
+    else
+        cout<<"no"<<endl;
+  }
+}

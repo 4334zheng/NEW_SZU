@@ -1,0 +1,131 @@
+第一种写法：创建动态数组，用的是指针
+#include <iostream>
+using namespace std;
+
+class Phone{
+  int phoneNum;
+  char type;
+public:
+  Phone(){}
+  void set(int phoneNum,char type){
+       this->phoneNum=phoneNum;
+       this->type=type; }
+  int getphoneNum(){return phoneNum;}
+  char gettype(){return type;}
+};
+
+class PhoneStore {
+    Phone p;
+    int stage;
+    string user;
+public:
+    PhoneStore(){}
+    void set(int phoneNum,char type,int stage,string user)
+    {   this->p.set(phoneNum,type);
+        this->stage=stage;
+        this->user=user;
+        cout<<p.getphoneNum()<<" constructed."<<endl;
+    }
+    void printThis()
+    {   string Now;
+        if(stage)
+          {Now = "use";}
+        else
+          {Now = "unuse";}
+        cout<<"Phone="<<p.getphoneNum()<<"--Type="<<p.gettype()<<"--State="<<Now<<"--Owner="<<user<<endl;
+    }
+    Phone& getphone(){return p;}
+    ~PhoneStore()
+    {cout<<p.getphoneNum()<<" destructed."<<endl;}
+};
+
+int main() {
+    int phoneNum,t,stage,i;
+    char type;
+    string user;
+
+    PhoneStore *a=new PhoneStore[3];
+    for(i = 0;i<3;i++){
+       cin>>phoneNum>>type>>stage>>user;
+       a[i].set(phoneNum,type,stage,user);
+    }
+
+    cin>>t;
+    while(t--){
+       cin>>phoneNum;
+       for(i = 0;i<3;i++){
+         if(a[i].getphone().getphoneNum()== phoneNum){
+             a[i].printThis();
+             break;
+          }
+       }
+       if(i == 3)
+        {cout<<"wrong number."<<endl;}
+     }
+
+     delete[] a;
+     return 0;
+}
+
+
+///////////////////////////
+第二种写法：创建动态对象数组，用的是二级指针
+#include <iostream>
+using namespace std;
+class Phone{
+  int phoneNum;
+  char type;
+public:
+  Phone(int phoneNum,char type):phoneNum(phoneNum),type(type){}
+  int getphoneNum(){return phoneNum;}
+  char gettype(){return type;}
+};
+class PhoneStore {
+    Phone p;
+    int stage;
+    string user;
+public:
+    PhoneStore(int phoneNum,char type,int stage,string user):p(phoneNum,type),stage(stage),user(user)
+    { cout<<phoneNum<<" constructed."<<endl;}
+    void printThis()
+    {   string Now;
+        if(stage)
+          {Now = "use";}
+        else
+          {Now = "unuse";}
+        cout<<"Phone="<<p.getphoneNum()<<"--Type="<<p.gettype()<<"--State="<<Now<<"--Owner="<<user<<endl;
+    }
+    Phone& getphone(){return p;}
+    ~PhoneStore()
+    {cout<<p.getphoneNum()<<" destructed."<<endl;}
+};
+int main() {
+    int phoneNum,t,stage,i;
+    char type;
+    string user;
+
+    PhoneStore **p=new PhoneStore*[3];
+    for(i = 0;i<3;i++){
+       cin>>phoneNum>>type>>stage>>user;
+       p[i] = new PhoneStore(phoneNum,type,stage,user);
+    }
+
+    cin>>t;
+    while(t--){
+       cin>>phoneNum;
+       for(i = 0;i<3;i++){
+         if(p[i]->getphone().getphoneNum() == phoneNum){
+             p[i]->printThis();
+             break;
+          }
+       }
+       if(i == 3)
+        {cout<<"wrong number."<<endl;}
+     }
+
+     for(i=2;i>=0;i--)   //要注意析构的次序
+         delete p[i];
+     delete[] p;
+
+     return 0;
+}

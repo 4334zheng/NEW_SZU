@@ -1,0 +1,162 @@
+﻿第一种做法：遍历两次：第一次遍历，找出孩子结点并输出；再遍历一次，找出父结点并输出
+#include<iostream>
+using namespace std;
+
+class BiTreeNode{
+public:
+    char data;
+    BiTreeNode *L;
+    BiTreeNode *R;
+    BiTreeNode() { L=NULL; R=NULL; }
+};
+
+class BiTree{
+private:
+    BiTreeNode *Root;
+
+    BiTreeNode *CreateBiTree() {
+        BiTreeNode *T;
+        char ch;
+        cin>>ch;
+        if(ch=='0')
+            T=NULL;
+        else {
+            T=new BiTreeNode();
+            T->data=ch;
+            T->L=CreateBiTree();
+            T->R=CreateBiTree();
+        }
+        return T;
+    }
+    void findleaf(BiTreeNode *t) {
+        if(t) {
+            if(!t->L && !t->R)
+                cout<<t->data<<" ";
+             findleaf(t->L);
+             findleaf(t->R);
+         }
+    }
+     void findfather(BiTreeNode *t) {
+        if(t->L){
+             if(!t->L->L && !t->L->R)
+                cout<<t->data<<" ";   //t是父节点
+             findfather(t->L);
+        }
+        if(t->R){
+             if(!t->R->L && !t->R->R)
+                cout<<t->data<<" ";
+             findfather(t->R);
+        }
+    }
+public:
+    BiTree(){}
+    void CreateTree() {
+        Root=CreateBiTree();
+    }
+    void findleaf() {
+        findleaf(Root);
+    }
+    void findfather() {
+        findfather(Root);
+    }
+};
+
+int main() {
+    int i,n;
+    cin>>n;
+    for(i=0;i<n;i++) {
+        BiTree Tree;
+        Tree.CreateTree();
+        Tree.findleaf();
+        cout<<endl;
+        Tree.findfather();
+        cout<<endl;
+    }
+}
+
+////////////////////////////////////////////////////////////
+第二种做法：需要两个数组。因为输出结果是上下结构，上面是叶子结点，下面是父节点，这种做法同时找出父子结点，用两个数组分别保留父子结果，最后统一输出
+#include<iostream>
+using namespace std;
+
+class BiTreeNode{
+public:
+    char data;
+    BiTreeNode *L;
+    BiTreeNode *R;
+    BiTreeNode() { L=NULL; R=NULL; }
+};
+
+class BiTree{
+private:
+    char leaf[100],father[100];
+    int count;
+    BiTreeNode *Root;
+
+    BiTreeNode *CreateBiTree() {
+        BiTreeNode *T;
+        char ch;
+        cin>>ch;
+        if(ch=='0')
+            T=NULL;
+        else {
+            T=new BiTreeNode();
+            T->data=ch;
+            T->L=CreateBiTree();
+            T->R=CreateBiTree();
+        }
+        return T;
+    }
+
+    void findleaf(BiTreeNode *t) {
+        if(t->L){
+             if(!t->L->L && !t->L->R) {
+                leaf[count]=t->L->data;
+                father[count]=t->data;
+                count++;
+             }
+             findleaf(t->L);
+        }
+        if(t->R){
+             if(!t->R->L && !t->R->R) {
+                leaf[count]=t->R->data;
+                father[count]=t->data;
+                count++;
+             }
+             findleaf(t->R);
+        }
+    }
+
+    void print(){
+       for(int i=0;i<count;i++)
+         cout<<leaf[i]<<" ";
+       cout<<endl;
+       for(int i=0;i<count;i++)
+         cout<<father[i]<<" ";
+       cout<<endl;
+    }
+
+public:
+    BiTree(){}
+
+    void CreateTree() {
+        count=0;
+        Root=CreateBiTree();
+    }
+
+    void findleaf() {
+        findleaf(Root);
+        print();
+    }
+
+};
+
+int main() {
+    int i,n;
+    cin>>n;
+    for(i=0;i<n;i++) {
+        BiTree Tree;
+        Tree.CreateTree();
+        Tree.findleaf();
+    }
+}

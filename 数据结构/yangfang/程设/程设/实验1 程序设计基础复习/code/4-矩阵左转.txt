@@ -1,0 +1,63 @@
+一、直接输出，没有将旋转的结果保留
+#include<iostream>
+using namespace std;
+
+int main()
+{
+   int t;
+   cin>>t;
+
+   int col,row;
+   int i,j;
+
+   while(t--){
+      cin>>row>>col;
+      int a[row][col];
+      for(i=0;i<row;i++)
+        for(j=0;j<col;j++)
+           cin>>a[i][j];
+
+      for(i=col-1;i>=0;i--){
+        for(j=0;j<row-1;j++){
+            cout<<a[j][i]<<" ";
+        }
+        cout<<a[j][i]<<endl;
+      }
+   }
+
+   return 0;
+}
+
+////////////////////////
+二、保留旋转后的矩阵
+#include<iostream>
+using namespace std;
+
+int main()
+{
+   int t;
+   int col,row;
+   int i,j;
+
+   cin>>t;
+   while(t--){
+      cin>>row>>col;
+      int a[row][col],b[col][row];
+      for(i=0;i<row;i++)
+        for(j=0;j<col;j++)
+           cin>>a[i][j];
+
+      for(i=0;i<col;i++)
+        for(j=0;j<row;j++)
+           b[i][j]=a[j][col-1-i];
+
+      for(i=0;i<col;i++){
+        for(j=0;j<row-1;j++){
+            cout<<b[i][j]<<" ";
+        }
+        cout<<b[i][j]<<endl;
+      }
+   }
+
+   return 0;
+}

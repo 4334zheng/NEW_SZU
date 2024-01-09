@@ -1,0 +1,181 @@
+#include<iostream>
+#include<stack>
+using namespace std;
+
+class treenode{
+public:
+    char data;
+    treenode *left,*right;
+    treenode():left(NULL),right(NULL){}
+};
+
+class tree{
+    treenode *root;
+    void creatbitree(treenode* &t){
+        char ch;
+        cin>>ch;
+        if(ch=='0')
+            t=NULL;
+        else{
+            t=new treenode();
+            t->data=ch;
+            creatbitree(t->left);
+            creatbitree(t->right);
+        }
+     }
+
+public:
+    tree(){}
+    ~tree(){}
+
+    void creattree(){
+        creatbitree(root);
+    }
+/*
+    void PreOrder(){  //先序遍历非递归写法
+        treenode *p=root;
+        stack<treenode *> s;
+        while(p||!s.empty()){  //注意这种写法，p没有进栈，直接访问，p的右孩子才进栈，p的左孩子设置成当前结点
+            if(p){
+                cout<<p->data;
+                if(p->right)
+                  s.push(p->right);
+                p=p->left;
+            }
+            else{
+                p=s.top();
+                s.pop();
+            }
+        }
+        cout<<endl;
+    }
+    void InOrder(){ //中序遍历非递归写法
+        treenode *p=root;
+        stack<treenode *> s;
+        while(p||!s.empty()){
+            if(p){
+               s.push(p);
+               p=p->left;
+            }
+            else{
+               p=s.top();
+               s.pop();
+               cout<<p->data;
+               p=p->right;
+            }
+        }
+       cout<<endl;
+    }
+*/
+    void PostOrder(){ //后序遍历非递归写法
+        treenode *p=root;
+        stack<treenode *> s;
+        stack<int> state;
+        do{
+            if(p){          //若P不为NULL，则P入栈，不访问，标志位为0，然后P指向其左结点，作为当前结点
+                s.push(p);
+                state.push(0);
+                p=p->left;
+            }
+            else{       //若P为NULL，则要判断标志位
+                if(!state.top()){    // 若标志位state.top()=0；将对应栈顶元素的可访问标志设置为1，然后P指向其右结点
+                    state.top()=1;
+                    p=s.top()->right;
+                }
+               else{    // 若标志位state.top()=1；则访问栈顶元素，并出栈，且使得p=NULL，通知p的父结点开始处理右分支
+                    cout<<s.top()->data;
+                    s.pop();
+                    state.pop();
+                    p=NULL;
+                }
+            }    
+        }while(!s.empty());
+        cout<<endl;
+   }
+
+};
+
+int main() {
+    int t;
+    cin >> t;
+    tree tree0;
+    while (t--) {
+        tree0.creattree();
+        tree0.PostOrder();
+    }
+    return 0;
+}
+
+/////////////////////////////////////////////
+另一种做法：将结点结构增加一个标识位flag，初始值为0，当左分支访问完后将其设置为1，以便右分支访问完后，当前栈顶元素即根可访问。
+#include<iostream>
+#include<stack>
+using namespace std;
+
+class treenode{
+public:
+    char data;
+    int flag;   //标志位
+    treenode *left,*right;
+    treenode():left(NULL),right(NULL),flag(0){} //标志位初始值为0
+};
+
+class tree{
+    treenode *root;
+    void creatbitree(treenode* &t){
+        char ch;
+        cin>>ch;
+        if(ch=='0')
+            t=NULL;
+        else{
+            t=new treenode();
+            t->data=ch;
+            creatbitree(t->left);
+            creatbitree(t->right);
+        }
+     }
+
+public:
+    tree(){}
+    ~tree(){}
+
+    void creattree(){
+        creatbitree(root);
+    }
+
+    void PostOrder(){ //后序遍历
+        treenode *p=root;
+        stack<treenode *> s;
+        do{
+            if(p){          //若P不为NULL，当前结点P入栈，不访问，且P指向其左结点
+                s.push(p);
+                p=p->left;
+            }
+            else{       //若P为NULL
+                p=s.top();
+                if(p->flag==0){    // 若p->flag=0,表示左分支已访问完，开始访问右分支，且将标识符设置为1
+                    p->flag=1;
+                    p=p->right;
+                }
+               else{    // 若p->flag=1，则表示右分支已处理完，则访问栈顶元素并出栈
+                    cout<<p->data;
+                    s.pop();
+                    p=NULL;
+                }
+            }    
+        }while(!s.empty());
+        cout<<endl;
+   }
+
+};
+
+int main() {
+    int t;
+    cin >> t;
+    tree tree0;
+    while (t--) {
+        tree0.creattree();
+        tree0.PostOrder();
+    }
+    return 0;
+}

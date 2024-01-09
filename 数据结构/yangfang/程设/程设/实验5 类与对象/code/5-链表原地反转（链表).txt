@@ -1,0 +1,253 @@
+///////////////
+使用类实现
+#include <iostream>
+#include <stdio.h>
+using namespace std;
+
+struct Node{
+  int e;
+  Node* next;
+};
+
+class List{
+  Node* head;
+public:
+  List(){
+    head=new Node{0,NULL};
+  }
+
+  void createList(){
+   int n,e;
+   Node *p=head;
+   cin>>n;
+   for(int i=1;i<=n;i++){
+     cin>>e;
+     Node *s=new Node{e,NULL};
+     p->next=s;
+     p=s;
+     head->e++;
+   }
+ }
+
+  void showList(){
+  if(head->e==0)
+       return;
+  Node* p=head->next;
+  while(p){
+     cout<<p->e<<" ";
+     p=p->next;
+  }
+  cout<<endl;
+  }
+
+  void reverseList(){
+//将head单链表中所有结点按相反次序链接
+   Node *p, *q,*t;
+
+   t=head->next;  //t指向待处理节点的前一个节点
+   if(t)  //若链表不为空
+      p=t->next;  //p指向下一个结点
+
+   if(!p || !t) //若只包含头结点或只有一个结点，则不需要逆序
+       return;
+   else
+      {t->next=NULL;q=t;}  //第一个节点单独处理
+
+   while(p)
+   {  q=p;                    //q指向当前待处理结点
+      p=p->next;          //p指向下一个结点
+      q->next=t;          //t指向逆转时q的后续结点
+      t=q;
+    }
+   head->next=t; //头结点指向t
+  }
+
+  void destroyList(){
+    Node *p;
+    while(head->next){
+        p=head->next;
+        head->next=p->next;
+        delete p;
+    }
+    delete head;
+  }
+};
+
+
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);
+    int t,n;
+    cin>>t;
+    while(t--){
+        List list;
+        list.createList();
+        list.reverseList();
+        list.showList();
+        list.destroyList();
+    }
+    return 0;
+}
+
+
+///////////不使用类的方式
+1、带头结点
+#include <iostream>
+#include <stdio.h>
+using namespace std;
+
+struct Node{
+  int e;
+  Node* next;
+};
+
+void createList(Node* head){
+   int n,e;
+   Node *p=head;
+   cin>>n;
+   for(int i=1;i<=n;i++){
+     cin>>e;
+     Node *s=new Node{e,NULL};
+     p->next=s;
+     p=s;
+     head->e++;
+   }
+}
+
+void showList(Node* head){
+  if(head->e==0)
+     return;
+  Node* p=head->next;
+  while(p){
+    cout<<p->e<<" ";
+    p=p->next;
+  }
+  cout<<endl;
+}
+
+void reverseList(Node* head){
+//将head单链表中所有结点按相反次序链接
+   Node *p, *q,*t;
+
+   t=head->next;  //t指向待处理节点的前一个节点
+   if(t)  //若链表不为空
+      p=t->next;  //p指向下一个结点
+
+   if(!p || !t) //若只包含头结点或只有一个结点，则不需要逆序
+       return;
+   else
+      {t->next=NULL;q=t;}  //第一个节点单独处理
+
+   while(p)
+   {  q=p;                    //q指向当前待处理结点
+      p=p->next;          //p指向下一个结点
+      q->next=t;          //t指向逆转时q的后续结点
+      t=q;
+    }
+   head->next=t; //头结点指向t
+}
+
+void destroyList(Node* head){
+    Node *p;
+    while(head->next){
+        p=head->next;
+        head->next=p->next;
+        delete p;
+    }
+    delete head;
+}
+
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);
+    int t,n;
+    cin>>t;
+    while(t--){
+        Node* head=new Node{0,NULL};
+        createList(head);
+        reverseList(head);
+        showList(head);
+        destroyList(head);
+    }
+    return 0;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+2、不带头结点，可把头结点head当做t用，指向当前待处理节点的前一个节点。注意，在函数中想改变实参指针的值，要用引用方式
+#include <iostream>
+#include <stdio.h>
+using namespace std;
+
+struct Node{
+  int e;
+  Node* next;
+};
+
+void createList(Node* &head){
+   int n,e;
+   Node *p;
+   cin>>n;
+   for(int i=1;i<=n;i++){
+     cin>>e;
+     if(i==1){
+        head=new Node{e,NULL};
+        p=head;
+     }
+     else{
+        Node *s=new Node{e,NULL};
+        p->next=s;
+        p=s;
+     }
+   }
+}
+
+void showList(Node* head){
+  Node* p=head;
+  while(p){
+    cout<<p->e<<" ";
+    p=p->next;
+  }
+  cout<<endl;
+}
+
+void reverseList(Node* &head){
+//将head单链表中所有结点按相反次序链接
+   Node *p, *q;
+
+   if(!head->next)
+    return;
+
+   p=head->next;
+   head->next=NULL;
+
+   while(p->next)
+   {  q=p;               //p指向当前待处理结点
+      p=p->next;      //head指向前一个已经逆序的结点
+      q->next=head;   //q为临时结点
+      head=q;
+    }
+   p->next=head;
+   head=p;
+}
+
+void destroyList(Node* head){
+    Node *p;
+    while(head){
+        p=head;
+        head=head->next;
+        delete p;
+    }
+}
+
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);
+    int t,n;
+    Node *head;
+    cin>>t;
+    while(t--){
+        createList(head);
+        reverseList(head);
+        showList(head);
+        destroyList(head);
+    }
+    return 0;
+}

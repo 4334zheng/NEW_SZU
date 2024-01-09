@@ -1,0 +1,54 @@
+单独写个change函数，再调用
+
+#include<iostream>
+using namespace std;
+class A
+{   string name,type;
+    int grad,damage,defence,blood;
+public:
+    A(string n,string t,int g):name(n),type(t),grad(g){
+      change(t);
+    }
+    void change(string t)
+    { type=t;
+      if(t=="N")
+            { damage=5*grad;blood=5*grad;defence=5*grad;}
+      else if(t=="A")
+            { damage=10*grad;blood=5*grad;defence=5*grad;}
+      else if(t=="D")
+            { defence=10*grad;damage=5*grad;blood=5*grad;}
+      else if(t=="H")
+            { blood=50*grad;damage=5*grad;defence=5*grad;}
+    }
+    string gettype(){return type;}
+    void display()
+    {cout<<name<<"--"<<type<<"--"<<grad<<"--"<<blood<<"--"<<damage<<"--"<<defence<<endl;}
+};
+
+bool check(string t,A *a)
+{   if(a->gettype()==t)
+      { return false; }
+    else
+      { a->change(t);return true;}
+}
+
+int main() {
+    int t;
+    cin>>t;
+    int count=0;
+    while(t--){
+       string n,t;
+       int g;
+       cin>>n>>t>>g;
+       A a(n,t,g);
+       string m;
+       cin>>m;
+       if(check(m,&a))
+          count++;
+       a.display();
+    }
+    cout<<"The number of robot transform is "<<count<<endl;
+    return 0;
+}
+
+

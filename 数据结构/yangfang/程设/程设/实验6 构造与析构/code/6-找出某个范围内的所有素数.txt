@@ -1,0 +1,58 @@
+#include<iostream>
+#include<cmath>
+using namespace std;
+class CSieve {
+    private:
+        char *p_sieve;
+        unsigned long num;
+    public:
+        CSieve(unsigned long n){
+           p_sieve=new char[n+1]; //0号单元浪费不用，数从1开始
+           for(int i=1;i<=n;i++)
+               p_sieve[i]='1';
+           num=n;
+        }
+        void printPrime(){
+          int last;
+          Prime();
+          last=getLast();  //最后一个元素的下标
+          for(int i=2;i<last;i++)
+          {
+              if(p_sieve[i]!='0')
+                 cout<<i<<" ";
+          }
+          cout<<last<<endl;  //最后一个单独输出
+        }
+        void Prime(){
+           int i,j,k;
+             k=sqrt(num);
+             for(j=2;j<=k;j++){
+                if(p_sieve[j]=='1'){
+                   for(i=j*2;i<=num;i=i+j)
+                        p_sieve[i]='0';  //将j的倍数处理成非素数
+                }
+             }
+        }
+        int getLast(){ //找到最后一个素数，因为它要单独处理，从后往前找
+           for(int i=num;i>=2;i--)
+           { if(p_sieve[i]=='1')
+                  return i;
+           }
+        }
+        ~CSieve(){
+            delete[] p_sieve;
+        }
+};
+
+int main()
+{
+    int t,n;
+    cin>>t;
+    while(t--)
+    {
+        cin>>n;
+        CSieve myCs(n);
+        myCs.printPrime();
+    }
+    return 0;
+}

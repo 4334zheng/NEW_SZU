@@ -1,0 +1,58 @@
+一、递归做法
+#include<iostream>
+using namespace std;
+
+double Func(int m){
+   if(m>1)
+    return Func(m-1)*m;
+   else
+    return 1;
+}
+
+int main()
+{
+   int t;
+   cin>>t;
+
+   int m,n;
+   double s;
+
+   while(t--){
+      cin>>m>>n;
+      s=Func(m)/(Func(n)*Func(m-n));
+      cout<<s<<endl;
+   }
+
+   return 0;
+}
+
+
+二、直接用累乘求阶乘
+/////////////////////////
+#include<iostream>
+using namespace std;
+
+double Func(int m){
+   double t=1;
+   for(int i=2;i<=m;i++)
+      t*=i;
+   return t;
+}
+
+int main()
+{
+   int t;
+   cin>>t;
+
+   int m,n;
+   double s;
+
+   while(t--){
+      cin>>m>>n;
+      s=Func(m)/(Func(n)*Func(m-n));
+      cout<<s<<endl;
+   }
+
+   return 0;
+}
+

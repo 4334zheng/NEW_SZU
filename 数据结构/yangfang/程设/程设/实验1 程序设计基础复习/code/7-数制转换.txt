@@ -1,0 +1,60 @@
+一、用数组处理字符串
+#include<iostream>
+using namespace std;
+
+int change(char a[]){
+   int sum=0,s;
+   for(int i=0;a[i]!=0;i++){  //或者a[i]!='\0'
+      if(isdigit(a[i]))
+        s=a[i]-'0';
+      else
+        s=a[i]-'A'+10;
+      sum=sum*16+s;
+   }
+    return sum;
+}
+
+int main()
+{
+   int t;
+   cin>>t;
+   char a[10];
+   while(t--){
+      cin>>a;
+      cout<<change(a)<<endl;
+   }
+
+   return 0;
+}
+
+//////////////////////
+二、用指针处理字符串
+#include<iostream>
+using namespace std;
+
+int change(char *a){
+   int sum=0,s;
+   while(*a){  
+      if(isdigit(*a))
+        s=*a-'0';
+      else
+        s=*a-'A'+10;
+      sum=sum*16+s;
+      a++;
+   }
+    return sum;
+}
+
+int main()
+{
+   int t;
+   cin>>t;
+   char a[10];
+   while(t--){
+      cin>>a;
+      cout<<change(a)<<endl;
+   }
+
+   return 0;
+}
+

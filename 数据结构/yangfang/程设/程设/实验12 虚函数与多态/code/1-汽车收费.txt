@@ -1,0 +1,130 @@
+第一种做法：使用单继承。注意：因为在main中使用了delete，因此，基类中的析构函数必须写成虚函数，才能正确释放动态对象。
+#include <iostream>
+using namespace std;
+class Vehicle
+{ protected:
+     string no;//编号
+  public:
+     Vehicle(string n):no(n){}
+     virtual void display()=0;//输出应收费用
+     virtual ~Vehicle(){}
+};
+
+class Car:public Vehicle{
+  int count;
+  int weight;
+public:
+  Car(string no,int c,int w):Vehicle(no),count(c),weight(w){}
+  void display(){
+     cout<<no<<" "<<count*8+weight*2<<endl;
+  }
+  virtual ~Car(){}
+};
+class Truck:public Vehicle{
+  int weight;
+public:
+  Truck(string no,int w):Vehicle(no),weight(w){}
+   void display(){
+     cout<<no<<" "<<weight*5<<endl;
+  }
+  virtual ~Truck(){}
+};
+class Bus:public Vehicle{
+  int count;
+public:
+  Bus(string no,int c):Vehicle(no),count(c){}
+   void display(){
+     cout<<no<<" "<<count*3<<endl;
+  }
+  virtual ~Bus(){}
+};
+int main(){
+Vehicle *pv;
+int t;
+string no;
+int count,weight,n;
+cin>>t;
+while(t--){
+    cin>>n;
+    switch(n){
+    case 1:{cin>>no>>count>>weight;
+           pv=new Car(no,count,weight);
+           break;}
+    case 2:{cin>>no>>weight;
+           pv=new Truck(no,weight);
+           break;}
+    case 3:{cin>>no>>count;
+           pv=new Bus(no,count);
+           break;}
+    }
+    pv->display();
+    delete pv;
+ }
+}
+
+////////////////////////
+第二种做法：使用多继承
+#include <iostream>
+using namespace std;
+class Vehicle
+{ protected:
+     string no;//编号
+  public:
+     Vehicle(string n):no(n){}
+     virtual void display()=0;//输出应收费用
+     virtual ~Vehicle(){}
+};
+
+class Truck:virtual public Vehicle{
+protected:
+  int weight;
+public:
+  Truck(string no,int w):Vehicle(no),weight(w){}
+   void display(){
+     cout<<no<<" "<<weight*5<<endl;
+  }
+  virtual ~Truck(){}
+};
+class Bus:virtual public Vehicle{
+protected:
+  int count;
+public:
+  Bus(string no,int c):Vehicle(no),count(c){}
+   void display(){
+     cout<<no<<" "<<count*3<<endl;
+  }
+  virtual ~Bus(){}
+};
+
+class Car:public Truck,public Bus{
+public:
+  Car(string no,int c,int w):Vehicle(no),Truck(no,w),Bus(no,c){}
+  void display(){
+     cout<<no<<" "<<count*8+weight*2<<endl;
+  }
+  virtual ~Car(){}
+};
+
+int main(){
+Vehicle *pv;
+int t;
+string no;
+int count,weight,n;
+cin>>t;
+while(t--){
+    cin>>n;
+    switch(n){
+    case 1:{cin>>no>>count>>weight;
+           pv=new Car(no,count,weight);
+           break;}
+    case 2:{cin>>no>>weight;
+           pv=new Truck(no,weight);
+           break;}
+    case 3:{cin>>no>>count;
+           pv=new Bus(no,count);
+           break;}
+    }
+    pv->display();
+    delete pv;
+ }
+}

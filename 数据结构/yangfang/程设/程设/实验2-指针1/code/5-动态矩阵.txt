@@ -1,0 +1,108 @@
+一、使用二维数组
+#include<iostream>
+using namespace std;
+
+int main()
+{
+    int **p;
+    int t,m,n,i,j,max,min;
+    cin>>t;
+    while(t--){
+      cin>>m>>n;
+      p=new int*[m];
+
+      for(i=0;i<m;i++)
+        p[i]=new int[n];
+
+      for(i=0;i<m;i++)
+        for(j=0;j<n;j++){
+           int temp;
+           cin>>temp;
+           p[i][j]=temp;
+           if(i==0 && j==0)   //将矩阵的第一个数据设置为max，min
+                max=temp,min=max;
+           else{
+                if(temp>max)
+                    max=temp;
+                if(temp<min)
+                   min=temp;
+           }
+      }
+      cout<<min<<" "<<max<<endl;
+    }
+    for(i=0;i<m;i++)
+        delete[] p[i];
+    delete[] p;
+
+    return 0;
+}
+
+---------------------------------
+二、使用一维数组：指针变量指向动态数组，不移动
+#include<iostream>
+using namespace std;
+
+int main()
+{
+    int *p;
+    int t,m,n,i,j,max,min;
+    cin>>t;
+    while(t--){
+      cin>>m>>n;
+      p=new int[m*n];
+
+      for(int i=0;i<m*n;i++){
+            cin>>p[i];
+            if(i==0){
+                max=p[0];
+                min=p[0];
+            }
+            else{
+                if(p[i]>max)
+                    max=p[i];
+                if(p[i]<min)
+                    min=p[i];
+            }
+      }
+
+      cout<<min<<" "<<max<<endl;
+      delete[] p;
+    }
+    return 0;
+}
+
+-------------------------------------------------------
+
+指针变量指向动态数组，指针移动
+#include<iostream>
+using namespace std;
+
+int main()
+{
+    int *p,*q;
+    int t,m,n,i,j,max,min;
+    cin>>t;
+    while(t--){
+      cin>>m>>n;
+      q=new int[m*n];  //当指针移动时，要多设置一个指针，指向数组首地址，最后才能正确释放数组
+      p=q;
+
+      for(int i=0;i<m*n;i++,p++){
+            cin>>*p;
+            if(i==0){
+                max=*p;
+                min=*p;
+            }
+            else{
+                if(*p>max)
+                    max=*p;
+                if(*p<min)
+                    min=*p;
+            }
+      }
+
+      cout<<min<<" "<<max<<endl;
+      delete[] q;
+    }
+    return 0;
+}

@@ -1,0 +1,35 @@
+#include<iostream>
+using namespace std;
+
+class A
+{       int a;
+    public:
+        A()
+        {cout<<"Constructed by default, value = 0"<<endl;}
+        A(int a1): a(a1)
+        {cout<<"Constructed using one argument constructor, value = "<<a<<endl;}
+        A(const A &a1): a(a1.a)
+        {cout<<"Constructed using copy constructor, value = "<<a<<endl;}
+};
+
+int main()
+{
+    int t, a,value;
+    cin>>t;
+    while(t--)
+    {
+        cin>>a;
+        switch(a)
+        {
+          case 0:{A a1;break;}
+          case 1:{cin>>value;
+                  A a2(value);
+                  break;}
+          case 2:{cin>>value;
+                  A a3(value);
+                  A a4(a3);
+                  break;}
+        }
+    }
+    return 0;
+}

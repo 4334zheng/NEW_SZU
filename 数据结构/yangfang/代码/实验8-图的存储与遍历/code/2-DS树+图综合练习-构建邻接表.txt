@@ -1,0 +1,261 @@
+#include<iostream>
+using namespace std;
+
+class Node { //图的边的结构
+public:
+    int data;
+    Node *next;
+    Node() { next=NULL; }
+};
+
+class Graph{
+   Node *head;  //邻接表
+   string  *v;   //顶点集合
+   int VexNum;   //顶点数
+   int ArcNum;   //边数
+public:
+   Graph(){  //初始化
+       cin>>VexNum>>ArcNum;
+       head=new Node[VexNum];
+       v=new string[VexNum];
+
+       for(int i=0; i<VexNum; i++)
+            cin>>v[i];
+
+       string ch1,ch2;
+       int m;
+       for(int i=0;i<ArcNum;i++){
+          cin>>ch1>>ch2;
+
+          Node *s=new Node;   //创建要插入的顶点
+          s->data=findchar(ch2);
+
+          m=findchar(ch1);  
+          Node *p=head+m;  //找到边的起始顶点在头结点数组中对应的下标
+                             
+          while(p->next)  //新的结点在链表尾插入
+               p=p->next;
+          p->next=s;
+      }
+
+   }
+   ~Graph(){  //析构函数，释放空间
+      Node* p;
+       for(int i=0;i<VexNum;i++){
+           while(head[i].next){  //每次删除头结点后的一个结点
+              p=head[i].next;
+              head[i].next=p->next;
+              delete p;
+          }
+       }
+       delete[] head;
+       delete[] v;
+   }
+
+   int findchar(string ch){ //查找顶点在数组中的下标
+      for(int j=0;j<VexNum;j++)
+            if(v[j]==ch)
+                return j;
+      return -1;
+   }
+
+    void print() {  //输出信息
+       for(int i=0;i<VexNum;i++){
+          cout<<i<<" "<<v[i];
+          Node *p=head[i].next;
+          while(p) {
+              cout<<"-"<<p->data;
+              p=p->next;
+          }
+          cout<<"-^"<<endl;
+       }
+    }
+};
+
+int main() {
+    int t;
+    cin>>t;
+    while(t--) {
+        Graph g;
+        g.print();
+    }
+    return 0;
+}
+
+///////////////////////////////////////////////////
+另一种写法：头结点数组用指针数组表示。
+#include<iostream>
+using namespace std;
+
+struct Node { //图的顶点
+    int data;
+    Node *next;
+    Node() { next=NULL; }
+};
+
+class Graph{
+   Node **head;  //顶点指针数组，因为每个元素都是指针，所以用二维指针动态生成一维指针数组
+   string  *v;   //顶点数据集合
+   int VexNum;   //顶点数
+   int ArcNum;   //边数
+public:
+   Graph(){
+       cin>>VexNum>>ArcNum;
+       head=new Node*[VexNum]; //指针数组
+       v=new string[VexNum]; //顶点数组
+
+       for(int i=0; i<VexNum; i++)
+            {cin>>v[i];head[i]=NULL;} //注意指针数组，每个元素初始化为NULL
+
+       string ch1,ch2;
+       int m;
+       for(int i=0;i<ArcNum;i++){
+          cin>>ch1>>ch2;
+
+          Node *s=new Node;
+          s->data=findchar(ch2);
+
+          m=findchar(ch1);
+
+          if(head[m]){
+             Node *p=head[m];
+             while(p->next)
+                  p=p->next;
+             p->next=s;
+          }
+          else
+            head[m]=s;  //注意：head只是一个指针数组，它的元素和结点结构不同，因此不能用带头结点的单链表的做法，第一个结点要单独处理
+      }
+   }
+
+   ~Graph(){
+      Node* p;
+       for(int i=0;i<VexNum;i++){
+           while(head[i]){
+              p=head[i];
+              head[i]=p->next;
+              delete p;
+          }
+       }
+       delete[] head;
+       delete[] v;
+   }
+
+   int findchar(string ch){
+      for(int j=0;j<VexNum;j++)
+            if(v[j]==ch)
+                return j;
+      return -1;
+   }
+
+    void print() {
+       for(int i=0;i<VexNum;i++){
+          cout<<i<<" "<<v[i];
+          Node *p=head[i];  //p指向的是第一个结点
+          while(p) {
+              cout<<"-"<<p->data;
+              p=p->next;
+          }
+          cout<<"-^"<<endl;
+       }
+    }
+};
+
+int main() {
+    int t;
+    cin>>t;
+    while(t--) {
+        Graph g;
+        g.print();
+    }
+    return 0;
+}
+
+///////////////////////////////////////////////////
+第三种写法：边的结构和顶点结构分别定义
+#include<iostream>
+using namespace std;
+
+struct EdgeNode {		// 定义图的边的结构
+  int VertexNo;		// 顶点下标
+  EdgeNode* NextArc;		// 指向下一条边(弧)指针
+  EdgeNode(){NextArc=NULL;}
+};
+
+struct VexNode {		// 定义图的顶点的结构
+  string data;	// 顶点信息
+  EdgeNode * FirstArc; // 指向该顶点对应的边的指针
+  VexNode(){FirstArc=NULL;}
+};
+
+class Graph{
+  int  VertexNum;		    // 顶点数
+  int  EdgeNum;             // 边数
+  VexNode *Vertex;          // 顶点数组
+public:
+   Graph( ){  //初始化
+       cin>>VertexNum>>EdgeNum;
+       Vertex=new VexNode[VertexNum];
+       for(int i=0; i<VertexNum; i++)
+            cin>>Vertex[i].data;
+
+       string ch1,ch2;
+       int m;
+       for(int i=0;i<EdgeNum;i++){
+          cin>>ch1>>ch2;
+
+          EdgeNode *s=new EdgeNode;
+          s->VertexNo=findchar(ch2);
+
+          m=findchar(ch1);
+          EdgeNode *p=Vertex[m].FirstArc;
+          if(p==NULL)     //插入第一个结点时，单独处理
+            Vertex[m].FirstArc=s;
+          else{    //新的结点在链表尾插入
+                 while(p->NextArc)
+                    p=p->NextArc;
+                 p->NextArc=s;
+          }
+      }
+   }
+   ~Graph(){  //析构函数，释放空间
+      EdgeNode* p;
+       for(int i=0;i<VertexNum;i++){
+           while(Vertex[i].FirstArc){  //每次删除头结点后的一个结点
+              p=Vertex[i].FirstArc;
+              Vertex[i].FirstArc=p->NextArc;
+              delete p;
+          }
+       }
+       delete[] Vertex;
+   }
+
+   int findchar(string ch){ //查找顶点在数组中的下标
+      for(int j=0;j<VertexNum;j++)
+            if(Vertex[j].data==ch)
+                return j;
+      return -1;
+   }
+
+    void print() {  //输出信息
+       for(int i=0;i<VertexNum;i++){
+          cout<<i<<" "<<Vertex[i].data;
+          EdgeNode *p=Vertex[i].FirstArc;
+          while(p) {
+              cout<<"-"<<p->VertexNo;
+              p=p->NextArc;
+          }
+          cout<<"-^"<<endl;
+       }
+    }
+};
+
+int main() {
+    int t;
+    cin>>t;
+    while(t--) {
+        Graph g;
+        g.print();
+    }
+    return 0;
+}

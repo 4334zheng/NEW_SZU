@@ -1,0 +1,149 @@
+使用一级指针建立动态数组
+#include<iostream>
+using namespace std;
+class CBook{
+    string num, name;
+    int total, avail;
+    static int inAll,outAll;
+public:
+    CBook(){}
+    void set(string  nu, string  na, int t, int a){
+        num=nu;
+        name=na;
+        total=t;
+        avail=a;
+        inAll+=total;
+        outAll+=total-avail;
+    }
+    string borrow() {
+        if(avail>=1) {
+            avail --;
+            outAll++;
+            return "索取号: " + num;
+        }
+        return "";
+    }
+    void print() {
+        cout << num << " " <<  name << " " <<  total << " " << avail << endl;
+    }
+    string getName() {return name;}
+
+    static void print1(){
+        cout << "借出图书: " << outAll << "本  剩余馆藏图书: " << inAll-outAll << "本" << endl;
+    }
+};
+
+int CBook::inAll=0;
+int CBook::outAll=0;
+
+int main() {
+    int num, t;
+    cin >> num;
+    CBook * books = new CBook[num];
+    for (int i = 0; i < num; ++i) {
+        string a, b;
+        int c, d;
+        cin >> a >> b >> c >> d;
+        books[i].set(a, b, c, d);
+    }
+
+    cin >> t;
+    while (t--) {
+        string name;
+        cin >> name;
+        int i = 0;
+        for (i = 0; i < num; ++i) {
+            if(books[i].getName()==name){
+                string ans = books[i].borrow();
+                if(ans == "") {
+                    cout << name << " 该书已全部借出" << endl;
+                }
+                else {
+                    cout << name << " " << ans << endl;
+                }
+            }
+        }
+    }
+
+    cout << endl;
+
+    for (int i = 0; i < num; ++i)
+        books[i].print();
+    CBook::print1();
+
+    delete[] books;
+}
+
+////////////////////
+使用二级指针建立动态数组
+#include<iostream>
+using namespace std;
+class CBook{
+    string num, name;
+    int total, avail;
+    static int inAll,outAll;
+public:
+    CBook(string  nu, string  na, int t, int a):num(nu),name(na),total(t), avail(a) {
+        inAll+=total;
+        outAll+=total-avail;
+    }
+    string borrow() {
+        if(avail>=1) {
+            avail --;
+            outAll++;
+            return "索取号: " + num;
+        }
+        return "";
+    }
+    void print() {
+        cout << num << " " <<  name << " " <<  total << " " << avail << endl;
+    }
+    string getName() {return name;}
+
+    static void print1(){
+        cout << "借出图书: " << outAll << "本  剩余馆藏图书: " << inAll-outAll << "本" << endl;
+    }
+};
+
+int CBook::inAll=0;
+int CBook::outAll=0;
+
+int main() {
+    int num, t;
+    cin >> num;
+    CBook ** books = new CBook*[num];
+    for (int i = 0; i < num; ++i) {
+        string a, b;
+        int c, d;
+        cin >> a >> b >> c >> d;
+        books[i] = new CBook(a, b, c, d);
+    }
+
+    cin >> t;
+    while (t--) {
+        string name;
+        cin >> name;
+        int i = 0;
+        for (i = 0; i < num; ++i) {
+            if(books[i]->getName()==name){
+                string ans = books[i]->borrow();
+                if(ans == "") {
+                    cout << name << " 该书已全部借出" << endl;
+                }
+                else {
+                    cout << name << " " << ans << endl;
+                }
+            }
+        }
+    }
+
+    cout << endl;
+
+    for (int i = 0; i < num; ++i)
+        books[i]->print();
+    CBook::print1();
+
+    for(int i=0;i<num;i++)
+        delete books[i];
+    delete[] books;
+}

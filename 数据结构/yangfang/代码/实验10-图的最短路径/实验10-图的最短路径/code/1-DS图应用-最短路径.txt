@@ -1,0 +1,130 @@
+#include <iostream>
+using namespace std;
+
+//图的定义（邻接矩阵）
+const int INFINITY=1000;  // 无穷大
+class Graph{
+	int  v;	              // 顶点数
+	string *Vertex;      // 顶点数组
+	int  **AdjMatrix;   // 邻接矩阵
+
+	string *Path;         // 存放每个结点对应的最短路径
+                int  *Dest;             // 存放每个顶点对应的最短路径长度
+                string start;          // 起始顶点
+public:
+    //创建图的邻接矩阵
+    void CreateGraph()    // 生成图（采用邻接矩阵）
+  {	 int  i, j;
+	 cin >> v;	  //输入顶点样本数目
+
+	 Vertex=new string[v];
+	 Dest=new int[v];
+	 Path=new string[v];
+                 AdjMatrix=new int*[v];
+                     
+                for(i=0;i<v;i++)
+                     cin>>Vertex[i];
+
+                for (i=0; i<v; i++) {
+                      AdjMatrix[i]=new int[v];
+	      for (j=0; j<v; j++) {
+		cin >> AdjMatrix[i][j];			//依次输入邻接矩阵
+		if (AdjMatrix[i][j] == 0)
+                                        AdjMatrix[i][j] = INFINITY;
+	       }
+	 }
+  }
+
+  //图的最短路径函数
+  void ShortestPath(string StartVexChar)
+  {            start=StartVexChar;
+	int i, j, k, StartVex, CurrentVex, MinDest;
+	bool *Final=new bool[v];   //判断顶点是否已经被选择过
+
+	for (i=0; i<v; i++) {				// 找到开始顶点的序号
+	       if (Vertex[i] == StartVexChar) {
+		StartVex = i;
+		break;
+	       }
+	}
+
+	for (i=0; i<v; i++) {  //初始化
+		Path[i] = StartVexChar+" " ;
+		Dest[i] = INFINITY;		                // 所有顶点到开始顶点之间的距离初值设为无穷大
+		if (AdjMatrix[StartVex][i] < INFINITY) {	// 在开始顶点与当前顶点之间存在弧
+			Dest[i] = AdjMatrix[StartVex][i];
+			Path[i] += Vertex[i]+" ";
+		}
+		Final[i] = false;
+	}
+
+	Dest[StartVex] = 0;		// 初始化，开始顶点属于S集（已处理过的结点）
+	Final[StartVex] = true;
+
+	for (i=0; i<v-1; i++) {
+		MinDest = INFINITY;
+		for (j=0; j<v; j++) {		// 找当前未处理过顶点中到开始顶点最近的顶点
+			if (!Final[j]) {
+				if (Dest[j] < MinDest) {
+					CurrentVex = j;	 // CurrentVex表示离开始顶点最近的顶点
+					MinDest = Dest[j];
+				}
+			}
+		}
+
+		Final[CurrentVex] = true;  //设置访问标志
+
+		for (j=0; j<v; j++) {		// 更新当前最短路径及距离
+			if ( !Final[j] && (MinDest+AdjMatrix[CurrentVex][j] < Dest[j])) {
+				Dest[j]=MinDest+AdjMatrix[CurrentVex][j];//更新顶点j到开始顶点的最短距离
+                                                                Path[j]= Path[CurrentVex];
+				Path[j]+= Vertex[j]+" ";
+			}
+		}
+	}
+
+	delete[] Final;
+  }
+
+  //显示图的最短路径
+  void ShowPath()
+  {
+	int i, j;
+	for (i=0; i<v; i++) {
+	      if (Dest[i] > 0) {
+                              if(Dest[i]<INFINITY)
+		       cout << start << "-" << Vertex[i] << "-" << Dest[i] << "----["<<Path[i]<< "]" << endl;
+                               else
+                                      cout << start << "-" << Vertex[i] << "--1" << endl;
+	      }
+	}
+  }
+
+  ~Graph(){
+      for(int i=0;i<v;i++)
+            delete[] AdjMatrix[i];
+
+      delete []Vertex;
+      delete []Dest;
+      delete []AdjMatrix;
+      delete []Path;
+  }
+
+};
+
+//主函数
+int main()
+ {
+    int t;
+    cin>>t;
+
+    while(t--){
+                  Graph g;
+                  g.CreateGraph();					// 生成图（采用邻接矩阵）
+                  string StartVex;
+	  cin >> StartVex;
+	  g.ShortestPath(StartVex);
+	  g.ShowPath();
+    }
+   return 0;
+}

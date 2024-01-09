@@ -1,0 +1,70 @@
+//第一种：用指针处理动态结构数组
+#include<iostream>
+#include<stdio.h>
+#include<algorithm>
+using namespace std;
+
+struct birthday{
+       int year,month,day;
+};
+
+int cmp(const birthday &a,const birthday &b); //注意，有&符号，就要加const
+
+int main()
+{   //freopen("d:\\a.txt","r",stdin); //提交时，要注释掉本行
+    int t;
+    cin>>t;
+    birthday *p=new birthday[t];
+    for(int i=0;i<t;i++)
+        cin>>p[i].year>>p[i].month>>p[i].day;
+    sort(p,p+t,cmp);
+    cout<<p[1].year<<"-"<<p[1].month<<"-"<<p[1].day<<endl;  //输出老二信息，在数组中下标为1
+    return 0;
+}
+
+int cmp(const birthday &a,const birthday &b){   //按从小到大排序
+  if(a.year!=b.year)
+     return a.year<b.year;
+  if(a.month!=b.month)
+     return a.month<b.month;
+  return a.day<b.day;
+}
+
+
+/////////////////////////////////////////
+
+//第二种：用数组处理结构数组
+#include <iostream>
+using namespace std;
+#include <algorithm>
+
+struct Date
+{
+    int year,month,day;
+};
+
+int cmp(Date d1,Date d2);  //d1,d2前没有引用符号，Date前可以不加const
+
+int main()
+{
+	int t,i;
+	cin>>t;
+                Date d[t];
+
+	for(i=0;i<t;i++)
+	{
+	   cin>>d[i].year>>d[i].month>>d[i].day;
+	}
+	sort(d,d+t,cmp);
+	cout<<d[1].year<<"-"<<d[1].month<<"-"<<d[1].day<<endl;
+	return 0;
+}
+
+int cmp(Date d1,Date d2)
+{
+   if(d1.year!=d2.year)
+     return d1.year<d2.year;
+  if(d1.month!=d2.month)
+     return d1.month<d2.month;
+  return d1.day<d2.day;
+}

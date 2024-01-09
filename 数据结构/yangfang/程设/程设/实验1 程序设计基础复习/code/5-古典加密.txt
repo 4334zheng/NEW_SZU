@@ -1,0 +1,55 @@
+一、使用char[]
+----------------------------------------------
+#include<iostream>
+#include<stdio.h>
+using namespace std;
+
+int main()
+{
+ // freopen("d:\\a.txt",  "r", stdin);
+  int t;
+  cin>>t;
+  while(t--)
+  {
+   char a[20];
+   cin>>a;
+   int j;
+   for(j=0;a[j]!='\0';j++){
+     if(isalpha(a[j])){
+        a[j]+=4;
+        if((a[j]>'z')||(a[j]>'Z' && a[j]<='Z'+4))  //注意后一个条件，因为小写字母都大于Z，所以要限定条件，保证当前是一个大写字母需要处理
+            a[j]-=26;
+     }
+   }
+   a[j]='\0';
+   cout<<a<<endl;
+  }
+}
+
+--------------------------------------------------------
+二、使用string
+
+#include<iostream>
+#include<stdio.h>
+using namespace std;
+
+int main()
+{
+  //freopen("d:\\a.txt",  "r", stdin);
+  int t;
+  cin>>t;
+  while(t--)
+  {
+   string a;
+   cin>>a;
+   int j;
+   for(j=0;j<a.length();j++){
+     if(isalpha(a[j])){
+        a[j]+=4;
+        if((a[j]>'z')||(a[j]>'Z' && a[j]<='Z'+4))
+            a[j]-=26;
+     }
+   }
+   cout<<a<<endl;
+  }
+}

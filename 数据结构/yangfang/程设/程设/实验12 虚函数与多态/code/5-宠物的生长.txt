@@ -1,0 +1,97 @@
+#include<iostream>
+#include<iomanip>
+using namespace std;
+class CDate
+{
+    int year, month, day;
+public:
+    CDate(int y, int m, int d):year(y),month(m),day(d){}
+    bool isLeapYear(int year) { return (year%4 == 0 && year%100 != 0) || year%400 == 0; }
+    double getDayofYear()   //计算当前日期和2000-1-1之间的距离
+    {
+        int i;
+        int a[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
+
+        double sum=day;
+        if (isLeapYear(year))
+            a[2]=29;
+
+        for(i=1; i<month; i++)
+            sum+=a[i];
+
+        for(i=2000;i<year;i++){   
+            if (isLeapYear(i))
+                sum+=366;
+            else
+                sum+=365;
+        }
+        return sum;
+    }
+};
+
+class Pet
+{
+protected:
+    string name;
+    double length,weight;
+    CDate current;
+public:
+    Pet(string name,double length,double weight,int year,int month,int day):name(name),length(length),weight(weight),current(year,month,day){}
+    virtual void display(CDate day)=0;//输出目标日期的身长和体重
+    void print(int t){
+      cout<<name<<" after "<<t<<" day: "<<"length="<<fixed<<setprecision(2)<<length<<",weight="<<fixed<<setprecision(2)<<weight<<endl;
+    }
+};
+
+class Cat:public Pet{
+public:
+    Cat(string name,double length,double weight,int year,int month,int day):Pet(name,length,weight,year,month,day){}
+    void display(CDate day){
+      long t1=current.getDayofYear();
+      long t2=day.getDayofYear();
+      long t=t2-t1;
+      if(t<0)
+        cout<<"error"<<endl;
+      else{
+        length+=t*0.1;
+        weight+=t*0.2;
+        print(t);
+      }
+    }
+};
+
+class Dog:public Pet{
+public:
+    Dog(string name,double length,double weight,int year,int month,int day):Pet(name,length,weight,year,month,day){}
+    void display(CDate day){
+      long t1=current.getDayofYear();
+      long t2=day.getDayofYear();
+      long t=t2-t1;
+      if(t<0)
+        cout<<"error"<<endl;
+      else{
+        length+=t*0.2;
+        weight+=t*0.1;
+        print(t);
+      }
+    }
+};
+
+int main() {
+   int t,length,weight,year,month,day,y,m,d,type;
+   cin>>t;
+   string name;
+   Pet* p;
+   cin>>year>>month>>day;
+   while(t--){
+     cin>>type>>name>>length>>weight;
+     cin>>y>>m>>d;
+     CDate date(y,m,d);
+     if(type==1)
+        p=new Cat(name,length,weight,year,month,day);
+     else
+        p=new Dog(name,length,weight,year,month,day);
+     p->display(date);
+   }
+   return 0;
+}

@@ -1,0 +1,263 @@
+第一种做法：用string。这个要注意一点，不同平台汉字占用的字节数不同，要通过求一个汉字的长度来确定，而不一定是2个字节。
+
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+
+struct Card{
+   string info;
+   int color;
+   int big;
+};
+
+string color[6]={"方块","梅花","红桃","黑桃","小王","大王"};
+string big[13]={"2","3","4","5","6","7","8","9","10","J","Q","K","A"};
+
+bool cmp(const Card& c1,const Card& c2){
+   if(c1.color!=c2.color)
+    return c1.color>c2.color;
+   else
+    return c1.big>c2.big;
+}
+
+int main()
+{
+   int t,n,i,j;
+   string info,s,h="黑";
+   int w=h.length()*2;  //正确计算汉字在不同平台的字节数，花色占两个汉字，所以乘以2
+
+   cin>>t;
+   while(t--)
+   {
+      cin>>n;
+      Card *card=new Card[n];
+
+      for(i=0;i<n;i++){
+          cin>>info;
+          card[i].info=info;
+          s=info.substr(0,w);  //获得花色
+          for(j=0;j<6;j++){
+               if(color[j]==s){
+                  card[i].color=j;
+                   break;
+                }
+           }
+
+           s=card[i].info.substr(w);
+           for(j=0;j<13;j++){
+                 if(big[j]==s){
+                    card[i].big=j;
+                    break;
+                  }
+           }
+      }
+
+      sort(card,card+n,cmp); //排序
+
+      for(j=0;j<n-1;j++)
+        cout<<card[j].info<<" ";
+      cout<<card[j].info<<endl;
+
+      delete[] card;
+   }
+   return 0;
+}
+
+///////////////////////////另一种写法，排序规则不同
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+
+struct Card{
+   string info;
+   int color;
+   int big;
+};
+
+string color[6]={"方块","梅花","红桃","黑桃","小王","大王"};
+string big[13]={"2","3","4","5","6","7","8","9","10","J","Q","K","A"};
+
+bool cmp(const Card& c1,const Card& c2){
+   return (c1.color*100+c1.big)>(c2.color*100+c2.big);
+}
+
+int main()
+{
+   int t,n,i,j;
+   string info,s,h="黑";
+   int w=h.length()*2;  //正确计算汉字在不同平台的字节数，花色占两个汉字，所以乘以2
+
+   cin>>t;
+   while(t--)
+   {
+      cin>>n;
+      Card *card=new Card[n];
+
+      for(i=0;i<n;i++){
+          cin>>info;
+          card[i].info=info;
+          s=info.substr(0,w);  //获得花色
+          for(j=0;j<6;j++){
+               if(color[j]==s){
+                  card[i].color=j;
+                   break;
+                }
+           }
+
+           if(s=="小王")    //判断大小，大王小王分别处理
+              card[i].big=13;
+           else if(s=="大王")
+              card[i].big=14;
+           else{
+              s=card[i].info.substr(w);
+              for(j=0;j<13;j++){
+                 if(big[j]==s){
+                    card[i].big=j;
+                    break;
+                  }
+               }
+            }
+      }
+
+      sort(card,card+n,cmp); //排序
+
+      for(j=0;j<n-1;j++)
+        cout<<card[j].info<<" ";
+      cout<<card[j].info<<endl;
+
+      delete[] card;
+   }
+   return 0;
+}
+
+
+////////////////////////////
+第二种做法：用指针
+#include<iostream>
+#include<cstring>
+#include<algorithm>
+#include<stdio.h>
+using namespace std;
+
+struct Card{
+   char info[10];
+   int color;
+   int big;
+};
+
+char *color[6]={"方块","梅花","红桃","黑桃","小王","大王"};
+char *big[13]={"2","3","4","5","6","7","8","9","10","J","Q","K","A"};
+
+bool cmp(const Card& c1,const Card& c2){
+   return (c1.color*100+c1.big)>(c2.color*100+c2.big);
+}
+
+int main()
+{
+   int t,n,i,j;
+   //freopen("d:\\a.txt",  "r", stdin);//提交到后台需要注释本行
+   cin>>t;
+   while(t--)
+   {
+      cin>>n;
+      Card *card=new Card[n];
+
+      for(i=0;i<n;i++){
+          cin>>card[i].info;
+          for(j=0;j<6;j++){
+               if(strstr(card[i].info,color[j])){
+                  card[i].color=j;
+                   break;
+                }
+           }
+
+           if(strcmp(card[i].info,"小王")==0)
+              card[i].big=13;
+           else if(strcmp(card[i].info,"大王")==0)
+              card[i].big=14;
+           else{
+              for(j=0;j<13;j++){
+                 if(strstr(card[i].info,big[j])){
+                    card[i].big=j;
+                    break;
+                  }
+               }
+            }
+      }
+
+      sort(card,card+n,cmp);
+
+      for(j=0;j<n-1;j++)
+        cout<<card[j].info<<" ";
+      cout<<card[j].info<<endl;
+
+      delete[] card;
+   }
+   return 0;
+}
+
+
+***********************************************************************
+//第三种做法：用数组
+
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+
+struct card
+{
+	char s[10];
+	int type;
+	int num;
+};
+
+bool compCard(card c1,card c2);  
+void change(card& c);       //返回结构体的函数
+char num[][3]={"2","3","4","5","6","7","8","9","10","J","Q","K","A"};
+char type[][10]={"方块","梅花","红桃","黑桃","小王","大王"};
+
+
+
+int main()
+{
+	card poker[54];
+	int t,n,i;
+	cin>>t;
+	while(t--)
+	{
+		cin>>n;
+		for(i=0;i<n;i++)
+		{
+			cin>>poker[i].s;
+			change(poker[i]);
+		}
+
+		sort(poker,poker+n,compCard);
+
+		for(i=0;i<n-1;i++)
+			cout<<poker[i].s<<" ";
+		cout<<poker[i].s<<endl;
+	}
+	return 1;
+}
+
+void change(card& c)
+{   int j;
+    for(j=0;j<6;j++)
+      if(strstr(c.s,type[j]))
+         {	c.type=j;break;}
+
+    for(j=0;j<13;j++)
+      if(strstr(c.s,num[j]))
+         {	c.num=j;break;}
+}
+
+bool compCard(card c1,card c2)
+{
+                if(c1.type!=c2.type)
+	    return c1.type>c2.type;
+	return c1.num>c2.num;
+}

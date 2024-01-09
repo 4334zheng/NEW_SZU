@@ -1,0 +1,274 @@
+一、使用链表结构：
+#include<iostream>
+using namespace std;
+#include<iomanip>
+class good{
+    string id,name,color,size;
+    double danjia;
+    int num;
+    public:
+        good(){};
+        good(string id1,string name1,string color1,string size1,double danjia1,int num1)
+        {id=id1;name=name1;color=color1;size=size1;danjia=danjia1;num=num1;}
+        void display()
+        {cout<<name<<","<<color<<","<<size<<","<<fixed<<setprecision(2)<<danjia<<","<<num<<","<<fixed<<setprecision(2)<<getsum()<<endl;}
+        string getid(){return id;}
+        int getnum(){return num;}
+        double getsum(){return danjia*num;}
+        void numplus(){
+            num++;
+        }
+        void numsub(){
+            num--;
+        }
+        void numplus1(int _num){
+            num+=_num;
+        }
+};
+
+struct Node{
+  good data;
+  Node* next;
+};
+
+class car{
+    Node* head;
+    public:
+        car(){head=new Node;head->next=NULL;}
+        void insertNode(good value){
+            Node* s=new Node;
+            s->data=value;
+            s->next=head->next;
+            head->next=s;
+        }
+        Node* findNode(string id){
+           Node* p=head->next;
+           while(p){
+             if(p->data.getid()==id)
+                return p;
+             p=p->next;
+           }
+           return NULL;
+        }
+         void deleteNode(string id){
+            Node* p=head;
+            while(p->next){
+             if(p->next->data.getid()==id){
+                p->next=p->next->next;
+                break;
+             }
+             p=p->next;
+            }
+        }
+
+        void add(string _id,string _name,string _color,string _size,double _danjia,int _num)
+        {  Node* p=findNode(_id);
+           if(!p){
+                 good value(_id,_name,_color,_size,_danjia,_num);
+                 insertNode(value);
+           }
+           else
+                 p->data.numplus1(_num);
+       }
+
+        void up(string _id){
+            Node* p=findNode(_id);
+            if(p)
+              p->data.numplus();
+        }
+
+        void down(string _id){
+            Node* p=findNode(_id);
+            if(p){
+              if(p->data.getnum()>1){
+                   p->data.numsub();
+              }
+            }
+          }
+
+          void display(){
+              double sum=0;
+              int count=0;
+              Node* p=head->next;
+
+              cout<<"商品清单:"<<endl;
+              cout<<"商品,颜色,尺码,单价,数量,小计"<<endl;
+
+              while(p){
+                p->data.display();
+                count+=p->data.getnum();
+                sum+=p->data.getsum();
+                p=p->next;
+              }
+              cout<<"----------"<<endl;
+              cout<<count<<"件商品,总商品金额"<<fixed<<setprecision(2)<<sum<<endl;
+            }
+};
+
+int main() {
+    int t;
+    cin>>t;
+    while(t--){
+       int n;
+       cin>>n;
+       string operate,id,name,color,size;
+       int num;
+       double danjia;
+       car c;
+       while(n--){
+          cin>>operate;
+          if(operate=="ADD"){
+             cin>>id>>name>>color>>size>>danjia>>num;
+             c.add(id,name,color,size,danjia,num);
+          }
+          else if(operate=="UP"){
+              cin>>id;
+              c.up(id);
+          }
+          else if(operate=="DOWN"){
+               cin>>id;
+               c.down(id);
+          }
+          else if(operate=="DELETE"){
+                cin>>id;
+                c.deleteNode(id);
+           }
+        }
+        c.display();
+    }
+    return 0;
+}
+
+
+//////////////////////////////
+二、使用数组：
+#include<iostream>
+using namespace std;
+#include<iomanip>
+
+class good{
+    string id,name,color,size;
+    double danjia;
+    int num;
+    public:
+       good(){}
+        void set(string id1,string name1,string color1,string size1,double danjia1,int num1)
+        {id=id1;name=name1;color=color1;size=size1;danjia=danjia1;num=num1;}
+        void display()
+        {cout<<name<<","<<color<<","<<size<<","<<fixed<<setprecision(2)<<danjia<<","<<num<<","<<fixed<<setprecision(2)<<getsum()<<endl;}
+        string getid(){return id;}
+        int getnum(){return num;}
+        double getsum(){return danjia*num;}
+        void numplus(){
+            num++;
+        }
+        void numsub(){
+            num--;
+        }
+        void numplus1(int _num){
+            num+=_num;
+        }
+};
+
+class car{
+    good g[100];
+    int i;//记录有效数据个数
+
+    public:
+        car():i(0){}
+        void add(string _id,string _name,string _color,string _size,double _danjia,int _num)
+        {  int j,k;
+           for(j=0;j<i;j++){
+              if(_id==g[j].getid()){
+                  g[j].numplus1(_num);
+                  return ;
+                 }
+           }
+           if(j==i){
+              for(k=i-1;k>=0;k--)
+                  g[k+1]=g[k];
+              g[0].set(_id,_name,_color,_size,_danjia,_num);
+              i++;
+           }
+       }
+       void ddelete(string _id){
+           int j,k;
+           for(j=0;j<i;j++){
+                if(_id==g[j].getid()){
+                    for(k=j;k<i-1;k++)
+                       g[k]=g[k+1];
+                    i--;
+                    break;
+                }
+            }
+        }
+        void up(string _id){
+            int j;
+            for(j=0;j<i;j++){
+               if(_id==g[j].getid()){
+                   g[j].numplus();
+                   break;
+                }
+            }
+        }
+        void down(string _id){
+            int j;
+            for(j=0;j<i;j++){
+              if(_id==g[j].getid()){
+                 if(g[j].getnum()>1){
+                     g[j].numsub();
+                     break;
+                  }
+               }
+             }
+          }
+
+          void display(){
+              double sum1=0;
+              int num1=0;
+              int j;
+              cout<<"商品清单:"<<endl;
+              cout<<"商品,颜色,尺码,单价,数量,小计"<<endl;
+              for(j=0;j<i;j++){
+                 sum1+=g[j].getsum();
+                 num1+=g[j].getnum();
+                 g[j].display();
+              }
+              cout<<"----------"<<endl;
+              cout<<num1<<"件商品,总商品金额"<<fixed<<setprecision(2)<<sum1<<endl;
+            }
+};
+
+int main() {
+    int t;
+    cin>>t;
+    while(t--){
+       int n;
+       cin>>n;
+       string operate,id,name,color,size;
+       int num;
+       double danjia;
+       car c;
+       while(n--){
+          cin>>operate;
+          if(operate=="ADD"){
+             cin>>id>>name>>color>>size>>danjia>>num;
+             c.add(id,name,color,size,danjia,num);
+          }
+          else if(operate=="UP"){
+              cin>>id;
+              c.up(id);
+          }
+          else if(operate=="DOWN"){
+               cin>>id;
+               c.down(id);
+          }
+          else if(operate=="DELETE"){
+                cin>>id;
+                c.ddelete(id);
+           }
+        }
+        c.display();
+    }
+    return 0;
+}

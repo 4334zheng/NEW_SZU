@@ -1,0 +1,160 @@
+#include<iostream>
+using namespace std;
+
+struct treenode{   //建立结点结构
+    char data;
+    treenode *left,*right;
+    treenode():left(NULL),right(NULL){}
+};
+
+class tree{
+    treenode *root;    //私有数据，根节点
+
+    treenode *creatbitree(){ //私有方法
+        treenode *t;
+        char ch;
+        cin>>ch;
+        if(ch=='#')
+            t=NULL;
+        else{
+            t=new treenode;
+            t->data=ch;
+            t->left=creatbitree();
+            t->right=creatbitree();
+        }
+        return t;
+     }
+
+     void preorder(treenode *t){ //私有方法
+        if(t){
+            cout<<t->data;
+            preorder(t->left);
+            preorder(t->right);
+        }
+     }
+     void inorder(treenode *t){ //私有方法
+         if(t){
+            inorder(t->left);
+            cout<<t->data;
+            inorder(t->right);
+          }
+     }
+     void postorder(treenode *t){ //私有方法
+         if(t){
+            postorder(t->left);
+            postorder(t->right);
+            cout<<t->data;
+         }
+     }
+
+public:   //因为root是私有数据，所以用到它的函数都写成公有函数，对外显示
+    tree(){}
+    void creattree(){   
+        root=creatbitree();
+    }
+    void preorder(){
+        preorder(root);
+    }
+    void inorder(){
+        inorder(root);
+    }
+    void postorder(){
+        postorder(root);
+    }
+};
+
+int main(){
+    int t;
+    cin>>t;
+    tree tree0;
+    while(t--){
+        tree0.creattree();
+
+        tree0.preorder();
+        cout<<endl;
+
+        tree0.inorder();
+        cout<<endl;
+
+        tree0.postorder();
+        cout<<endl;
+    }
+    return 0;
+}
+
+////////////////////////////////////
+//构建函数不同，其他相同
+#include<iostream>
+using namespace std;
+
+class treenode{
+public:
+    char data;
+    treenode *left,*right;
+    treenode():left(NULL),right(NULL){}
+};
+
+class tree{
+    treenode *root;
+
+public:
+    void creatbitree(treenode* &t){  //构建函数不同
+        char ch;
+        cin>>ch;
+        if(ch=='#')
+            t=NULL;
+        else{
+            t=new treenode();
+            t->data=ch;
+            creatbitree(t->left);
+            creatbitree(t->right);
+        }
+     }
+
+     void preorder(treenode *t){
+        if(t!=NULL){
+            cout<<t->data;
+            preorder(t->left);
+            preorder(t->right);
+        }
+     }
+     void inorder(treenode *t){
+         if(t!=NULL){
+            inorder(t->left);
+            cout<<t->data;
+            inorder(t->right);
+          }
+     }
+     void postorder(treenode *t){
+         if(t!=NULL){
+            postorder(t->left);
+            postorder(t->right);
+            cout<<t->data;
+         }
+     }
+
+   treenode* getRoot(){
+       return root;
+  }
+
+};
+
+int main(){
+    int t;
+    cin>>t;
+    tree tree0;
+    treenode* root=tree0.getRoot();
+    while(t--){
+        tree0.creatbitree(root);
+
+        tree0.preorder(root);
+        cout<<endl;
+
+        tree0.inorder(root);
+        cout<<endl;
+
+        tree0.postorder(root);
+        cout<<endl;
+    }
+    return 0;
+}

@@ -1,0 +1,26 @@
+#include<cstring>
+#include<iostream>
+using namespace std;
+
+int main()
+{
+           char word[20],key[10],secret[20]; //分别为明文、密钥、密文
+           char *p,*q,*s,c;
+           int t;
+           cin>>t;
+           while(t--)
+          {
+	cin>>word>>key;
+	p=word,q=key,s=secret;
+	while(*p){   //逐个处理明文
+                     c=islower(*p)?'a':'A';  //处理字符大小写的不同
+                   *s=((*p-c)+(*q-'0'))%26+c;  //计算密文
+                    p++,q++,s++;
+                   if(*q==0)  //密钥已经到尾部，则跳回密钥头
+                   q=key;
+            }
+            *s=0;
+           cout<<secret<<endl;
+        }
+       return 0;
+}

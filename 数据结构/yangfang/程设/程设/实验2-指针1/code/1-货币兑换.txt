@@ -1,0 +1,55 @@
+一、第一种写法：指针p的值和整数做运算，因此每次循环需要p=ch；
+#include <iostream>
+#include <iomanip>
+#include<stdio.h>
+using namespace std;
+
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);//提交到后台需要注释本行
+    const double ch[]={6.2619, 6.6744, 0.0516, 0.8065};
+    const double *p=ch;
+    int t;
+    char a;
+    double m;
+    cin>>t;
+    while(t--)
+    {   p=ch;
+        cin>>a>>m;
+        switch(a){
+        case 'D': break;
+        case 'E': p+=1;break;
+        case 'Y': p+=2;break;
+        case 'H': p+=3;break;
+        }
+        cout<<fixed<<setprecision(4)<<(*p)*m<<endl;
+    }
+}
+
+///////////////////////////////////////////////////
+
+二、第二种写法
+#include <iostream>
+#include <iomanip>
+#include<stdio.h>
+using namespace std;
+
+int main()
+{   //freopen("d:\\a.txt",  "r", stdin);  //提交到后台需要注释本行
+    const double ch[4]={6.2619, 6.6744, 0.0516, 0.8065};
+    const double *p;
+    int t;
+    char a;
+    double m;
+    cin>>t;
+    while(t--)
+    {
+        cin>>a>>m;
+        switch(a){
+        case 'D': p=&ch[0];break;
+        case 'E': p=&ch[1];break;
+        case 'Y': p=&ch[2];break;
+        case 'H': p=&ch[3];break;
+        }
+        cout<<fixed<<setprecision(4)<<(*p)*m<<endl;
+    }
+}

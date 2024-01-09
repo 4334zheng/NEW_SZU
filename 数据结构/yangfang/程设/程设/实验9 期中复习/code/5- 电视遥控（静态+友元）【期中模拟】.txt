@@ -1,0 +1,70 @@
+#include<iostream>
+using namespace std;
+
+class tv {
+    int volume;
+    int mode;
+    int channel;
+    static int tvnumber;
+    static int dvdnumber;
+public:
+    tv(){volume=50;mode=1;tvnumber++;channel=tvnumber;}
+    void display(int i){
+        string _mode;
+        if(mode==1)
+            _mode="TV";
+       else
+            _mode="DVD";
+        cout<<"第"<<i<<"号电视机--"<<_mode<<"模式--频道"<<channel<<"--音量"<<volume<<endl;
+     }
+     int getmode(){return mode;}
+     static int gettvnumber(){return tvnumber;}
+     static int getdvdnumber(){return dvdnumber;}
+     friend void control(tv &p,int _mode,int channel,int _volume);
+};
+
+int tv::tvnumber=0;
+int tv::dvdnumber=0;
+
+void control (tv &p,int _mode,int _channel,int _volume) {
+    if(p.mode!=_mode){
+       if(p.mode==1){
+         p.tvnumber--;
+         p.dvdnumber++;
+       }
+       else{
+        p.tvnumber++;
+        p.dvdnumber--;
+       }
+    }
+    p.mode=_mode;
+    p.channel=_channel;
+    p.volume+=_volume;
+    if(p.volume>100)
+       p.volume=100;
+    if(p.volume<0)
+       p.volume=0;
+}
+
+int main() {
+    int n;
+    cin>>n;
+    tv *p=new tv[n];
+
+    int t;
+    int i,j;
+    int mode,channel,volume;
+
+    cin>>t;
+    while(t--){
+        cin>>j>>mode>>channel>>volume;
+        control(p[j-1],mode,channel,volume);
+        p[j-1].display(j);
+     }
+
+     cout<<"播放电视的电视机数量为"<<tv::gettvnumber()<<endl;
+     cout<<"播放DVD的电视机数量为"<<tv::getdvdnumber()<<endl;
+
+     delete[] p;
+     return 0;
+}

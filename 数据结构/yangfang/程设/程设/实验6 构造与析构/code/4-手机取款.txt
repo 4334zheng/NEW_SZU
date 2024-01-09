@@ -1,0 +1,73 @@
+#include<iostream>
+using namespace std;
+
+class CAccount
+{
+	int CardNo;
+	int MobileNo;
+	int PassCode;
+	int balance;
+public:
+	CAccount(){}
+	void setData(int c,int m,int p,int a){
+	      CardNo=c;
+	      MobileNo=m;
+	      PassCode=p;
+	      balance=a;
+	}
+	int getCardNo(){return CardNo;}
+	int getMobileNo(){return MobileNo;}
+	int getPassCode(){return PassCode;}
+	void redraw(int amount){
+	      if(amount>balance)
+                             cout<<"¿¨ºÅ"<<CardNo<<"--"<<"Óà¶î²»×ã"<<endl;
+	     else{
+	             balance-=amount;
+                             cout<<"¿¨ºÅ"<<CardNo<<"--"<<"Óà¶î"<<balance<<endl;
+                      }
+               }
+};
+
+int main()
+{
+	int CardNo,MobileNo,PassCode;
+	int balance,amount;
+	int t,i,n,k;
+
+	cin>>t;
+	CAccount *account=new CAccount[t];
+
+	for(i=0;i<t;i++)
+	{
+	        cin>>CardNo>>MobileNo>>PassCode>>balance;
+	        account[i].setData(CardNo,MobileNo,PassCode,balance);
+	}
+
+	cin>>n;
+	while(n--)
+	{
+		k=-1;  //±êÊ¶Î´ÕÒµ½µÄÄÇÖÖÇé¿ö
+		cin>>MobileNo>>PassCode>>amount;
+		for(i=0;i<t;i++){
+		     if(account[i].getMobileNo()==MobileNo){	//ÅÐ¶ÏºÅÂëÊÇ·ñ´æÔÚ
+                                               k=i;
+                                               break;
+                                    }
+                                 }
+	                if(k!=-1){   //ÈôºÅÂë´æÔÚ£¬¼ÌÐøÅÐ¶ÏÃÜÂëÊÇ·ñÕýÈ·
+		             if(account[k].getPassCode()==PassCode)
+			     account[k].redraw(amount);
+		             else
+			    cout<<"ÃÜÂë´íÎó"<<endl;
+		}
+		else
+		             cout<<"ÊÖ»úºÅ²»´æÔÚ"<<endl£»
+	}
+
+	delete[] account;
+	return 0;
+}
+
+
+
+

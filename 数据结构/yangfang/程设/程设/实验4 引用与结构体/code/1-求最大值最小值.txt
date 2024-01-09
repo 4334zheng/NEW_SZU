@@ -1,0 +1,35 @@
+#include<iostream>
+using namespace std;
+
+void find(int *num,int n,int &minindex,int &maxindex);
+
+int main()
+{
+   int t,n,minindex,maxindex;
+   cin>>t;
+   int *p;
+   while(t--)
+   {
+     cin>>n;
+     p=new int[n];
+     for(int i=0;i<n;i++)
+        cin>>p[i];
+     minindex=0;
+     maxindex=0;
+     find(p,n,minindex,maxindex);
+     cout<<"min="<<p[minindex]<<" minindex="<<minindex<<endl;
+     cout<<"max="<<p[maxindex]<<" maxindex="<<maxindex<<endl;
+     cout<<endl;
+    delete[] p;
+   }
+   return 0;
+}
+
+void find(int *num,int n,int &minindex,int &maxindex){
+  for(int i=1;i<n;i++){
+    if(num[i]>num[maxindex])
+        maxindex=i;
+    if(num[i]<num[minindex])
+        minindex=i;
+  }
+}

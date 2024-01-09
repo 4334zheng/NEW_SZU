@@ -1,0 +1,62 @@
+#include<iostream>
+using namespace std;
+class lottery{
+private:
+    int group1[6];
+    int num;
+    int ** groupn;
+public:
+    lottery(const int g[], int n) :num(n){
+        for (int i = 0; i < 6; ++i) {
+            group1[i] = g[i];
+        }
+    }
+    lottery(lottery & oth):num(oth.num) {
+        for (int i = 0; i < 6; ++i) {
+            group1[i] = oth.group1[i];
+        }
+        groupn = new int*[num];
+        for (int i = 0; i < num; ++i) {
+            groupn[i] = new int[6];
+            if(i == 0) {
+                groupn[i][0] = group1[5] + 1;
+                for (int j = 1; j < 6; ++j) {
+                    groupn[i][j] = group1[j-1]+1;
+                }
+            }
+            else {
+                groupn[i][0] = groupn[i-1][5] + 1;
+                for (int j = 1; j < 6; ++j) {
+                    groupn[i][j] = groupn[i-1][j-1]+1;
+                }
+            }
+        }
+    }
+    void print() {
+        int i,j;
+        for (i = 0; i < 5; ++i) 
+            cout << group1[i]<<" ";
+        cout <<group1[i]<<endl;
+
+        for (i = 0; i < num; ++i) {
+            for (j = 0; j < 5; ++j) 
+                cout << groupn[i][j]<<" ";
+            cout <<groupn[i][j]<< endl;
+        }
+    }
+};
+ 
+ 
+int main() {
+    int t, a[6], b;
+    cin >> t;
+    while (t--) {
+        for (int i = 0; i < 6; ++i) {
+            cin >> a[i];
+        }
+        cin >> b;
+        lottery ss(a, b);
+        lottery sss(ss);
+        sss.print();
+    }
+}

@@ -1,0 +1,102 @@
+#include<iostream>
+#include<iomanip>
+#include<cstring>
+using namespace std;
+
+class Customer{
+private:
+	static int TotalCustNum;
+	static int Year;
+	static int Rent;
+
+	char* CustName;
+	int CustID;
+public:
+	Customer(char* name){
+		TotalCustNum++;
+		CustID=TotalCustNum;
+		CustName=new char[strlen(name)+1];
+		strcpy(CustName,name);
+	}
+	~Customer(){delete[] CustName;}
+	static void changeYear(int r){ Year=r; }
+                void print(){
+    	      cout<<CustName<<" "<<Year<<setw(4)<<setfill('0')<<CustID<<" "<<CustID<<" "<<Rent*TotalCustNum<<endl;
+	}
+
+};
+int Customer::TotalCustNum=0;
+int Customer::Rent=150;
+int Customer::Year=2014;
+
+int main()
+{   int t;
+    char name[10];
+    int year;
+
+    cin>>t;
+	while(t--)
+	{   cin>>year;
+	    Customer::changeYear(year);
+	    while(1){
+	      cin>>name;
+	      if(name[0]=='0')  //ªª÷÷–¥∑®£∫if(!strcmp(name,"0"))
+	          break;
+	      Customer C(name);
+	      C.print();
+	   }
+	}
+
+	return 0;
+}
+
+///////////////////
+”√string
+#include<iostream>
+#include<iomanip>
+using namespace std;
+
+class Customer{
+private:
+	static int TotalCustNum;
+	static int Year;
+	static int Rent;
+
+	string CustName;
+	int CustID;
+public:
+	Customer(string name):CustName(name){
+		TotalCustNum++;
+		CustID=TotalCustNum;
+	}
+	~Customer(){}
+	static void changeYear(int r){ Year=r; }
+                void print(){
+    	      cout<<CustName<<" "<<Year<<setw(4)<<setfill('0')<<CustID<<" "<<CustID<<" "<<Rent*TotalCustNum<<endl;
+	}
+
+};
+int Customer::TotalCustNum=0;
+int Customer::Rent=150;
+int Customer::Year=2014;
+
+int main()
+{   int t;
+    string name;
+    int year;
+
+    cin>>t;
+	while(t--)
+	{   cin>>year;
+	    Customer::changeYear(year);
+	    while(1){
+	      cin>>name;
+	      if(name=="0")
+	          break;
+	      Customer C(name);
+	      C.print();
+	   }
+	}
+
+	return 0;
+}

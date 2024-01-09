@@ -1,0 +1,70 @@
+///题目中分块大小是确定的，因此可以直接找到每个分块在数组中的起始位置
+#include<iostream>
+using namespace std;
+
+class Search{
+    int len;     //数组长度
+    int *data; //数组元素
+    int piece; //分块长度
+    int *index; //存放分块数据
+public:
+    Search(){     //初始化
+        cin>>len;  //数组长度
+        data=new int[len];
+        for(int i=0;i<len;i++)
+            cin>>data[i];   //数组数据
+
+        cin>>piece;   //分块数目
+        index=new int[piece];//分块数组
+        for(int i=0;i<piece;i++){
+            cin>>index[i]; //每块的最大值
+        }
+    }
+
+    void SeqSearchKey(int Key)
+    {  int i,pos,count;    //count记录查找次数，i记录数据位置
+        count=0;
+        i=0;
+        while(i<piece){  //在索引表中查找，从头开始
+            count++;
+            if(Key>index[i])
+              i++;
+            else
+              break;
+        }
+        if(i==piece)  //注意：当Key>index[piece-1]时，要单独处理一下
+           { cout<<"error"<<endl;  return;  }
+
+        int n=len/piece;  //n表示每块元素的个数
+        pos=i*n;   //找到对应块的第一个元素
+        i=pos;
+        while (i<pos+n){  //在同块内查找
+            count++;
+            if(data[i] != Key )
+               i++;
+            else
+               break;
+        };
+        if (i==pos+n)  //若查到尾巴还没找到
+            cout<<"error"<<endl;
+        else
+            cout<<i+1<<"-"<<count<<endl;
+   }
+
+    ~Search(){
+        delete[] data;
+        delete[] index;
+        len=0;
+    }
+};
+
+int main(){
+    Search s;
+    int t,key;
+    cin>>t;
+    while(t--){
+      cin>>key;
+      s.SeqSearchKey(key);
+    }
+    return 0;
+}

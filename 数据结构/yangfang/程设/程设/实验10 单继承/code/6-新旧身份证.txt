@@ -1,0 +1,340 @@
+#include<cstring>
+#include<iostream>
+using namespace std;
+
+class CDate {
+private:
+   int year,month,day;
+public:
+   CDate(int y=0,int m=0,int d=0):year(y),month(m),day(d){}
+   bool check(){
+       int mon[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};  //第一个月的天数用mon[1]表示
+       if(isLeap())
+           mon[2]++;
+       if(year<=0||month<1||month>12||day<1||day>mon[month])  //验证日期的合法性
+           return false;
+       return true;
+    }
+    bool isLeap(){
+        return (year%4==0&&year%100!=0)||(year%400==0);
+    }
+    void print(){cout<<year<<"年"<<month<<"月"<<day<<"日 ";}
+    int getYear(){return year;}
+    int getMonth(){return month;}
+    int getDay(){return day;}
+    void setYear(int y){ year=y;}
+};
+
+class COldID {
+protected:
+   char *p_id15,*p_name;
+   CDate birthday;
+public:
+   COldID(char *p_idval,char *p_nameval,int y,int m,int d) : birthday(y,m,d){
+       p_id15=new char[strlen(p_idval)+1];
+       p_name=new char[strlen(p_nameval)+1];
+       strcpy(p_id15,p_idval);
+       strcpy(p_name,p_nameval);
+    }
+    bool check(){
+        int lenth=strlen(p_id15);
+        if(lenth!=15)   //验证长度是否为15位
+            return false;
+
+        for(int i=0;i<lenth;i++){  //验证是否都是数字
+            if(!isdigit(p_id15[i]))
+                return false;
+        }
+
+        if(birthday.check()==false)  //验证出生年月合法性
+            return false;
+
+        int a1,b1,a2,b2,a3,b3,y,m,d;  //验证身份证上的年月日和出生年月日是否相同
+        a1=p_id15[6]-'0';
+        b1=p_id15[7]-'0';
+        y=1900+a1*10+b1;    //老身份证默认19几几年
+        a2=p_id15[8]-'0';
+        b2=p_id15[9]-'0';
+        m=a2*10+b2;
+        a3=p_id15[10]-'0';
+        b3=p_id15[11]-'0';
+        d=a3*10+b3;
+        if(y!=birthday.getYear()||m!=birthday.getMonth()||d!=birthday.getDay())
+            return false;
+
+        return true;
+    }
+    void print(){
+        if(check()==false)
+            {cout<<"illegal id"<<endl;}
+        else
+            {cout<<p_name<<endl;cout<<p_id15<<" "<<endl;}
+    }
+    ~COldID(){delete[]p_name;delete[]p_id15;}
+};
+
+class CNewID:public COldID {
+private:
+    char *p_id18;
+    CDate issueday;
+    int validyear;
+public:
+    CNewID(char *p_nameval,int y1,int m1,int d1,char *p_idval1,char *p_idval,int y2,int m2,int d2,int validyear): COldID (p_idval1,p_nameval,y1,m1,d1), issueday(y2,m2,d2),validyear(validyear){
+        p_id18=new char[strlen(p_idval)+1];
+        strcpy(p_id18,p_idval);
+    }
+    char find(){ //求检验码
+        int sum=0;
+        int a[17]={7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2};
+        char b[11]={'1','0','X','9','8','7','6','5','4','3','2'};
+        for(int i=0;i<17;i++){
+            sum+=(p_id18[i]-'0')*a[i];
+        }
+        sum%=11;
+        return b[sum];
+    }
+    bool check(){
+        int lenth=strlen(p_id18);
+        if(!COldID::check())   //先验证15位身份证的正确性
+            return false;
+
+        if(lenth!=18)  //验证18位身份证长度
+            return false;
+
+        for(int i=0;i<lenth-1;i++){   //验证18位身份证的前17位是否为数字
+            if(!isdigit(p_id18[i]))
+                return false;
+        }
+
+        if(p_id18[17]!=find())  //验证第18位校验码
+            return false;
+
+        if(issueday.check()==false) //验证发证日期的正确性
+            return false;
+
+        for(int i=0;i<6;i++)   //验证18位身份证是否和15位身份证一致
+            if(p_id18[i]!=p_id15[i])
+               return false;
+        for(int i=6, j=8;i<15;i++,j++)
+            if(p_id18[j]!=p_id15[i])
+                return false;
+
+        int a1,b1,c1,d1,a2,b2,a3,b3,y,m,d; //验证18位身份证上的年月日是否和出生年月日一致
+        a1=p_id18[6]-'0';
+        b1=p_id18[7]-'0';
+        c1=p_id18[8]-'0';
+        d1=p_id18[9]-'0';
+        y=a1*1000+b1*100+c1*10+d1;   //年
+        a2=p_id18[10]-'0';
+        b2=p_id18[11]-'0';
+        m=a2*10+b2;        //月
+        a3=p_id18[12]-'0';
+        b3=p_id18[13]-'0';
+        d=a3*10+b3;        //日
+        if(y!=birthday.getYear()||m!=birthday.getMonth()||d!=birthday.getDay())
+            return false;
+
+        y=issueday.getYear()+validyear;  //验证身份证是否在有效期内
+        m=issueday.getMonth();
+        d=issueday.getDay();
+        if(y<2017||(y==2017&&m<5)||(y==2017&&m==5&&d<10))
+           return false;
+
+       return true;
+    }
+    void print(){
+        cout<<p_name<<endl;
+        if(check()==false)
+            {cout<<"illegal id"<<endl;}
+        else
+            {cout<<p_id18<<" ";
+             issueday.print();
+             if(validyear>=100)
+                cout<<"长期"<<endl;
+             else
+                cout<<validyear<<"年"<<endl;
+             }
+    }
+    ~CNewID(){delete[]p_id18;}
+};
+int main() {
+  int t;
+  char p_id15[128],p_id18[128], p_name[128];
+  int validyear;
+  int y1,y2,m1,m2,d1,d2;
+  cin>>t;
+  while(t--){
+     cin>>p_name>>y1>>m1>>d1>>p_id15>>p_id18>>y2>>m2>>d2>>validyear;
+     CNewID a(p_name,y1,m1,d1,p_id15,p_id18,y2,m2,d2,validyear);
+     a.print();
+    }
+    return 0;
+}
+
+
+//////////////
+用string
+#include<cstring>
+#include<iostream>
+using namespace std;
+
+class CDate {
+private:
+   int year,month,day;
+public:
+   CDate(int y=0,int m=0,int d=0):year(y),month(m),day(d){}
+   bool check(){
+       int mon[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
+       if(isLeap())
+           mon[2]++;
+       if(year<=0||month<1||month>12||day<1||day>mon[month])
+           return false;
+       return true;
+    }
+    bool isLeap(){
+        return (year%4==0&&year%100!=0)||(year%400==0);
+    }
+    void print(){cout<<year<<"年"<<month<<"月"<<day<<"日 ";}
+    int getYear(){return year;}
+    int getMonth(){return month;}
+    int getDay(){return day;}
+    void setYear(int y){ year=y;}
+};
+
+class COldID {
+protected:
+   string p_id15,p_name;
+   CDate birthday;
+public:
+   COldID(string p_idval,string p_nameval,int y,int m,int d) : p_id15(p_idval),p_name(p_nameval),birthday(y,m,d){}
+    bool check(){
+        int lenth=p_id15.length();
+
+        if(lenth!=15)
+            return false;
+
+        for(int i=0;i<lenth;i++){
+            if(!isdigit(p_id15[i]))
+            return false;
+        }
+
+        if(birthday.check()==false)
+            return false;
+
+        int a1,b1,a2,b2,a3,b3,y,m,d;
+        a1=p_id15[6]-'0';
+        b1=p_id15[7]-'0';
+        y=1900+a1*10+b1;
+        a2=p_id15[8]-'0';
+        b2=p_id15[9]-'0';
+        m=a2*10+b2;
+        a3=p_id15[10]-'0';
+        b3=p_id15[11]-'0';
+        d=a3*10+b3;
+        if(y!=birthday.getYear()||m!=birthday.getMonth()||d!=birthday.getDay())
+            return false;
+
+        return true;
+    }
+    void print(){
+        if(check()==false)
+            {cout<<"illegal id"<<endl;}
+        else
+            {cout<<p_name<<endl;cout<<p_id15<<" "<<endl;}
+    }
+};
+
+class CNewID:public COldID {
+private:
+    string p_id18;
+    CDate issueday;
+    int validyear;
+public:
+    CNewID(string p_nameval,int y1,int m1,int d1,string p_idval1,string p_idval,int y2,int m2,int d2,int validyear): COldID (p_idval1,p_nameval,y1,m1,d1), issueday(y2,m2,d2), validyear(validyear),p_id18(p_idval){}
+    char find(){
+        int sum=0;
+        int a[17]={7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2};
+        char b[11]={'1','0','X','9','8','7','6','5','4','3','2'};
+        for(int i=0;i<17;i++){
+            sum+=(p_id18[i]-'0')*a[i];
+        }
+        sum%=11;
+        return b[sum];
+    }
+    bool check(){
+        int lenth=p_id18.length();
+
+        if(!COldID::check())
+            return false;
+
+        if(lenth!=18)
+            return false;
+
+        for(int i=0;i<lenth-1;i++){
+            if(!isdigit(p_id18[i]))
+                return false;
+        }
+
+        if(p_id18[17]!=find())
+            return false;
+
+        if(issueday.check()==false)
+            return false;
+
+        for(int i=0;i<6;i++)
+            if(p_id18[i]!=p_id15[i])
+               return false;
+        for(int i=6, j=8;i<15;i++,j++)
+            if(p_id18[j]!=p_id15[i])
+                return false;
+
+        int a1,b1,c1,d1,a2,b2,a3,b3,y,m,d;
+        a1=p_id18[6]-'0';
+        b1=p_id18[7]-'0';
+        c1=p_id18[8]-'0';
+        d1=p_id18[9]-'0';
+        y=a1*1000+b1*100+c1*10+d1;
+        a2=p_id18[10]-'0';
+        b2=p_id18[11]-'0';
+        m=a2*10+b2;
+        a3=p_id18[12]-'0';
+        b3=p_id18[13]-'0';
+        d=a3*10+b3;
+        if(y!=birthday.getYear()||m!=birthday.getMonth()||d!=birthday.getDay())
+            return false;
+
+        y=issueday.getYear()+validyear;
+        m=issueday.getMonth();
+        d=issueday.getDay();
+        if(y<2017||(y==2017&&m<5)||(y==2017&&m==5&&d<10))
+            return false;
+
+        return true;
+    }
+    void print(){
+        cout<<p_name<<endl;
+        if(check()==false)
+            {cout<<"illegal id"<<endl;}
+        else
+            {cout<<p_id18<<" ";
+             issueday.print();
+             if(validyear>=100)
+                cout<<"长期"<<endl;
+             else
+                cout<<validyear<<"年"<<endl;
+             }
+    }
+};
+int main() {
+  int t;
+  string  p_id15,p_id18, p_name;
+  int validyear;
+  int y1,y2,m1,m2,d1,d2;
+  cin>>t;
+  while(t--){
+     cin>>p_name>>y1>>m1>>d1>>p_id15>>p_id18>>y2>>m2>>d2>>validyear;
+     CNewID a(p_name,y1,m1,d1,p_id15,p_id18,y2,m2,d2,validyear);
+     a.print();
+    }
+    return 0;
+}

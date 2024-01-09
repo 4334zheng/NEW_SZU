@@ -1,0 +1,64 @@
+#include<iostream>
+#include<cmath>
+using namespace std;
+
+class CComp
+{
+        double a, b;
+    public:
+        CComp(): a(1), b(1) {}
+        CComp(double _a, double _b): a(_a), b(_b) {}
+        void add(CComp& c);
+        void sub(CComp& c);
+        void print();
+};
+
+void CComp::add(CComp& c)
+{
+    CComp ret(a+c.a, b+c.b);
+    cout<<"sum:";
+    ret.print();
+}
+
+void CComp::sub(CComp& c)
+{
+    CComp ret(a-c.a, b-c.b);
+    cout<<"remainder:";
+    ret.print();
+}
+
+void CComp::print()
+{
+    if(a)
+    {
+        cout<<a;
+        if(b>0)
+            cout<<"+";
+    }
+    if(b)
+    {
+        if(abs(b)!=1)
+            cout<<b;
+        if(b==-1)
+            cout<<"-";
+        cout<<"i";
+    }
+    if(!a && !b)
+        cout<<0;
+    cout<<endl;
+}
+
+int main()
+{
+    int t, a, b, c, d;
+    cin>>t;
+    while(t--)
+    {
+        cin>>a>>b>>c>>d;
+        CComp c1(a, b), c2(c, d);
+        c1.add(c2);
+        c1.sub(c2);
+    }
+
+    return 0;
+}

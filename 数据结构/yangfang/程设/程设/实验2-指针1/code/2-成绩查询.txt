@@ -1,0 +1,59 @@
+一、第一种做法：数据放在数组里
+#include <iostream>
+using namespace std;
+
+int main()
+{
+       int t;
+       int n,mid,number;
+       int *p;
+
+       cin>>t;
+       while(t--)
+      {
+            cin>>n;
+            int a[n];  //数组
+            for(int i=0;i<n;i++)
+                 cin>>a[i];
+            mid=n/2;  //计算中间位置
+            p=a+mid;
+            cout<<*--p<<" ";
+            p=a+mid;
+           cout<<*++p<<endl;
+           cin>>number;
+           p=a+number-1;
+           cout<<*p<<endl;
+    }
+   return 0;
+}
+--------------------------------
+
+二、第二种做法：数据放在指针指向的动态数组里，用完后释放
+#include <iostream>
+using namespace std;
+
+int main()
+{
+      int t;
+      int n,mid,number;
+      int *p,*a;
+
+      cin>>t;
+      while(t--)
+     {
+          cin>>n;
+          a=new int[n];  //数组
+         for(int i=0;i<n;i++)
+              cin>>a[i];
+        mid=n/2;  //计算中间位置
+        p=a+mid;
+        cout<<*--p<<" ";
+        p=a+mid;
+        cout<<*++p<<endl;
+        cin>>number;
+       p=a+number-1;
+       cout<<*p<<endl;
+       delete[] a;   //释放数组
+    }
+   return 0;
+}

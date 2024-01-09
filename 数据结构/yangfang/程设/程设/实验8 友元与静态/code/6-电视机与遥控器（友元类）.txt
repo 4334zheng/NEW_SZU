@@ -1,0 +1,124 @@
+#include<iostream>
+#include<string>
+using namespace std;
+
+class Tv
+{              int state;
+	int volume;
+	int maxchannel;
+	int channel;
+	int mode;
+	int input;
+	string sstate[2]={"off","on"};
+                string smode[2]={"Cable","Antenna"};
+                string sinput[2]={"VCR","TV"};
+public:
+	Tv():state(0),volume(0),maxchannel(100),channel(0),mode(0),input(0){}
+	Tv(int s, int v,int c,int m,int i):state(s),maxchannel(100),volume(v),channel(c),mode(m),input(i){}
+	void onoff()
+	{
+	    state=1-state;
+	}
+	bool ison()const
+	{
+	    return state?true:false;
+	}
+	bool volup()
+	{
+	     if(volume<20)
+                            return ++volume;
+	}
+	bool voldown()
+	{
+	   if(volume>0)
+                        return --volume;
+	}
+	void chanup()
+	{
+		channel++;
+	}
+	void chandown()
+	{
+		channel--;
+	}
+	void set_mode()
+	{
+		mode=1-mode;
+	}
+	void set_input()
+	{
+		input=1-input;
+	}
+	void settings()const
+	{
+                      cout << sstate[state] << " "<<volume << " " << channel << " "<< smode[mode] << " "<< sinput[input] <<endl;
+	}
+
+	friend class Remote;
+};
+
+class Remote
+{
+	int mode;
+public:
+	Remote(int m):mode(m){}
+	bool volup(Tv &t)
+	  { return t.volup(); }
+	bool voldown(Tv &t)
+	  { return t.voldown(); }
+	void onoff(Tv &t)
+	  { t.onoff(); }
+	void chanup(Tv &t)
+	  { t.chanup(); }
+	void chandown(Tv &t)
+	  { t.chandown(); }
+	void set_chan(Tv &t,int c)
+	  { t.channel = c; }
+	void set_mode(Tv &t)
+	  { t.set_mode(); }
+	void set_input(Tv &t)
+	  { t.set_input(); }
+};
+
+int main()
+{
+	string s, m, i;
+	int s1, m1, i1;
+	int v,c;
+	cin >> s >> v >> c >> m >> i;
+	s1=(s == "off")?0:1;
+	m1=(m == "Cable")?0:1;
+                 i1=(i == "VCR")?0:1;
+
+	Remote tv(m1);
+	Tv t(s1, v, c, m1, i1);
+
+	string s2, v2, c2, m2, i2;
+	cin >> s2 >> v2 >> c2 >> m2 >> i2;
+
+	if (s2 == "onoff")
+                    tv.onoff(t);
+	if (!t.ison()) {  //电视处于关机状态，则直接输出信息，然后结束
+                    t.settings();
+                    return 0;
+	}
+
+	if (v2 == "volup")
+                    tv.volup(t);
+               else
+                   tv.voldown(t);
+
+	if (c2 == "chanup")
+	    tv.chanup(t);
+                else
+                   tv.chandown(t);
+
+	if (m2 == "set_mode")
+	    tv.set_mode(t);
+
+	if (i2 == "set_input")
+	    tv.set_input(t);
+
+	t.settings();
+	return 0;
+}

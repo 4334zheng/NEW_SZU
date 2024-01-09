@@ -1,0 +1,292 @@
+#include<iostream>
+using namespace std;
+
+class ListNode{//结点类
+public:
+    int data;
+    ListNode *next;
+    ListNode(){next=NULL;}
+};
+
+class Linklist{
+    ListNode *head;
+public:
+    Linklist(){
+        head=new ListNode;
+    }
+
+    void L_creat(){
+        int n;
+        cin>>n;
+        ListNode *p=head,*s;
+        for(int i=0;i<n;i++){
+           s=new ListNode;
+           cin>>s->data;
+           p->next=s;
+           p=s;
+        }
+    }
+
+    ~Linklist(){
+        ListNode *p;
+        while(head){
+           p=head;
+           head=p->next;
+           delete p;
+        }
+    }
+
+    void L_insert(ListNode* p,int item){//把数据item插入指针p后
+        ListNode *s;
+        s=new ListNode;
+        s->data=item;
+        p->next=s;
+    }
+
+    void L_display(){
+        ListNode *p;
+        p=head->next;
+        while(p){
+          cout<<p->data<<" ";
+          p = p->next;
+        }
+        cout<<endl;
+    }
+
+    friend void list_add(const Linklist& s1,const Linklist& s2){
+        ListNode *p,*q,*r;
+        Linklist s;
+        int v1,v2,val;
+
+        p=(s1.head)->next;
+        q=(s2.head)->next;
+        r=s.head;
+
+        while(p && q){
+           v1=p->data;
+           v2=q->data;
+           if(v1==v2){
+              val=v1;
+              p=p->next;
+              q=q->next;
+           }
+           else if(v1<v2){
+                  val=v1;
+                  p=p->next;
+              }
+           else{
+                  val=v2;
+                  q=q->next;
+           }
+           s.L_insert(r,val);
+           r=r->next;
+      }
+
+      while(p)
+          {s.L_insert(r, p->data); p=p->next; r=r->next;}
+      while(q)
+          {s.L_insert(r, q->data); r=r->next; q=q->next;}
+
+      s.L_display();
+    }
+
+};
+
+int main() {
+    Linklist l1,l2;
+
+    l1.L_creat();
+    l2.L_creat();
+    list_add(l1,l2);
+
+    return 0;
+}
+
+////////////////////////////
+第二种写法：没有产生新链表，通过在2个链表中修改指针，获得第3个链表。但这种写法有个问题：不能写析构函数，因为当指针被修改后，前两个链表不完整了，没有办法正常析构。或者，写析构函数，但将前两个链表的头结点设置成NULL
+1、不写析构函数
+#include<iostream>
+using namespace std;
+
+class ListNode{//结点类
+public:
+    int data;
+    ListNode *next;
+    ListNode(){next=NULL;}
+};
+
+class Linklist{
+    ListNode *head;
+public:
+    Linklist(){
+        head=new ListNode;
+    }
+
+    void L_creat(){
+        int n;
+        cin>>n;
+        ListNode *p=head,*s;
+        for(int i=0;i<n;i++){
+           s=new ListNode;
+           cin>>s->data;
+           p->next=s;
+           p=s;
+        }
+    }
+    
+    void L_display(){
+        ListNode *p;
+        p=head->next;
+        while(p){
+          cout<<p->data<<" ";
+          p = p->next;
+        }
+        cout<<endl;
+    }
+
+    friend void list_add(const Linklist& s1,const Linklist& s2){
+        ListNode *p,*q,*r;
+        Linklist s;
+
+        p=(s1.head)->next;
+        q=(s2.head)->next;
+        r=s.head;
+
+        while(p && q){
+           if(p->data==q->data){
+                  r->next=p;
+                  p=p->next;
+                  q=q->next;
+           }
+           else if(p->data<q->data){
+                  r->next=p;
+                  p=p->next;
+              }
+           else{
+                  r->next=q;
+                  q=q->next;
+           }
+           r=r->next;
+      }
+
+      if(p)
+          r->next=p;
+      if(q)
+          r->next=q;
+
+      s.L_display();
+    }
+
+};
+
+int main() {
+    Linklist l1,l2;
+
+    l1.L_creat();
+    l2.L_creat();
+    list_add(l1,l2);
+
+    return 0;
+}
+
+///////////////
+2、写析构函数，增加了一个函数finish，将head=NULL;
+#include<iostream>
+using namespace std;
+
+class ListNode{//结点类
+public:
+    int data;
+    ListNode *next;
+    ListNode(){next=NULL;}
+};
+
+class Linklist{
+    ListNode *head;
+public:
+    Linklist(){
+        head=new ListNode;
+    }
+
+    void L_creat(){
+        int n;
+        cin>>n;
+        ListNode *p=head,*s;
+        for(int i=0;i<n;i++){
+           s=new ListNode;
+           cin>>s->data;
+           p->next=s;
+           p=s;
+        }
+    }
+
+    void L_display(){
+        ListNode *p;
+        p=head->next;
+        while(p){
+          cout<<p->data<<" ";
+          p = p->next;
+        }
+        cout<<endl;
+    }
+
+    ~Linklist(){
+        ListNode *p;
+        while(head){
+           p=head;
+           head=p->next;
+           delete p;
+        }
+    }
+
+    void finish(){head->next=NULL;}
+
+    friend void list_add(const Linklist& s1,const Linklist& s2){
+        ListNode *p,*q,*r,*temp;
+        Linklist s;
+
+        p=(s1.head)->next;
+        q=(s2.head)->next;
+        r=s.head;
+
+        while(p && q){
+           if(p->data==q->data){
+                  r->next=p;
+                  p=p->next;
+                  temp=q;
+                  q=q->next;
+                  delete temp;
+           }
+           else if(p->data<q->data){
+                  r->next=p;
+                  p=p->next;
+              }
+           else{
+                  r->next=q;
+                  q=q->next;
+           }
+           r=r->next;
+      }
+
+      if(p)
+          r->next=p;
+      if(q)
+          r->next=q;
+
+      s.L_display();
+    }
+
+};
+
+int main() {
+    Linklist l1,l2;
+
+    l1.L_creat();
+    l2.L_creat();
+    list_add(l1,l2);
+
+    l1.finish();
+    l2.finish();
+
+    return 0;
+}

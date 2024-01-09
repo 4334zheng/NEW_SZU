@@ -1,0 +1,45 @@
+#include<iostream>
+using namespace std;
+
+class Date
+{
+      int y,m,d;
+public:
+      Date(){}
+      Date(int y1,int m1,int d1):y(y1),m(m1),d(d1){}
+      int getyear(){return y;}
+      int getmonth(){return m;}
+      int getday(){return d;}
+};
+
+class VIP{
+   string id;
+   Date birth;
+public:
+   VIP(string id,int y,int m,int d):id(id),birth(y,m,d){}
+   void consume(Date today,double money){
+      double discount;
+      if(today.getmonth()==birth.getmonth() && today.getday()==birth.getday())
+            discount=0.5;
+      else
+           discount=0.95;
+      int pay=(int)(discount*money);
+      cout<<id<<"'s consumption is "<<pay<<endl;
+   }
+};
+
+int main()
+{
+	int t,y,m,d,money;
+	string id;
+	cin>>y>>m>>d;
+	Date today(y,m,d);
+	cin>>t;
+	while(t--){
+                    cin>>id>>y>>m>>d;
+                    VIP v(id,y,m,d);
+                    cin>>money;
+                    v.consume(today,money);
+	}
+	return 0;
+}
